@@ -12,6 +12,17 @@ export async function POST(req: Request) {
       );
     }
 
+    const safePrompt = `
+Japanese urban legend character portrait,
+dark fantasy illustration,
+cinematic lighting,
+mysterious atmosphere,
+anime style character design,
+moody, elegant, supernatural,
+non-graphic, non-violent, no gore, no injury, no blood.
+${prompt}
+`;
+
     const response = await fetch("https://api.openai.com/v1/images/generations", {
       method: "POST",
       headers: {
@@ -20,7 +31,7 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         model: "gpt-image-1-mini",
-        prompt,
+        prompt: safePrompt,
         size: "1024x1024",
         output_format: "png",
       }),
