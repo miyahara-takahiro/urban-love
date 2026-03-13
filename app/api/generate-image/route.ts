@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const { prompt } = await req.json();
 
     const img = await client.images.generate({
-      model: "gpt-image-1",
+      model: "gpt-image-1-mini",
       prompt,
       size: "1024x1024",
     });

@@ -529,22 +529,25 @@ export default function App() {
 
   const downloadResultImage = async () => {
     if (!resultCaptureRef.current) return;
-
+  
     try {
       const canvas = await html2canvas(resultCaptureRef.current, {
         backgroundColor: "#0b0b12",
-        scale: 2,
+        scale: 3,
         useCORS: true,
       });
 
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
-      link.download = `urban-legend-result-${Date.now()}.png`;
+      link.download = "urban-legend-result.png";
       link.click();
-    } catch {
+    } catch (error) {
+      console.error(error);
       alert("画像保存に失敗しました");
     }
   };
+
+
 
   const shareResult = async () => {
     try {
@@ -938,9 +941,16 @@ const styles: Record<string, React.CSSProperties> = {
     backdropFilter: "blur(4px)",
   },
 
-  captureArea: {
+   captureArea: {
+    width: "100%",
+    maxWidth: 720,
+    margin: "0 auto",
+    padding: 20,
     borderRadius: 18,
+    boxSizing: "border-box",
   },
+
+
 
   badge: {
     display: "inline-block",
