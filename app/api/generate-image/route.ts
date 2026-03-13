@@ -1,36 +1,53 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export async function POST(req: Request) {
   try {
     const { prompt } = await req.json();
+    const apiKey = process.env.OPENAI_API_KEY;
 
-    const img = await client.images.generate({
-      model: "gpt-image-1-mini",
-      prompt,
-      size: "1024x1024",
-    });
-
-    const b64 = img.data?.[0]?.b64_json;
-
-    if (!b64) {
+    if (!apiKey) {
       return NextResponse.json(
-        { error: "Image generation returned no image" },
+        { error: "OPENAI_API_KEY 環境変数を設定してください" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({
-      imageUrl: `data:image/png;base64,${b64}`,
+    const response = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-image-1-mini",
+        prompt,
+        size: "1024x1024",
+      }),
     });
-  } catch (error) {
-    console.error("generate-image error:", error);
-    const message =
-      error instanceof Error ? error.message : "Failed to generate image";
-    return NextResponse.json({ error: message }, { status: 500 });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(
+        { error: data?.error?.message || "画像生成に失敗しました。" },
+        { status: response.status }
+      );
+    }
+
+    const imageUrl = data?.data?.[0]?.url;
+
+    if (!imageUrl) {
+      return NextResponse.json(
+        { error: "画像URLの取得に失敗しました。" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ imageUrl });
+  } catch {
+    return NextResponse.json(
+      { error: "image generation failed" },
+      { status: 500 }
+    );
   }
 }

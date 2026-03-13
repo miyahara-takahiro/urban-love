@@ -59,6 +59,15 @@ const ZERO: AxisScores = {
   independence: 0,
 };
 
+const q = (
+  category: Category,
+  visualEmoji: string,
+  visualTitle: string,
+  visualTag: string,
+  text: string,
+  colors: [string, string],
+  options: QuestionOption[]
+): Question => ({ category, visualEmoji, visualTitle, visualTag, text, colors, options });
 
 const questions: Question[] = [
   q("basic", "👣", "ぬめる足音", "振り返るか、見なかったことにするか", "夜道を歩いていると後ろから湿った足音がついてくる。あなたならどうする？", ["#14532d", "#111827"], [
@@ -312,13 +321,11 @@ independence: ${axis.independence}
 function buildMockResult(first: RankedType, second: RankedType, p1: number, p2: number, axis: AxisScores, gender: Gender) {
   const intense = axis.attachment >= axis.independence ? "相手の温度差を静かに記憶していく" : "平気そうな顔で一歩引いて支配権を渡さない";
   const secondLine = second.loveWarning;
-  const genderLine =
-    gender === "male"
-      ? "一見すると余裕がありそうに見えるのに、内側では想像以上に執着が深いタイプとして出やすいです。"
-      : gender === "female"
-        ? "柔らかく見えても、感情の持ち方がかなり濃く、曖昧さに対して静かに怖くなるタイプとして出やすいです。"
-        : "性別の印象に縛られず、外から見える顔と内側の濃さにかなり差があるタイプとして出やすいです。";
-
+  const genderLine = gender === "male"
+    ? "一見すると余裕がありそうに見えるのに、内側では想像以上に執着が深いタイプとして出やすいです。"
+    : gender === "female"
+      ? "柔らかく見えても、感情の持ち方がかなり濃く、曖昧さに対して静かに怖くなるタイプとして出やすいです。"
+      : "性別の印象に縛られず、外から見える顔と内側の濃さにかなり差があるタイプとして出やすいです。";
   return `【第一印象】
 あなたは最初から露骨に怖い人には見えません。むしろ落ち着いていて、ちゃんとしていて、少し近寄りがたいけど綺麗にまとまっている印象を持たれやすいです。ただ、それは入口の話です。今回の結果は ${first.name} ${p1}% × ${second.name} ${p2}%。表向きは静かでも、中身は普通よりずっと濃い。近づくほど安全そうには見えなくなるタイプです。${genderLine}
 
@@ -492,69 +499,80 @@ export default function App() {
     }
   };
 
+  const getShareUrl = () => {
+    if (typeof window === "undefined") return "";
+    return window.location.href;
+  };
+
+  const getShareText = () => {
+    return `私の都市伝説占いの結果は「${first.scaryTitle}」でした。`;
+  };
+
+  const saveResultToLocal = () => {
+    try {
+      const payload = {
+        savedAt: Date.now(),
+        first,
+        second,
+        blend,
+        gender,
+        normalizedAxis,
+        resultText,
+        imageUrl,
+      };
+      localStorage.setItem("urban-legend-result", JSON.stringify(payload));
+      alert("結果を保存しました");
+    } catch {
+      alert("保存に失敗しました");
+    }
+  };
+
   const downloadResultImage = async () => {
     if (!resultCaptureRef.current) return;
-
-    const target = resultCaptureRef.current;
-    const originalWidth = target.style.width;
-    const originalMaxWidth = target.style.maxWidth;
-    const originalMargin = target.style.margin;
-    const originalPadding = target.style.padding;
-
+  
     try {
-      target.style.width = "900px";
-      target.style.maxWidth = "900px";
-      target.style.margin = "0 auto";
-      target.style.padding = "24px";
-
-      const canvas = await html2canvas(target, {
+      const canvas = await html2canvas(resultCaptureRef.current, {
         backgroundColor: "#0b0b12",
-        scale: 2,
+        scale: 3,
         useCORS: true,
-        logging: false,
-        windowWidth: 1200,
       });
 
-      const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob(resolve, "image/png")
-      );
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "urban-legend-result.png";
+      link.click();
+    } catch (error) {
+      console.error(error);
+      alert("画像保存に失敗しました");
+    }
+  };
 
-      if (!blob) {
-        throw new Error("PNGの生成に失敗しました");
-      }
 
-      const file = new File([blob], "urban-legend-result.png", {
-        type: "image/png",
-      });
 
-      if (
-        navigator.share &&
-        navigator.canShare &&
-        navigator.canShare({ files: [file] })
-      ) {
+  const shareResult = async () => {
+    try {
+      const shareUrl = getShareUrl();
+      const shareText = getShareText();
+
+      if (navigator.share) {
         await navigator.share({
           title: "都市伝説占い",
-          text: "診断結果を共有する",
-          files: [file],
+          text: shareText,
+          url: shareUrl,
         });
         return;
       }
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "urban-legend-result.png";
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error(error);
-      alert("画像の共有または保存に失敗しました");
-    } finally {
-      target.style.width = originalWidth;
-      target.style.maxWidth = originalMaxWidth;
-      target.style.margin = originalMargin;
-      target.style.padding = originalPadding;
+      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      alert("共有用テキストをコピーしました");
+    } catch {
+      alert("共有に失敗しました");
     }
+  };
+
+  const openLineShare = () => {
+    const text = encodeURIComponent(`${getShareText()}\n${getShareUrl()}`);
+    window.open(`https://social-plugins.line.me/lineit/share?text=${text}`, "_blank");
   };
 
   if (viewMode === "intro") {
@@ -580,7 +598,9 @@ export default function App() {
             <div style={styles.kvContent}>
               <div style={styles.kvMini}>urban myth . exe</div>
               <h1 style={styles.kvTitle}>都市伝説.exe</h1>
-              <div style={styles.kvLead}>あなたの内側に棲む怪異を解析します</div>
+              <div style={styles.kvLead}>
+                あなたの内側に棲む怪異を解析します
+              </div>
 
               <p style={styles.kvText}>
                 深夜、誰もいないはずの場所で視線を感じたり、
@@ -667,8 +687,17 @@ export default function App() {
           </div>
 
           <div style={styles.actionGrid}>
+            <button style={styles.actionBtn} onClick={saveResultToLocal}>
+              結果を保存
+            </button>
             <button style={styles.actionBtn} onClick={downloadResultImage}>
-              画像を共有
+              画像で保存
+            </button>
+            <button style={styles.actionBtn} onClick={shareResult}>
+              共有する
+            </button>
+            <button style={styles.actionBtnLine} onClick={openLineShare}>
+              LINEで送る
             </button>
           </div>
 
@@ -765,8 +794,7 @@ const styles: Record<string, React.CSSProperties> = {
     position: "fixed",
     inset: 0,
     pointerEvents: "none",
-    background:
-      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 24%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.03), transparent 20%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.02), transparent 22%)",
+    background: "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 24%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.03), transparent 20%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.02), transparent 22%)",
     opacity: 0.35,
   },
 
@@ -774,8 +802,7 @@ const styles: Record<string, React.CSSProperties> = {
     position: "absolute",
     inset: 0,
     pointerEvents: "none",
-    background:
-      "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 24%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.03), transparent 20%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.02), transparent 22%)",
+    background: "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.04), transparent 24%), radial-gradient(circle at 80% 30%, rgba(255,255,255,0.03), transparent 20%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.02), transparent 22%)",
     opacity: 0.22,
   },
 
@@ -914,7 +941,7 @@ const styles: Record<string, React.CSSProperties> = {
     backdropFilter: "blur(4px)",
   },
 
-  captureArea: {
+   captureArea: {
     width: "100%",
     maxWidth: 720,
     margin: "0 auto",
@@ -922,6 +949,8 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 18,
     boxSizing: "border-box",
   },
+
+
 
   badge: {
     display: "inline-block",
@@ -1157,7 +1186,7 @@ const styles: Record<string, React.CSSProperties> = {
     whiteSpace: "pre-line",
     lineHeight: 1.95,
     color: "rgba(255,255,255,0.94)",
-    fontSize: 17,
+    fontSize: 15,
   },
 
   questionVisual: {
@@ -1232,7 +1261,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   actionGrid: {
     display: "grid",
-    gridTemplateColumns: "1fr",
+    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
     gap: 10,
     marginTop: 16,
     marginBottom: 12,
@@ -1243,6 +1272,16 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 14,
     border: "1px solid rgba(255,255,255,0.12)",
     background: "rgba(255,255,255,0.06)",
+    color: "#fff",
+    fontSize: 14,
+    cursor: "pointer",
+  },
+
+  actionBtnLine: {
+    padding: "14px 14px",
+    borderRadius: 14,
+    border: "1px solid rgba(134,239,172,0.18)",
+    background: "rgba(34,197,94,0.22)",
     color: "#fff",
     fontSize: 14,
     cursor: "pointer",
