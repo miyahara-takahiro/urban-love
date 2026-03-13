@@ -59,6 +59,15 @@ const ZERO: AxisScores = {
   independence: 0,
 };
 
+const q = (
+  category: Category,
+  visualEmoji: string,
+  visualTitle: string,
+  visualTag: string,
+  text: string,
+  colors: [string, string],
+  options: QuestionOption[]
+): Question => ({ category, visualEmoji, visualTitle, visualTag, text, colors, options });
 
 const questions: Question[] = [
   q("basic", "👣", "ぬめる足音", "振り返るか、見なかったことにするか", "夜道を歩いていると後ろから湿った足音がついてくる。あなたならどうする？", ["#14532d", "#111827"], [

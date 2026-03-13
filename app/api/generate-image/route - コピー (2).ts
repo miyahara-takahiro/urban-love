@@ -22,7 +22,6 @@ export async function POST(req: Request) {
         model: "gpt-image-1-mini",
         prompt,
         size: "1024x1024",
-        output_format: "png",
       }),
     });
 
@@ -35,20 +34,17 @@ export async function POST(req: Request) {
       );
     }
 
-    const b64 = data?.data?.[0]?.b64_json;
+    const imageUrl = data?.data?.[0]?.url;
 
-    if (!b64) {
+    if (!imageUrl) {
       return NextResponse.json(
-        { error: "画像データの取得に失敗しました。" },
+        { error: "画像URLの取得に失敗しました。" },
         { status: 500 }
       );
     }
 
-    const imageUrl = `data:image/png;base64,${b64}`;
-
     return NextResponse.json({ imageUrl });
-  } catch (error) {
-    console.error(error);
+  } catch {
     return NextResponse.json(
       { error: "image generation failed" },
       { status: 500 }
