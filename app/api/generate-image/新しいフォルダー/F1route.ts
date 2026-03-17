@@ -13,16 +13,13 @@ export async function POST(req: Request) {
     }
 
     const safePrompt = `
-Japanese urban legend fusion character illustration.
-Semi-realistic.
-Slightly grotesque kimo-kawaii balance.
-Unsettling but not horror.
-Not cute.
-Not cinematic.
-No gore.
-No excessive blood.
-Single unified creature only.
-The percentage balance in the prompt must visibly affect the final design.
+Japanese urban legend character portrait,
+dark fantasy illustration,
+cinematic lighting,
+mysterious atmosphere,
+anime style character design,
+moody, elegant, supernatural,
+non-graphic, non-violent, no gore, no injury, no blood.
 ${prompt}
 `;
 

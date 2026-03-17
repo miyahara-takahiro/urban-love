@@ -272,262 +272,32 @@ function topTwoBlend(firstScore: number, secondScore: number) {
   return { p1, p2: 100 - p1 };
 }
 
-function buildResultName(first: RankedType, second: RankedType, p1: number) {
-  if (p1 >= 70) return `${first.name}寄り${second.name}型`;
-  if (p1 >= 60) return `${first.name}${second.name}混成型`;
-  return `${first.name}${second.name}融合型`;
-}
-
-
-const characterAdjustments: Record<string, string> = {
-  "花子さん": `slightly unsettling smile
-not friendly
-quiet but watching you`,
-  "人面犬": `awkward human-like face
-slightly annoying expression
-not cute`,
-  "モスマン": `not too scary
-not horror
-slightly awkward posture
-not powerful`,
-  "ビッグフット": `not heroic
-not cool
-slightly clumsy presence
-a bit awkward`,
-  "口裂け女": `not too violent
-no excessive blood
-unsettling but not horror`,
-  "ツチノコ": `fat body
-short and stubby
-lazy posture
-slightly stupid expression
-not cool
-not cute`,
-  "雪女": `emotionless expression
-slightly uncanny beauty
-not elegant
-not majestic`,
-  "ネッシー": `not realistic
-slightly strange proportions
-not majestic
-a bit awkward`,
-  "チュパカブラ": `no blood
-no gore
-not horror
-slightly weird expression`,
-  "天狗": `not heroic
-not cool
-slightly strange proportions
-a bit unsettling`,
-  "河童": `not cute
-slightly creepy
-awkward expression`,
-  "鵺": `strange hybrid creature
-not cool
-not powerful
-slightly unsettling`,
-  "座敷童": `slightly unsettling eyes
-too calm expression
-not fully innocent`,
-  "海坊主": `not too scary
-not horror
-simple face
-slightly uncanny`,
-  "一つ目小僧": `not cute
-slightly awkward
-unsettling single eye`,
-  "ぬらりひょん": `not cool
-petty
-sneaky
-annoying
-uninvited guest
-slightly ugly
-comical but creepy`,
-};
-
 function buildFusionPrompt(first: TypeDef, second: TypeDef, p1: number, p2: number) {
-  const firstAdjust = characterAdjustments[first.name] ?? "";
-  const secondAdjust = characterAdjustments[second.name] ?? "";
-
-  return `
-Create ONE unified character that fuses two Japanese urban legend creatures.
-
-Primary influence: ${first.name} (${p1}%)
-Secondary influence: ${second.name} (${p2}%)
-
-IMPORTANT:
-- This must be ONE character only
-- Do NOT split the character into two halves
-- Do NOT show two separate characters
-- Do NOT place characters side by side
-- Do NOT make it look like cosplay
-- Both influences must remain visible
-- The ${p1}% / ${p2}% balance must clearly affect the final design
-- ${first.name} should be visibly dominant, but ${second.name} must still remain recognizable
-
-Design direction:
-- create a strange new creature, not two characters standing together
-- use the dominant character as the main silhouette and personality base
-- blend the secondary character into facial structure, body details, expression, texture, posture, or small iconic traits
-- the percentage difference must noticeably change how strong each influence appears
-- uncanny, memorable, slightly disturbing, slightly comical
-- semi-realistic illustration
-- slightly grotesque (kimo-kawaii)
-- unsettling but not horror
-- not cute
-- not cinematic
-- full body
-- centered composition
-- simple plain background
-- character clearly visible
-- no gore
-- no excessive blood
-
-${first.name} adjustment:
-${firstAdjust}
-
-${second.name} adjustment:
-${secondAdjust}
-`.trim();
+  return `creepy cute japanese urban legend fusion portrait, ${first.name} ${p1}% and ${second.name} ${p2}%, realistic horror photo, cinematic lighting, detailed face, dark atmosphere, subtle romance mood, eerie but beautiful, main color from ${first.colors[0]}, shadow influence from ${second.colors[0]}, social media cover image, 1:1 composition`;
 }
-
-
-
-
 
 function buildSystemPrompt() {
-  return `あなたは「都市伝説占いサイト」の結果文を書く専門ライターです。
-出力は必ず自然な日本語にしてください。
-
-これは普通の性格診断ではありません。
-「人の中に潜む怪異」や「都市伝説っぽい気配」を読む占いです。
-読んだ人が、少し笑えて、少しゾクッとして、でも妙に当たっていると感じる文章を書いてください。
-
-【世界観】
-- 都市伝説、妖怪、怪異、噂話の空気感を大事にする
-- ただの人間分析ではなく、「人に紛れた何か」として描写する
-- 怖すぎないが、少し不気味
-- コミカルさは入れてよいが、ふざけすぎない
-- 説明文ではなく、気配や現象として語る
-- 「気づいたら」「いつの間にか」「妙に」「なぜか」など、怪談っぽい自然な言い回しを適度に使う
-
-【文章トーン】
-- 少し意地悪
-- 少しユーモアがある
-- でも雑ではない
-- 読みやすく、テンポがある
-- 一文が長すぎない
-- 項目ごとに2〜5文程度で、全体はしっかり読める長さにする
-- 断定しすぎず、「〜しがち」「〜な空気があります」「〜に見えやすい」などの表現を使う
-- 同じ言い回しを繰り返さない
-
-【最重要ルール】
-- キャラAとキャラBは、必ず「合成されたひとつの存在」として書く
-- 2体を別々に説明しない
-- 割合（%）を必ず文章に反映する
-- 70%以上なら、そのキャラが性格・行動・雰囲気の核になる
-- 60/40なら主導権はあるが、もう片方もかなり見える
-- 50/50なら、どちらとも言い切れない不安定な混ざりものとして書く
-- 割合は不自然に数値を繰り返さず、自然な文章で反映する
-- 都市伝説としての性質が、基本性格・対人関係・恋愛傾向・隠れた欲求ににじむようにする
-
-【性別ルール】
-- 性別によって「恋愛傾向」の言い回しを少し変える
-- 男性: 外からは余裕や鈍感さに見えて、内側の濃さや執着がじわっと出る書き方
-- 女性: 柔らかさや静けさの奥に、濃さや怖さが潜む書き方
-- その他・回答しない: 既存の役割に寄せず、外と内のズレや読めなさを強調する書き方
-- 差をつけすぎない
-- 偏見や決めつけは禁止
-
-【相性ルール】
-- 「危険な相性」は、相性が悪い相手ではなく、混ざると暴走しやすい相手を書く
-- 「元に戻れる相手」は、一緒にいるとバランスが取れる相手を書く
-- どちらも入力でもらう候補キャラ一覧から1体ずつ選ぶ
-- キャラAとキャラB本人は選ばない
-- 同じ結果文の中で、危険な相手と元に戻れる相手は別にする
-
-【出力形式】
-必ず以下の見出しをこの順番どおりに出力してください。
-
-【基本性格】
-【対人関係】
-【恋愛傾向】
-【隠れた欲求】
-【⚠ 危険な相性】
-【◎ 元に戻れる相手】
-
-【各項目の内容】
-- 【基本性格】: その人の核となる性質。怪異っぽい存在感やクセを書く
-- 【対人関係】: 周囲からどう見えるか、どう距離を作るかを書く
-- 【恋愛傾向】: 恋愛になると怪異性がどう出るかを書く。性別を少し反映する
-- 【隠れた欲求】: 本人も自覚していない願望、執着、見つけてほしさ、支配欲、安心への欲などを書く
-- 【⚠ 危険な相性】: 暴走しやすい相手を1体。なぜ危険かも説明する
-- 【◎ 元に戻れる相手】: バランスを取りやすい相手を1体。なぜ落ち着けるかも説明する
-
-【禁止】
-- ただの優等生っぽい性格診断
-- 説明だけで終わる文章
-- 普通すぎる恋愛コラム調
-- 過度なネットスラング
-- 寒いギャグ
-- グロ表現
-- 過度な断定
-- キャラ設定の箇条書きコピペ
-
-全体として、「ちょっと怖い噂話みたいなのに、妙に自分のことっぽい」文章にしてください。`;
+  return `あなたは少し意地悪で観察力の高い恋愛診断師です。固定キャラ説明をそのまま並べるのではなく、合成された最終タイプとして自然に書いてください。ユーザーの性別に合わせて語尾や見られ方のニュアンスを少し変えてください。少し怖く、少しコミカルで、でも当たっていてゾクッとする文にしてください。必ず次の見出しを順番どおりに入れてください。
+【第一印象】
+【裏の顔】
+【恋愛するとこうなる】
+【正直めんどくさい所】
+【でもハマる理由】`;
 }
 
-function buildUserPrompt(
-  first: RankedType,
-  second: RankedType,
-  p1: number,
-  p2: number,
-  axis: AxisScores,
-  gender: Gender
-) {
-  const genderLabel =
-    gender === "male"
-      ? "男性"
-      : gender === "female"
-        ? "女性"
-        : "その他・回答しない";
+function buildUserPrompt(first: RankedType, second: RankedType, p1: number, p2: number, axis: AxisScores, gender: Gender) {
+  return `都市伝説占いの最終結果文を書いてください。
 
-  const ratioGuide =
-    p1 >= 70
-      ? `${first.name}が明確に主導してください。${second.name}はクセ、裏味、歪みとして混ぜてください。`
-      : p1 >= 60
-        ? `${first.name}がやや主導しつつ、${second.name}もはっきり分かるようにしてください。`
-        : `${first.name}と${second.name}が拮抗した、どちらとも言い切れない混ざりものとして書いてください。`;
+対象の性別: ${gender === "male" ? "男性" : gender === "female" ? "女性" : "指定なし"}
+第一タイプ: ${first.name}
+第二タイプ: ${second.name}
+割合: ${p1}% / ${p2}%
 
-  const candidateList = types
-    .filter((t) => t.name !== first.name && t.name !== second.name)
-    .map((t) => `- ${t.name}: ${t.vibe}`)
-    .join("\n");
+第一タイプの怖さ: ${first.loveWarning}
+第二タイプの怖さ: ${second.loveWarning}
+主タイトル候補: ${first.scaryTitle}
 
-  return `都市伝説占いの結果文を書いてください。
-
-【合成結果名】
-${buildResultName(first, second, p1)}
-
-【合成元】
-キャラA: ${first.name}
-特徴A: ${first.vibe}
-内面A: ${first.innerCore}
-恋愛注意A: ${first.loveWarning}
-
-キャラB: ${second.name}
-特徴B: ${second.vibe}
-内面B: ${second.innerCore}
-恋愛注意B: ${second.loveWarning}
-
-【割合】
-${first.name}: ${p1}%
-${second.name}: ${p2}%
-
-【割合の反映ルール】
-${ratioGuide}
-
-【診断軸】
+心理傾向:
 passion: ${axis.passion}
 caution: ${axis.caution}
 intuition: ${axis.intuition}
@@ -535,26 +305,17 @@ reality: ${axis.reality}
 attachment: ${axis.attachment}
 independence: ${axis.independence}
 
-【対象の性別】
-${genderLabel}
-
-【相性候補キャラ】
-${candidateList}
-
-【文章の要件】
+条件:
 - 日本語
-- 少し長めでOK
-- 都市伝説っぽい空気感を出す
-- 少しユーモアを入れる
-- ただしふざけすぎない
-- 恋愛診断でありつつ、怪異としての性質をちゃんと感じさせる
-- 「この人、普通っぽいのに少し怖い」と感じる内容にする
-- キャラAとキャラBを別々に紹介するのではなく、最終的に混ざったひとつの存在として書く
-- 2つの割合差が、性格・対人関係・恋愛傾向・欲求のすべてに自然に出るようにする
-- 700〜1200文字程度を目安にする
-- 危険な相性と元に戻れる相手は、上の候補キャラから1体ずつ選ぶ
-- 危険な相性と元に戻れる相手は別キャラにする
-- ${first.name}と${second.name}本人は選ばない`;
+- 恋愛メイン
+- 少し怖い
+- 少し意地悪
+- 少しコミカル
+- 具体的な恋愛描写
+- 700〜1100文字
+- 固定文っぽくしない
+- 相手がゾクッとする表現を少し入れる
+- 性別に応じて、恋愛で見られ方の言い回しを少し変える`;
 }
 
 function buildMockResult(first: RankedType, second: RankedType, p1: number, p2: number, axis: AxisScores, gender: Gender) {
@@ -640,19 +401,17 @@ function ResultHero({
   second,
   p1,
   p2,
-  resultName,
 }: {
   first: RankedType;
   second: RankedType;
   p1: number;
   p2: number;
-  resultName: string;
 }) {
   return (
     <div style={{ ...styles.hero, background: `linear-gradient(135deg, ${first.colors[0]}, ${second.colors[0]})` }}>
       <div style={styles.heroNoise} />
       <div style={styles.heroChip}>都市伝説占い RESULT</div>
-      <div style={styles.heroName}>{resultName}</div>
+      <div style={styles.heroName}>{first.scaryTitle}</div>
       <div style={styles.heroMix}>{first.name} × {second.name}</div>
       <div style={styles.heroPercent}>{p1}% / {p2}%</div>
       <div style={styles.heroSub}>{first.loveWarning}</div>
@@ -698,7 +457,6 @@ export default function App() {
   const second = ranked[1] ?? ({ ...types[1], score: 49 } as RankedType);
   const blend = topTwoBlend(first.score, second.score);
   const imagePrompt = buildFusionPrompt(first, second, blend.p1, blend.p2);
-  const resultName = buildResultName(first, second, blend.p1);
 
   const answer = (score: Partial<AxisScores>) => {
     setAxis((prev) => {
@@ -891,13 +649,7 @@ export default function App() {
             <div style={styles.badge}>診断結果</div>
             <h1 style={styles.titleLarge}>あなたの都市伝説タイプ</h1>
 
-            <ResultHero
-              first={first}
-              second={second}
-              p1={blend.p1}
-              p2={blend.p2}
-              resultName={resultName}
-            />
+            <ResultHero first={first} second={second} p1={blend.p1} p2={blend.p2} />
 
             {!resultText && !isGenerating && (
               <button style={styles.generateBtn} onClick={generateAll}>
