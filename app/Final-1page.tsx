@@ -10,7 +10,7 @@ const IMAGE_API_URL = "/api/generate-image";
 const AXES = ["passion", "caution", "intuition", "reality", "attachment", "independence"] as const;
 type AxisKey = (typeof AXES)[number];
 type AxisScores = Record<AxisKey, number>;
-type Category = "self" | "emotion" | "romance" | "social";
+type Category = "basic" | "subconscious" | "romance" | "social";
 type ViewMode = "intro" | "diagnosis" | "result";
 
 type QuestionOption = { label: string; score: Partial<AxisScores> };
@@ -24,14 +24,7 @@ type Question = {
   options: QuestionOption[];
 };
 
-type CharacterTraits = {
-  behavior: string;
-  emotion: string;
-  love: string;
-};
-
 type TypeDef = {
-  id: string;
   name: string;
   vibe: string;
   axis: AxisScores;
@@ -42,17 +35,16 @@ type TypeDef = {
   gift: string;
   scaryTitle: string;
   loveWarning: string;
-  traits: CharacterTraits;
   introHint?: string;
 };
 
 type RankedType = TypeDef & { score: number };
 
 type GenerateResultPayload = {
-  main: RankedType;
-  sub: RankedType;
-  bad: string;
-  good: string;
+  first: RankedType;
+  second: RankedType;
+  percentages: { p1: number; p2: number };
+  axis: AxisScores;
   gender: Gender;
 };
 
@@ -78,407 +70,181 @@ const q = (
 ): Question => ({ category, visualEmoji, visualTitle, visualTag, text, colors, options });
 
 const questions: Question[] = [
-  q("self", "🧠", "ひとり時間", "alone",
-    "ひとりで過ごす時間が続いたとき、いちばん近い感覚は？",
-    ["#141e30", "#243b55"],
-    [
-      { label: "落ち着いて、自分のペースに戻れる", score: { independence: 2 } },
-      { label: "少し寂しくなって誰かを思い出す", score: { attachment: 2 } },
-      { label: "いろんなことを考え始める", score: { intuition: 2 } },
-      { label: "特に何も変わらず普通に過ごす", score: { reality: 2 } }
-    ]),
-
-  q("self", "🔥", "ハマり方", "obsession",
-    "何かに興味を持ったとき、自分はどうなりやすい？",
-    ["#1c1c1c", "#434343"],
-    [
-      { label: "気づいたらかなりのめり込んでいる", score: { attachment: 3 } },
-      { label: "バランスを取りながら楽しむ", score: { reality: 2 } },
-      { label: "ある程度で満足して離れる", score: { independence: 2 } },
-      { label: "そのときの気分で変わる", score: { passion: 2 } }
-    ]),
-
-  q("self", "⚖️", "判断", "decision",
-    "何かを決めるとき、いちばん近いのは？",
-    ["#232526", "#414345"],
-    [
-      { label: "直感で決めることが多い", score: { intuition: 3 } },
-      { label: "慎重に考えてから決める", score: { caution: 3 } },
-      { label: "現実的に損得で判断する", score: { reality: 3 } },
-      { label: "気持ちの流れを優先する", score: { passion: 3 } }
-    ]),
-
-  q("social", "👥", "距離感", "distance",
-    "人と関わるときの距離感は？",
-    ["#0f2027", "#2c5364"],
-    [
-      { label: "自然と距離が近くなりやすい", score: { attachment: 2 } },
-      { label: "ちょうどいい距離を保てる", score: { reality: 2 } },
-      { label: "少し距離を置くことが多い", score: { independence: 2 } },
-      { label: "相手によって変わる", score: { caution: 1 } }
-    ]),
-
-  q("social", "👀", "違和感", "sense",
-    "相手のちょっとした違和感に気づいたときは？",
-    ["#141e30", "#243b55"],
-    [
-      { label: "細かいところまで気になってしまう", score: { caution: 3 } },
-      { label: "なんとなく引っかかる程度", score: { intuition: 2 } },
-      { label: "あまり気にしない", score: { reality: 2 } },
-      { label: "気になると深く考える", score: { attachment: 1, caution: 1 } }
-    ]),
-
-  q("emotion", "🫀", "感情", "emotion",
-    "自分の感情はどちらかというと？",
-    ["#1f1c2c", "#928dab"],
-    [
-      { label: "そのまま表に出やすい", score: { passion: 3 } },
-      { label: "あまり外に出さない", score: { independence: 2 } },
-      { label: "コントロールしている", score: { reality: 2 } },
-      { label: "状況によって変わる", score: { caution: 1 } }
-    ]),
-
-  q("emotion", "🕯", "記憶", "memory",
-    "過去の出来事については？",
-    ["#232526", "#000000"],
-    [
-      { label: "長く覚えていることが多い", score: { attachment: 3 } },
-      { label: "経験として整理する", score: { reality: 2 } },
-      { label: "あまり引きずらない", score: { independence: 2 } },
-      { label: "意味を考えがち", score: { intuition: 2 } }
-    ]),
-
-  q("emotion", "💣", "不安", "anxiety",
-    "不安やモヤっとした気持ちがあるときは？",
-    ["#0f2027", "#2c5364"],
-    [
-      { label: "気持ちが強く揺れる", score: { passion: 3 } },
-      { label: "内側に溜め込む", score: { attachment: 2 } },
-      { label: "考えて整理する", score: { caution: 2 } },
-      { label: "少し距離を取る", score: { independence: 2 } }
-    ]),
-
-  q("romance", "💬", "返信", "response",
-    "好きな人に送ったメッセージが既読のまま返ってこない。そんなときは？",
-    ["#141e30", "#243b55"],
-    [
-      { label: "何度も見返してしまう", score: { attachment: 3 } },
-      { label: "理由を考える", score: { caution: 2 } },
-      { label: "気にしないようにする", score: { reality: 2 } },
-      { label: "少し距離を置こうと思う", score: { independence: 2 } }
-    ]),
-
-  q("romance", "🔥", "恋", "love",
-    "誰かを好きになったときの自分に近いのは？",
-    ["#232526", "#ff4e50"],
-    [
-      { label: "一気に気持ちが強くなる", score: { passion: 3 } },
-      { label: "相手をよく観察する", score: { caution: 2 } },
-      { label: "慎重に距離を保つ", score: { independence: 2 } },
-      { label: "どこか運命のように感じる", score: { intuition: 3 } }
-    ]),
-
-  q("romance", "💔", "違和感", "unease",
-    "相手の態度が少しだけ冷たくなったと感じたときは？",
-    ["#000000", "#434343"],
-    [
-      { label: "気づかないふりをするけど覚えている", score: { attachment: 2 } },
-      { label: "理由を知りたくなる", score: { caution: 2 } },
-      { label: "少し気持ちが冷める", score: { independence: 2 } },
-      { label: "考えすぎかもしれないと思う", score: { reality: 2 } }
-    ]),
-
-  q("social", "👁", "観察", "observe",
-    "人のことをどれくらい観察していると思う？",
-    ["#232526", "#414345"],
-    [
-      { label: "かなりよく見ている", score: { caution: 3 } },
-      { label: "なんとなく感じる", score: { intuition: 2 } },
-      { label: "あまり気にしていない", score: { reality: 2 } },
-      { label: "興味があるときだけ", score: { passion: 1 } }
-    ]),
-
-  q("emotion", "🌙", "夜", "night",
-    "夜に考え事をするときは？",
-    ["#0f2027", "#2c5364"],
-    [
-      { label: "過去や人間関係を思い出す", score: { attachment: 2 } },
-      { label: "色々な可能性を考える", score: { caution: 2 } },
-      { label: "あまり深く考えない", score: { reality: 2 } },
-      { label: "感覚的に整理する", score: { intuition: 2 } }
-    ]),
-
-  q("self", "⚡", "衝動", "impulse",
-    "衝動的に動くことは？",
-    ["#141e30", "#243b55"],
-    [
-      { label: "よくある", score: { passion: 3 } },
-      { label: "あまりない", score: { reality: 2 } },
-      { label: "抑えることが多い", score: { caution: 2 } },
-      { label: "状況次第", score: { intuition: 1 } }
-    ]),
-
-  q("romance", "💭", "未来", "future",
-    "好きな人との未来については？",
-    ["#232526", "#414345"],
-    [
-      { label: "よく想像する", score: { intuition: 3 } },
-      { label: "現実的に考える", score: { reality: 3 } },
-      { label: "あまり考えない", score: { independence: 2 } },
-      { label: "気持ちの流れで変わる", score: { passion: 2 } }
-    ]),
-
-  q("emotion", "🧊", "防御", "defense",
-    "傷つきそうだと感じたときは？",
-    ["#0f2027", "#000000"],
-    [
-      { label: "先に距離を取る", score: { independence: 3 } },
-      { label: "耐える", score: { attachment: 2 } },
-      { label: "考えて整理する", score: { caution: 2 } },
-      { label: "気にしないようにする", score: { reality: 2 } }
-    ]),
-
-  q("social", "🫂", "信頼", "trust",
-    "人を信じるときは？",
-    ["#141e30", "#243b55"],
-    [
-      { label: "比較的信じやすい", score: { attachment: 2 } },
-      { label: "慎重に判断する", score: { caution: 2 } },
-      { label: "あまり深く信じない", score: { independence: 2 } },
-      { label: "状況による", score: { reality: 1 } }
-    ]),
-
-  q("self", "🎭", "本音", "mask",
-    "自分の本音は？",
-    ["#232526", "#414345"],
-    [
-      { label: "あまり見せない", score: { independence: 2 } },
-      { label: "比較的出す", score: { passion: 2 } },
-      { label: "考えてから出す", score: { caution: 2 } },
-      { label: "自分でもよくわからない", score: { intuition: 2 } }
-    ]),
-
-  q("emotion", "🔥", "嫉妬", "jealous",
-    "嫉妬したときは？",
-    ["#000000", "#ff4e50"],
-    [
-      { label: "強く感じる", score: { attachment: 3, passion: 2 } },
-      { label: "少し気になる程度", score: { caution: 1 } },
-      { label: "あまり感じない", score: { reality: 2 } },
-      { label: "距離を取る", score: { independence: 2 } }
-    ]),
-
-  q("romance", "❤️", "怖さ", "fear",
-    "恋愛で一番不安になりやすいのは？",
-    ["#141e30", "#243b55"],
-    [
-      { label: "関係が終わること", score: { attachment: 3 } },
-      { label: "裏切られること", score: { caution: 2 } },
-      { label: "縛られること", score: { independence: 3 } },
-      { label: "感情が揺れること", score: { passion: 2 } }
-    ])
+  q("basic", "👣", "ぬめる足音", "振り返るか、見なかったことにするか", "夜道を歩いていると後ろから湿った足音がついてくる。あなたならどうする？", ["#14532d", "#111827"], [
+    { label: "振り返って正体を確認する", score: { caution: 4, reality: 2 } },
+    { label: "気のせいと思ってそのまま歩く", score: { reality: 5 } },
+    { label: "怖くなって早歩きで逃げる", score: { caution: 5 } },
+    { label: "人ではない気配を感じる恐怖する", score: { intuition: 5, passion: 1 } },
+    { label: "『誰？』って普通に聞いてみる", score: { passion: 2, intuition: 2 } },
+  ]),
+  q("basic", "🚪", "半開きの扉", "閉めたはずのものが少しだけ開いている", "帰宅すると閉めたはずの扉が数センチだけ開いていた。最初の反応は？", ["#1e3a8a", "#111827"], [
+    { label: "中を確認しにいく", score: { reality: 3, caution: 2 } },
+    { label: "気のせいだと考え無視する", score: { reality: 5 } },
+    { label: "一度その場で様子を見てから入る", score: { caution: 4 } },
+    { label: "違和感を感じて立ち止まる", score: { intuition: 4, caution: 1 } },
+  ]),
+  q("basic", "☎️", "午前2時の着信", "出るか、調べるか、無視するか", "知らない番号から深夜に電話。画面には番号だけ。あなたはどうする？", ["#7c3aed", "#111827"], [
+    { label: "とりあえず出てしまう", score: { passion: 3, intuition: 1 } },
+    { label: "番号を検索してから判断する", score: { reality: 5, caution: 1 } },
+    { label: "怪しいので見なかったことにする", score: { caution: 5 } },
+    { label: "通知だけ見て放置する", score: { independence: 4 } },
+    { label: "一回だけ『もしもし？』って言う", score: { passion: 2, reality: 1 } },
+  ]),
+  q("basic", "🏚️", "古い屋敷", "ワクワクか、警戒か", "古い洋館に入ることになった。あたなはどうする？", ["#374151", "#111827"], [
+    { label: "探検したくて少しワクワクする", score: { passion: 5 } },
+    { label: "危ない場所がないか先に見る", score: { caution: 3, reality: 2 } },
+    { label: "気配や音を気にしながら入る", score: { intuition: 5 } },
+    { label: "無理には入らない", score: { independence: 4, reality: 1 } },
+    { label: "とりあえず『お邪魔します』と言う", score: { passion: 2, attachment: 1 } },
+  ]),
+  q("subconscious", "🪞", "笑う鏡", "現実か都市伝説か", "鏡を見ると一瞬だけ自分が違う表情をしていた気がした。あなたはどう受け取る？", ["#831843", "#111827"], [
+    { label: "疲れてるだけだと思って終わらせる", score: { reality: 5 } },
+    { label: "もう一回見て確かめる", score: { caution: 4 } },
+    { label: "今日は鏡を避けてもう見ない", score: { caution: 5 } },
+    { label: "逆に少し面白く感じる", score: { intuition: 3, passion: 2 } },
+  ]),
+  q("subconscious", "👁️", "視線の正体", "気のせいで済ませるか、拾うか", "暗闇で、誰かに見られている気がする。あなたはどうする？", ["#1d4ed8", "#111827"], [
+    { label: "気のせいで終わらせる", score: { reality: 5 } },
+    { label: "視線の主を探しにいく", score: { caution: 3, reality: 1 } },
+    { label: "普通に怖いので離れる", score: { caution: 5 } },
+    { label: "目を閉じ気配を感じとる", score: { intuition: 5 } },
+  ]),
+  q("subconscious", "🚇", "暗いトンネル", "出口の見えない場所で本性が出る", "長くて暗いトンネルを歩いている。前の方に誰かの影が見えた。あなたはどうする？", ["#1f2937", "#020617"], [
+    { label: "距離を保って様子を見る", score: { caution: 4, reality: 1 } },
+    { label: "追いついて話しかける", score: { passion: 3, attachment: 2 } },
+    { label: "怖いので引き返す", score: { caution: 5 } },
+    { label: "近づいて正体を確かめる", score: { intuition: 5 } },
+    { label: "とりあえず『すみませーん』って言う", score: { passion: 2, intuition: 1 } },
+  ]),
+  q("subconscious", "🏪", "深夜のコンビニ", "ありふれた場所ほど怖い", "深夜のコンビニで、たった一人の客がずっとあなたを見ている。あなたは？", ["#0ea5e9", "#111827"], [
+    { label: "気にしないで無視する", score: { independence: 4, reality: 1 } },
+    { label: "店員の近くへ行って様子を見る", score: { caution: 5 } },
+    { label: "こちらも見返して反応を見る", score: { passion: 3, reality: 1 } },
+    { label: "とりあえず店を出る", score: { caution: 4, independence: 1 } },
+    { label: "とりあえず会釈する", score: { attachment: 2, passion: 1 } },
+  ]),
+  q("romance", "📸", "百枚の執着", "愛と監視は紙一重", "好きな人があなたの写真を100枚保存していた。どう感じる？", ["#4c1d95", "#111827"], [
+    { label: "愛が濃いと感じて少し嬉しい", score: { attachment: 5 } },
+    { label: "普通に怖い", score: { caution: 5 } },
+    { label: "理由を聞いてから判断する", score: { reality: 5 } },
+    { label: "そこまでいくと逆に面白い", score: { passion: 5 } },
+  ]),
+  q("romance", "🫀", "永遠の愛", "ロマンか、都市伝説か", "恋人が『永遠に一緒だよね？』と言ってきた。あなたは？", ["#9f1239", "#111827"], [
+    { label: "嬉しいし、わりと好き", score: { attachment: 5 } },
+    { label: "ロマンチックだなと受け取る", score: { passion: 5 } },
+    { label: "怖くなって距離を取る", score: { caution: 5 } },
+    { label: "無視して相手にしない", score: { reality: 5 } },
+  ]),
+  q("romance", "📩", "3日間の未読", "連絡が来ない時の本音が出る", "好きな人から3日連絡が来ない。あなたの反応は？", ["#1d4ed8", "#111827"], [
+    { label: "不安でかなり気になる", score: { attachment: 5 } },
+    { label: "何かあったかもしれないと勘ぐる", score: { caution: 5 } },
+    { label: "忙しいだけかと現実的に考える", score: { reality: 5 } },
+    { label: "気にしないで連絡を待つ", score: { independence: 5 } },
+  ]),
+  q("romance", "🔥", "恋の点火", "好きになる速度で本質が出る", "人を好きになる時、あなたに近いのは？", ["#dc2626", "#111827"], [
+    { label: "一気に気持ちが燃え上がる", score: { passion: 5 } },
+    { label: "少しずつ相手を好きになる", score: { attachment: 5 } },
+    { label: "まず相手の気持ちを観察する", score: { caution: 4, reality: 1 } },
+    { label: "距離感が合うかを確認してから判断する", score: { independence: 5 } },
+  ]),
+  q("romance", "🩸", "嫉妬の気配", "平然としてるか、内側で燃えるか", "好きな人が別の誰かと楽しそうにしている。あなたは？", ["#7f1d1d", "#111827"], [
+    { label: "表では平気なふりをする", score: { caution: 3, attachment: 2 } },
+    { label: "ちょっと不機嫌になる", score: { passion: 4, attachment: 1 } },
+    { label: "距離を取って冷静になる", score: { independence: 5 } },
+    { label: "状況を観察して判断する", score: { reality: 5 } },
+  ]),
+  q("romance", "🕯️", "夜の約束", "守るか、忘れるか、重くなるか", "好きな人との約束が曖昧なまま流れそう。あなたは？", ["#6b21a8", "#111827"], [
+    { label: "ちゃんと確認したい", score: { attachment: 4, reality: 1 } },
+    { label: "向こうから言うまで待つ", score: { caution: 3, independence: 2 } },
+    { label: "ちょっと拗ねる", score: { passion: 4 } },
+    { label: "覚えておいて後で問い詰める", score: { caution: 2, attachment: 3 } },
+  ]),
+  q("social", "🤝", "信頼のスピード", "心を開くのに必要なもの", "初対面の人に対して近いのは？", ["#065f46", "#111827"], [
+    { label: "わりとすぐ打ち解ける", score: { passion: 4 } },
+    { label: "まず相手をよく観察する", score: { caution: 5 } },
+    { label: "会話の内容を聞いて判断する", score: { reality: 5 } },
+    { label: "直感で合う合わないを決める", score: { intuition: 5 } },
+  ]),
+  q("social", "🧩", "秘密の扱い", "人の本音にどう向き合うか", "誰かから重い秘密を打ち明けられた。あなたは？", ["#6d28d9", "#111827"], [
+    { label: "とにかく受け止めたい", score: { attachment: 5 } },
+    { label: "本当かどうか慎重に考える", score: { caution: 4, reality: 1 } },
+    { label: "頭で意味を理解してから対応する", score: { reality: 5 } },
+    { label: "少し距離を取りつつ見守る", score: { independence: 5 } },
+  ]),
+  q("social", "⚔️", "対立の場面", "ぶつかった時の本音が出る", "誰かと意見がぶつかった時、あなたはどうなりやすい？", ["#991b1b", "#111827"], [
+    { label: "感情が先に出てしまう", score: { passion: 5 } },
+    { label: "相手を警戒して無言になる", score: { caution: 5 } },
+    { label: "話の内容を整理して意見する", score: { reality: 5 } },
+    { label: "距離を取って頭を冷ます", score: { independence: 5 } },
+  ]),
+  q("social", "🫂", "付き合い方", "広くか、深くか、自由か", "人付き合いで一番近いのは？", ["#d97706", "#111827"], [
+    { label: "深く濃い関係が好き", score: { attachment: 5 } },
+    { label: "刺激がある人間関係が好き", score: { passion: 5 } },
+    { label: "安心できる少人数がいい", score: { caution: 3, attachment: 1 } },
+    { label: "干渉しすぎない自由な関係がいい", score: { independence: 5 } },
+  ]),
+  q("social", "🪤", "空気の罠", "気まずさにどう反応するか", "場の空気が急に変になった時、あなたは？", ["#0f172a", "#334155"], [
+    { label: "何が起きたかとりあえず観察する", score: { caution: 4, intuition: 1 } },
+    { label: "とりあえず笑って流す", score: { passion: 4 } },
+    { label: "周りを見て自分で空気を戻す", score: { reality: 5 } },
+    { label: "自分は巻き込まれないようにする", score: { independence: 5 } },
+  ]),
+  q("social", "📦", "抱え込み体質", "言うか、話すか、抱え込むか", "嫌だったことがあっても、あなたはどうしがち？", ["#4338ca", "#111827"], [
+    { label: "わりとその場ですぐ言う", score: { passion: 5 } },
+    { label: "しばらく様子を見る", score: { caution: 4 } },
+    { label: "頭で整理してから話す", score: { reality: 5 } },
+    { label: "自分の中に抱え込む", score: { attachment: 2, independence: 3 } },
+  ]),
+  q("basic", "🌧️", "雨の帰り道", "濡れてでも進むか、避けるか", "急な雨。傘は一本しかない。あなたなら？", ["#0f766e", "#111827"], [
+    { label: "相手と一緒に傘に入る", score: { attachment: 4, passion: 1 } },
+    { label: "とりあえず走る", score: { passion: 5 } },
+    { label: "雨宿りして様子を見る", score: { caution: 5 } },
+    { label: "濡れても平気でそのまま歩く", score: { independence: 5 } },
+  ]),
+  q("basic", "📞", "非通知の留守電", "聞く勇気があるか", "非通知から留守電が入っていた。あなたは？", ["#be123c", "#111827"], [
+    { label: "すぐ聞く", score: { passion: 3, caution: 1 } },
+    { label: "内容を想像してから聞く", score: { intuition: 4 } },
+    { label: "しばらく放置", score: { independence: 4 } },
+    { label: "怪しいので聞かずに消す", score: { caution: 5 } },
+  ]),
+  q("subconscious", "🕳️", "覗いてはいけない穴", "好奇心か自己防衛か", "見てはいけないと分かっているのに気になるものがある。あなたは？", ["#111827", "#3f3f46"], [
+    { label: "すぐ見る", score: { passion: 3, intuition: 2 } },
+    { label: "かなり気になるけど我慢する", score: { caution: 5 } },
+    { label: "見てはいけないなら見ない", score: { reality: 5 } },
+    { label: "最初から近づかない", score: { independence: 5 } },
+  ]),
+  q("romance", "💬", "既読の温度差", "言葉より間を読むか", "好きな人の返信が短い時、まず何を感じる？", ["#9333ea", "#111827"], [
+    { label: "何か悪かったかなと思う", score: { attachment: 5 } },
+    { label: "特にきにしない", score: { reality: 5 } },
+    { label: "少し冷める", score: { independence: 4, caution: 1 } },
+    { label: "逆に気になって燃える", score: { passion: 5 } },
+  ]),
+  q("social", "🫥", "人の裏側", "気づくか、見ないふりか", "誰かの表情の違和感に気づいた時、あなたは？", ["#1e293b", "#111827"], [
+    { label: "すぐ気づいて相手に言う", score: { intuition: 4, attachment: 1 } },
+    { label: "気づいてもあえて触れない", score: { caution: 4, independence: 1 } },
+    { label: "なぜか理由を考える", score: { reality: 5 } },
+    { label: "空気を変えようとする", score: { passion: 4 } },
+  ]),
 ];
 
 const types: TypeDef[] = [
-  {
-    id: "kuchisake",
-    name: "口裂け女",
-    vibe: "答えを求め続ける存在",
-    axis: { passion: 70, caution: 70, intuition: 40, reality: 30, attachment: 85, independence: 20 },
-    colors: ["#ff416c", "#ff4b2b"],
-    publicMask: "魅力的で距離感がうまい",
-    innerCore: "曖昧な愛に耐えられない",
-    risk: "確認しすぎる",
-    gift: "本音を見抜く",
-    scaryTitle: "問い続ける女",
-    loveWarning: "答えを求めすぎる",
-    traits: { behavior: "反応を確かめる", emotion: "不安と承認欲求", love: "確かめたくなる" }
-  },
-  {
-    id: "hanako",
-    name: "花子さん",
-    vibe: "静かに残る存在",
-    axis: { passion: 40, caution: 60, intuition: 70, reality: 30, attachment: 80, independence: 50 },
-    colors: ["#1c1c1c", "#434343"],
-    publicMask: "大人しく優しい",
-    innerCore: "忘れられるのが怖い",
-    risk: "溜め込む",
-    gift: "深い共感",
-    scaryTitle: "消えない記憶",
-    loveWarning: "言わずに縛る",
-    traits: { behavior: "静かに残る", emotion: "内向きの執着", love: "言わずに続く" }
-  },
-  {
-    id: "sadako",
-    name: "貞子",
-    vibe: "忘れられない侵食",
-    axis: { passion: 30, caution: 65, intuition: 80, reality: 20, attachment: 90, independence: 30 },
-    colors: ["#000000", "#434343"],
-    publicMask: "静か",
-    innerCore: "消えない存在",
-    risk: "侵食する",
-    gift: "強い印象",
-    scaryTitle: "消えない存在",
-    loveWarning: "離れても残る",
-    traits: { behavior: "離れても影響が続く", emotion: "消えない存在感", love: "後から効く" }
-  },
-  {
-    id: "yukionna",
-    name: "雪女",
-    vibe: "冷たい境界",
-    axis: { passion: 20, caution: 60, intuition: 40, reality: 70, attachment: 30, independence: 90 },
-    colors: ["#e0eafc", "#cfdef3"],
-    publicMask: "静かで美しい",
-    innerCore: "傷つく前に離れる",
-    risk: "冷たすぎる",
-    gift: "冷静さ",
-    scaryTitle: "凍らせる存在",
-    loveWarning: "距離を取りすぎる",
-    traits: { behavior: "距離を取る", emotion: "冷静・防御", love: "近づきすぎない" }
-  },
-  {
-    id: "tengu",
-    name: "天狗",
-    vibe: "支配と誇り",
-    axis: { passion: 60, caution: 60, intuition: 40, reality: 60, attachment: 50, independence: 70 },
-    colors: ["#c31432", "#240b36"],
-    publicMask: "自信家",
-    innerCore: "主導権を握りたい",
-    risk: "支配的",
-    gift: "リーダー性",
-    scaryTitle: "見下ろす者",
-    loveWarning: "優位に立とうとする",
-    traits: { behavior: "主導権を取る", emotion: "プライド", love: "リードしたい" }
-  },
-  {
-    id: "kappa",
-    name: "河童",
-    vibe: "合理的な存在",
-    axis: { passion: 30, caution: 70, intuition: 30, reality: 80, attachment: 40, independence: 60 },
-    colors: ["#56ab2f", "#a8e063"],
-    publicMask: "穏やか",
-    innerCore: "損をしたくない",
-    risk: "冷静すぎる",
-    gift: "安定",
-    scaryTitle: "計算する者",
-    loveWarning: "感情が薄い",
-    traits: { behavior: "合理的に判断する", emotion: "安定", love: "バランス型" }
-  },
-  {
-    id: "hitotsume",
-    name: "一つ目小僧",
-    vibe: "観察者",
-    axis: { passion: 30, caution: 85, intuition: 60, reality: 50, attachment: 60, independence: 50 },
-    colors: ["#232526", "#414345"],
-    publicMask: "静か",
-    innerCore: "見逃さない",
-    risk: "見すぎる",
-    gift: "洞察",
-    scaryTitle: "すべてを見る",
-    loveWarning: "観察しすぎる",
-    traits: { behavior: "観察する", emotion: "敏感・分析", love: "気づきすぎる" }
-  },
-  {
-    id: "rokuro",
-    name: "ろくろ首",
-    vibe: "伸びる執着",
-    axis: { passion: 60, caution: 60, intuition: 50, reality: 40, attachment: 80, independence: 30 },
-    colors: ["#434343", "#000000"],
-    publicMask: "普通",
-    innerCore: "離れられない",
-    risk: "侵入する",
-    gift: "関係を深める",
-    scaryTitle: "伸びる想い",
-    loveWarning: "踏み込みすぎる",
-    traits: { behavior: "距離を越えて入り込む", emotion: "執着", love: "踏み込みすぎる" }
-  },
-  {
-    id: "noppera",
-    name: "のっぺらぼう",
-    vibe: "読めない存在",
-    axis: { passion: 20, caution: 50, intuition: 60, reality: 50, attachment: 40, independence: 80 },
-    colors: ["#232526", "#000000"],
-    publicMask: "無表情",
-    innerCore: "本音を隠す",
-    risk: "何もわからない",
-    gift: "冷静",
-    scaryTitle: "顔のない者",
-    loveWarning: "本音を見せない",
-    traits: { behavior: "本音を見せない", emotion: "不明・曖昧", love: "読めない" }
-  },
-  {
-    id: "zashiki",
-    name: "座敷童",
-    vibe: "守られる存在",
-    axis: { passion: 40, caution: 40, intuition: 60, reality: 40, attachment: 80, independence: 20 },
-    colors: ["#f7971e", "#ffd200"],
-    publicMask: "無邪気",
-    innerCore: "依存",
-    risk: "離れられない",
-    gift: "愛される",
-    scaryTitle: "離れない存在",
-    loveWarning: "依存しすぎる",
-    traits: { behavior: "離れずに居続ける", emotion: "依存・安心", love: "守られたい" }
-  },
-  {
-    id: "nurarihyon",
-    name: "ぬらりひょん",
-    vibe: "掴めない存在",
-    axis: { passion: 30, caution: 60, intuition: 70, reality: 60, attachment: 40, independence: 70 },
-    colors: ["#434343", "#232526"],
-    publicMask: "自然体",
-    innerCore: "読ませない",
-    risk: "掴めない",
-    gift: "余裕",
-    scaryTitle: "気づけばいる",
-    loveWarning: "本心が見えない",
-    traits: { behavior: "自然に入り込む", emotion: "掴めない", love: "流される" }
-  },
-  {
-    id: "kijo",
-    name: "鬼女",
-    vibe: "感情の暴走",
-    axis: { passion: 90, caution: 60, intuition: 40, reality: 20, attachment: 85, independence: 20 },
-    colors: ["#ff0000", "#000000"],
-    publicMask: "普通",
-    innerCore: "怒りと嫉妬",
-    risk: "暴走",
-    gift: "強い愛",
-    scaryTitle: "変わる女",
-    loveWarning: "感情が強すぎる",
-    traits: { behavior: "感情が一気に強くなる", emotion: "嫉妬・怒り", love: "重くなる" }
-  }
+  { name: "花子さん", vibe: "執着と警戒が極端に強い怪談型", axis: { passion: 40, caution: 96, intuition: 70, reality: 35, attachment: 92, independence: 12 }, colors: ["#7c3aed", "#111827"], publicMask: "静かで落ち着いて見えるのに、相手の温度差には異常に敏感。", innerCore: "大事だと思った相手の言葉や態度を、忘れたふりでずっと持ち続けます。", risk: "不安になると確認したい気持ちが増え、相手からすると静かな圧になります。", gift: "違和感や嘘にかなり早く気づける、怖いほど鋭い観察力。", scaryTitle: "静かに記憶してくる花子さん型", loveWarning: "優しく見えて、恋愛になると記憶力と執着が急に伸びる。" },
+  { name: "人面犬", vibe: "感情と勢いで突っ走る暴走型", axis: { passion: 96, caution: 20, intuition: 40, reality: 18, attachment: 86, independence: 20 }, colors: ["#ea580c", "#111827"], publicMask: "感情が顔にも行動にも出やすく、好き嫌いがわかりやすい。", innerCore: "刺さった相手には一直線で、迷いより勢いが勝ちやすいです。", risk: "好意がそのまま圧になって、相手がついて来れなくなることがあります。", gift: "空気を一気に変える熱量があり、忘れられない存在になりやすい。", scaryTitle: "熱量で追い詰める人面犬型", loveWarning: "好意は強いけど、温度差があると一人だけ恋愛ホラーになる。" },
+  { name: "モスマン", vibe: "直感と予兆に支配される予感型", axis: { passion: 72, caution: 38, intuition: 96, reality: 16, attachment: 52, independence: 44 }, colors: ["#dc2626", "#312e81"], publicMask: "意味深な空気や、言葉にならない違和感にやたら強い。", innerCore: "理屈よりも『なんとなく嫌な予感』『運命っぽさ』で動きます。", risk: "怪しい相手を運命だと勘違いしやすく、危険をロマンに変換しがち。", gift: "誰よりも早く空気の異変を察知する、予兆センサーの強さ。", scaryTitle: "予感で恋を壊すモスマン型", loveWarning: "運命に弱いから、危ない恋にも意味を見つけてしまう。" },
+  { name: "ビッグフット", vibe: "超現実派の安定型", axis: { passion: 30, caution: 26, intuition: 18, reality: 96, attachment: 48, independence: 82 }, colors: ["#0f766e", "#111827"], publicMask: "変な空気にも巻き込まれにくく、落ち着いていて地に足がついている。", innerCore: "感情で暴走するより、現実的に見て続くかどうかを判断します。", risk: "冷静すぎて、相手からすると温度が低く見えることがあります。", gift: "壊れにくい関係を作る安定感と、無駄にブレない強さ。", scaryTitle: "感情を踏み潰すビッグフット型", loveWarning: "ちゃんとしてるけど、相手のロマンを静かに殺しがち。" },
+  { name: "口裂け女", vibe: "愛と執着が暴走する依存型", axis: { passion: 86, caution: 62, intuition: 36, reality: 20, attachment: 98, independence: 8 }, colors: ["#b91c1c", "#111827"], publicMask: "特別扱いへの反応が大きく、愛されているかをかなり見ています。", innerCore: "曖昧にされるのが苦手で、好きになるほど確認したくなります。", risk: "相手の態度が少しでも変わると、不安がそのまま怖さになります。", gift: "薄い関係で終わらず、本気で深く向き合う強さがある。", scaryTitle: "愛が濃すぎる口裂け女型", loveWarning: "好きになると優しさより確認欲求が前に出やすい。" },
+  { name: "ツチノコ", vibe: "本音を見せないミステリアス型", axis: { passion: 42, caution: 72, intuition: 78, reality: 50, attachment: 38, independence: 66 }, colors: ["#65a30d", "#111827"], publicMask: "何を考えているのか読ませず、距離感の作り方がうまい。", innerCore: "かなり慎重で、簡単には自分の本音を明かしません。", risk: "黙っているだけで相手に怪談を作らせる、無自覚な怖さがあります。", gift: "流されず見極める目があり、軽いノリに飲まれにくい。", scaryTitle: "沈黙で不安を育てるツチノコ型", loveWarning: "脈ありかどうか分からなさすぎて相手をじわじわ狂わせる。" },
+  { name: "雪女", vibe: "静かな冷気をまとうクール距離型", axis: { passion: 28, caution: 66, intuition: 74, reality: 62, attachment: 18, independence: 92 }, colors: ["#60a5fa", "#0f172a"], publicMask: "綺麗に見えても近づきにくく、距離感がかなりはっきりしている。", innerCore: "内側は繊細ですが、簡単に触れさせない冷たさも持っています。", risk: "冷静に見えて、突然すっと気持ちを切る怖さがあります。", gift: "ベタつかない美しさと、静かな余裕が強い魅力になる。", scaryTitle: "急に冷える雪女型", loveWarning: "重い相手を見ると、気配を残さず温度を切る。" },
+  { name: "ネッシー", vibe: "静かで深すぎる深層心理型", axis: { passion: 38, caution: 64, intuition: 88, reality: 40, attachment: 54, independence: 60 }, colors: ["#0369a1", "#111827"], publicMask: "穏やかで静か。でも底が見えない。", innerCore: "感情を表に出さないだけで、内側ではかなり深く揺れています。", risk: "本音を沈めすぎて、相手が何を考えているか分からなくなります。", gift: "静かに相手を包み込むような、深い余韻を残せる。", scaryTitle: "底が見えないネッシー型", loveWarning: "静かだから安全そうに見えて、実は感情が深すぎる。" },
+  { name: "チュパカブラ", vibe: "衝動と本能の捕食型", axis: { passion: 98, caution: 28, intuition: 46, reality: 10, attachment: 60, independence: 50 }, colors: ["#991b1b", "#111827"], publicMask: "欲しいものには一直線で、熱量がすぐに行動へ出る。", innerCore: "考える前に動く、本能優先の恋愛をしやすいです。", risk: "盛り上がるのは早いのに、荒れ方も派手になりやすい。", gift: "停滞した空気を一気に変える、危険なくらいの引力。", scaryTitle: "本能で噛みに来るチュパカブラ型", loveWarning: "刺さったら早い。早いけど荒い。" },
+  { name: "天狗", vibe: "孤高でプライドの高い支配型", axis: { passion: 62, caution: 36, intuition: 52, reality: 66, attachment: 10, independence: 98 }, colors: ["#9a3412", "#111827"], publicMask: "自立していて強く見え、簡単には迎合しない。", innerCore: "自分のペースと尊厳を守る気持ちがかなり強いです。", risk: "必要とされているかより、邪魔されていないかを先に見がち。", gift: "依存しない強さがあり、対等な関係では圧倒的に魅力的。", scaryTitle: "主導権を渡さない天狗型", loveWarning: "好きでも自分のペースは崩さないから相手が不安になる。" },
+  { name: "河童", vibe: "観察と皮肉の分析型", axis: { passion: 50, caution: 56, intuition: 64, reality: 70, attachment: 28, independence: 72 }, colors: ["#0891b2", "#111827"], publicMask: "よく見ていて、冗談っぽく核心を刺すことがある。", innerCore: "感情より先に分析が働くので、恋愛でも冷静さを保ちやすいです。", risk: "見抜きすぎて、相手の夢やロマンまで削りがち。", gift: "裏側に気づける鋭さと、ズレを見逃さない知性。", scaryTitle: "見抜きすぎる河童型", loveWarning: "嘘には強いけど、相手の幻想も平気で壊す。" },
+  { name: "鵺", vibe: "混沌で正体不明のカオス型", axis: { passion: 70, caution: 70, intuition: 84, reality: 22, attachment: 46, independence: 48 }, colors: ["#4f46e5", "#111827"], publicMask: "人によって見え方が全く変わる、不思議な混沌さを持つ。", innerCore: "自分でも感情の理由を説明しきれず、気持ちが急に変わることがある。", risk: "恋愛が始まる時も壊れる時も、相手に理由が見えない怖さがある。", gift: "唯一無二の引力があり、一度ハマると記憶に残り続ける。", scaryTitle: "読めなさで支配する鵺型", loveWarning: "理由のない熱と冷えで相手を混乱させる。" },
+  { name: "座敷童", vibe: "安心感を与える守護型", axis: { passion: 34, caution: 18, intuition: 40, reality: 72, attachment: 96, independence: 24 }, colors: ["#d97706", "#111827"], publicMask: "一緒にいると落ち着く、柔らかい安心感がある。", innerCore: "安心できる関係や居場所を何より大切にします。", risk: "優しさが自然すぎて、都合よく扱われると静かに傷みます。", gift: "人の緊張を解き、長く残る安心を作れる。", scaryTitle: "優しさが重くなる座敷童型", loveWarning: "癒し系に見えて、愛情は想像よりずっと深い。" },
+  { name: "海坊主", vibe: "静かな狂気を秘めた深海型", axis: { passion: 60, caution: 68, intuition: 74, reality: 34, attachment: 78, independence: 22 }, colors: ["#0f766e", "#172554"], publicMask: "静かで重心が低く、必要以上に騒がない。", innerCore: "信頼した相手には深く入り込み、感情の重さもかなり強い。", risk: "表面が静かなぶん、重さに気づいた時にはもう逃げにくい。", gift: "軽く終わらない深い絆を作れる、本気の強さ。", scaryTitle: "静かに沈める海坊主型", loveWarning: "大人しく見えて、恋愛になると深海レベルで重い。" },
+  { name: "一つ目小僧", vibe: "観察力が異常に高い分析型", axis: { passion: 24, caution: 82, intuition: 66, reality: 94, attachment: 20, independence: 68 }, colors: ["#a16207", "#111827"], publicMask: "冷静でよく見ている人、という印象を与えやすい。", innerCore: "違和感やズレを細かく拾うので、恋愛でも見逃しが少ないです。", risk: "恋愛なのに監査みたいになり、相手が息苦しくなることがある。", gift: "危険回避能力が高く、怪しい相手に飲まれにくい。", scaryTitle: "監視精度が高すぎる一つ目小僧型", loveWarning: "安心はするけど、全部見られてる感じがちょっと怖い。" },
+  { name: "ぬらりひょん", vibe: "空気を支配するマイペース型", axis: { passion: 44, caution: 42, intuition: 80, reality: 78, attachment: 22, independence: 74 }, colors: ["#475569", "#111827"], publicMask: "自然に場へ入り込み、気づけば空気を持っていく。", innerCore: "人に合わせているようで、自分のペースは絶対に崩しません。", risk: "支配している自覚なく、相手の生活リズムまで飲み込みがち。", gift: "どこでも居場所を作り、気づけば中心になる適応力。", scaryTitle: "静かに侵食するぬらりひょん型", loveWarning: "自然体で距離を詰めて、気づけば相手の日常に居座る。" },
 ];
-
-const BAD_MATCH: Record<string, string[]> = {
-  kuchisake: ["kijo", "tengu"],
-  hanako: ["kijo", "rokuro"],
-  sadako: ["kijo", "kuchisake"],
-  yukionna: ["kijo", "rokuro"],
-  kijo: ["kuchisake", "yukionna"],
-  hitotsume: ["kijo", "tengu"],
-  rokuro: ["yukionna", "kappa"],
-  noppera: ["kuchisake", "kijo"],
-  zashiki: ["tengu", "nurarihyon"],
-  nurarihyon: ["kijo", "kuchisake"],
-  kappa: ["kijo", "rokuro"],
-  tengu: ["zashiki", "hanako"]
-};
-
-const GOOD_MATCH: Record<string, string[]> = {
-  kuchisake: ["yukionna", "hitotsume"],
-  hanako: ["yukionna", "zashiki"],
-  sadako: ["yukionna", "nurarihyon"],
-  yukionna: ["hanako", "sadako"],
-  kijo: ["tengu", "kappa"],
-  hitotsume: ["kappa", "yukionna"],
-  rokuro: ["kijo", "kuchisake"],
-  noppera: ["nurarihyon", "yukionna"],
-  zashiki: ["hanako", "kappa"],
-  nurarihyon: ["noppera", "sadako"],
-  kappa: ["hitotsume", "zashiki"],
-  tengu: ["kijo", "kuchisake"]
-};
 
 function normalizeAxisScores(axis: AxisScores): AxisScores {
   const maxValue = Math.max(...AXES.map((k) => axis[k]), 1);
@@ -511,6 +277,7 @@ function buildResultName(first: RankedType, second: RankedType, p1: number) {
   if (p1 >= 60) return `${first.name}${second.name}混成型`;
   return `${first.name}${second.name}融合型`;
 }
+
 
 const characterAdjustments: Record<string, string> = {
   "花子さん": `slightly unsettling smile
@@ -624,6 +391,172 @@ ${secondAdjust}
 `.trim();
 }
 
+
+
+
+
+function buildSystemPrompt() {
+  return `あなたは「都市伝説占いサイト」の結果文を書く専門ライターです。
+出力は必ず自然な日本語にしてください。
+
+これは普通の性格診断ではありません。
+「人の中に潜む怪異」や「都市伝説っぽい気配」を読む占いです。
+読んだ人が、少し笑えて、少しゾクッとして、でも妙に当たっていると感じる文章を書いてください。
+
+【世界観】
+- 都市伝説、妖怪、怪異、噂話の空気感を大事にする
+- ただの人間分析ではなく、「人に紛れた何か」として描写する
+- 怖すぎないが、少し不気味
+- コミカルさは入れてよいが、ふざけすぎない
+- 説明文ではなく、気配や現象として語る
+- 「気づいたら」「いつの間にか」「妙に」「なぜか」など、怪談っぽい自然な言い回しを適度に使う
+
+【文章トーン】
+- 少し意地悪
+- 少しユーモアがある
+- でも雑ではない
+- 読みやすく、テンポがある
+- 一文が長すぎない
+- 項目ごとに2〜5文程度で、全体はしっかり読める長さにする
+- 断定しすぎず、「〜しがち」「〜な空気があります」「〜に見えやすい」などの表現を使う
+- 同じ言い回しを繰り返さない
+
+【最重要ルール】
+- キャラAとキャラBは、必ず「合成されたひとつの存在」として書く
+- 2体を別々に説明しない
+- 割合（%）を必ず文章に反映する
+- 70%以上なら、そのキャラが性格・行動・雰囲気の核になる
+- 60/40なら主導権はあるが、もう片方もかなり見える
+- 50/50なら、どちらとも言い切れない不安定な混ざりものとして書く
+- 割合は不自然に数値を繰り返さず、自然な文章で反映する
+- 都市伝説としての性質が、基本性格・対人関係・恋愛傾向・隠れた欲求ににじむようにする
+
+【性別ルール】
+- 性別によって「恋愛傾向」の言い回しを少し変える
+- 男性: 外からは余裕や鈍感さに見えて、内側の濃さや執着がじわっと出る書き方
+- 女性: 柔らかさや静けさの奥に、濃さや怖さが潜む書き方
+- その他・回答しない: 既存の役割に寄せず、外と内のズレや読めなさを強調する書き方
+- 差をつけすぎない
+- 偏見や決めつけは禁止
+
+【相性ルール】
+- 「危険な相性」は、相性が悪い相手ではなく、混ざると暴走しやすい相手を書く
+- 「元に戻れる相手」は、一緒にいるとバランスが取れる相手を書く
+- どちらも入力でもらう候補キャラ一覧から1体ずつ選ぶ
+- キャラAとキャラB本人は選ばない
+- 同じ結果文の中で、危険な相手と元に戻れる相手は別にする
+
+【出力形式】
+必ず以下の見出しをこの順番どおりに出力してください。
+
+【基本性格】
+【対人関係】
+【恋愛傾向】
+【隠れた欲求】
+【⚠ 危険な相性】
+【◎ 元に戻れる相手】
+
+【各項目の内容】
+- 【基本性格】: その人の核となる性質。怪異っぽい存在感やクセを書く
+- 【対人関係】: 周囲からどう見えるか、どう距離を作るかを書く
+- 【恋愛傾向】: 恋愛になると怪異性がどう出るかを書く。性別を少し反映する
+- 【隠れた欲求】: 本人も自覚していない願望、執着、見つけてほしさ、支配欲、安心への欲などを書く
+- 【⚠ 危険な相性】: 暴走しやすい相手を1体。なぜ危険かも説明する
+- 【◎ 元に戻れる相手】: バランスを取りやすい相手を1体。なぜ落ち着けるかも説明する
+
+【禁止】
+- ただの優等生っぽい性格診断
+- 説明だけで終わる文章
+- 普通すぎる恋愛コラム調
+- 過度なネットスラング
+- 寒いギャグ
+- グロ表現
+- 過度な断定
+- キャラ設定の箇条書きコピペ
+
+全体として、「ちょっと怖い噂話みたいなのに、妙に自分のことっぽい」文章にしてください。`;
+}
+
+function buildUserPrompt(
+  first: RankedType,
+  second: RankedType,
+  p1: number,
+  p2: number,
+  axis: AxisScores,
+  gender: Gender
+) {
+  const genderLabel =
+    gender === "male"
+      ? "男性"
+      : gender === "female"
+        ? "女性"
+        : "その他・回答しない";
+
+  const ratioGuide =
+    p1 >= 70
+      ? `${first.name}が明確に主導してください。${second.name}はクセ、裏味、歪みとして混ぜてください。`
+      : p1 >= 60
+        ? `${first.name}がやや主導しつつ、${second.name}もはっきり分かるようにしてください。`
+        : `${first.name}と${second.name}が拮抗した、どちらとも言い切れない混ざりものとして書いてください。`;
+
+  const candidateList = types
+    .filter((t) => t.name !== first.name && t.name !== second.name)
+    .map((t) => `- ${t.name}: ${t.vibe}`)
+    .join("\n");
+
+  return `都市伝説占いの結果文を書いてください。
+
+【合成結果名】
+${buildResultName(first, second, p1)}
+
+【合成元】
+キャラA: ${first.name}
+特徴A: ${first.vibe}
+内面A: ${first.innerCore}
+恋愛注意A: ${first.loveWarning}
+
+キャラB: ${second.name}
+特徴B: ${second.vibe}
+内面B: ${second.innerCore}
+恋愛注意B: ${second.loveWarning}
+
+【割合】
+${first.name}: ${p1}%
+${second.name}: ${p2}%
+
+【割合の反映ルール】
+${ratioGuide}
+
+【診断軸】
+passion: ${axis.passion}
+caution: ${axis.caution}
+intuition: ${axis.intuition}
+reality: ${axis.reality}
+attachment: ${axis.attachment}
+independence: ${axis.independence}
+
+【対象の性別】
+${genderLabel}
+
+【相性候補キャラ】
+${candidateList}
+
+【文章の要件】
+- 日本語
+- 少し長めでOK
+- 都市伝説っぽい空気感を出す
+- 少しユーモアを入れる
+- ただしふざけすぎない
+- 恋愛診断でありつつ、怪異としての性質をちゃんと感じさせる
+- 「この人、普通っぽいのに少し怖い」と感じる内容にする
+- キャラAとキャラBを別々に紹介するのではなく、最終的に混ざったひとつの存在として書く
+- 2つの割合差が、性格・対人関係・恋愛傾向・欲求のすべてに自然に出るようにする
+- 700〜1200文字程度を目安にする
+- 危険な相性と元に戻れる相手は、上の候補キャラから1体ずつ選ぶ
+- 危険な相性と元に戻れる相手は別キャラにする
+- ${first.name}と${second.name}本人は選ばない`;
+}
+
 function buildMockResult(first: RankedType, second: RankedType, p1: number, p2: number, axis: AxisScores, gender: Gender) {
   const intense = axis.attachment >= axis.independence ? "相手の温度差を静かに記憶していく" : "平気そうな顔で一歩引いて支配権を渡さない";
   const secondLine = second.loveWarning;
@@ -657,24 +590,35 @@ function mockImageUrl(first: RankedType, second: RankedType) {
 
 async function requestResult(payload: GenerateResultPayload) {
   if (USE_MOCK) {
-    return buildMockResult(payload.main, payload.sub, 60, 40, ZERO, payload.gender);
+    return buildMockResult(
+      payload.first,
+      payload.second,
+      payload.percentages.p1,
+      payload.percentages.p2,
+      payload.axis,
+      payload.gender
+    );
   }
 
   const response = await fetch(RESULT_API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      main: payload.main,
-      sub: payload.sub,
-      bad: payload.bad,
-      good: payload.good,
-      gender: payload.gender,
+      system: buildSystemPrompt(),
+      user: buildUserPrompt(
+        payload.first,
+        payload.second,
+        payload.percentages.p1,
+        payload.percentages.p2,
+        payload.axis,
+        payload.gender
+      ),
     }),
   });
 
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || "結果文の生成に失敗しました。");
-  return data.result as string;
+  return data.text as string;
 }
 
 async function requestImage(prompt: string, first: RankedType, second: RankedType) {
@@ -786,21 +730,10 @@ export default function App() {
     try {
       setIsGenerating(true);
       setErrorMessage("");
-
-      const bad = BAD_MATCH[first.id]?.[0] ?? "kijo";
-      const good = GOOD_MATCH[first.id]?.[0] ?? "yukionna";
-
       const [text, img] = await Promise.all([
-        requestResult({
-          main: first,
-          sub: second,
-          bad,
-          good,
-          gender,
-        }),
+        requestResult({ first, second, percentages: blend, axis: normalizedAxis, gender }),
         requestImage(imagePrompt, first, second),
       ]);
-
       setResultText(text);
       setImageUrl(img);
     } catch (error) {
