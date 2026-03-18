@@ -94,7 +94,7 @@ const questions: Question[] = [
     [
       { label: "気づいたらかなりのめり込んでいる", score: { attachment: 3 } },
       { label: "バランスを取りながら楽しむ", score: { reality: 2 } },
-      { label: "ある程度で満足して離れる", score: { independence: 2 } },
+      { label: "ある程度で満足して飽きる", score: { independence: 2 } },
       { label: "そのときの気分で変わる", score: { passion: 2 } }
     ]),
 
@@ -102,10 +102,10 @@ const questions: Question[] = [
     "何かを決めるとき、いちばん近いのは？",
     ["#232526", "#414345"],
     [
-      { label: "直感で決めることが多い", score: { intuition: 3 } },
+      { label: "直感を信じて決める", score: { intuition: 3 } },
       { label: "慎重に考えてから決める", score: { caution: 3 } },
       { label: "現実的に損得で判断する", score: { reality: 3 } },
-      { label: "気持ちの流れを優先する", score: { passion: 3 } }
+      { label: "その場の気分で決める", score: { passion: 3 } }
     ]),
 
   q("social", "👥", "距離感", "distance",
@@ -125,37 +125,37 @@ const questions: Question[] = [
       { label: "細かいところまで気になってしまう", score: { caution: 3 } },
       { label: "なんとなく引っかかる程度", score: { intuition: 2 } },
       { label: "あまり気にしない", score: { reality: 2 } },
-      { label: "気になると深く考える", score: { attachment: 1, caution: 1 } }
+      { label: "気になるとずっと考えてしまう", score: { attachment: 1, caution: 1 } }
     ]),
 
   q("emotion", "🫀", "感情", "emotion",
     "自分の感情はどちらかというと？",
     ["#1f1c2c", "#928dab"],
     [
-      { label: "そのまま表に出やすい", score: { passion: 3 } },
-      { label: "あまり外に出さない", score: { independence: 2 } },
-      { label: "コントロールしている", score: { reality: 2 } },
-      { label: "状況によって変わる", score: { caution: 1 } }
+      { label: "感情をそのまま表に出やすい", score: { passion: 3 } },
+      { label: "あまり感情は外に出さない", score: { independence: 2 } },
+      { label: "感情はコントロールできる", score: { reality: 2 } },
+      { label: "その場の状況によって変える", score: { caution: 1 } }
     ]),
 
   q("emotion", "🕯", "記憶", "memory",
     "過去の出来事については？",
     ["#232526", "#000000"],
     [
-      { label: "長く覚えていることが多い", score: { attachment: 3 } },
-      { label: "経験として整理する", score: { reality: 2 } },
+      { label: "ずっと覚えていることが多い", score: { attachment: 3 } },
+      { label: "経験として整理して忘れる", score: { reality: 2 } },
       { label: "あまり引きずらない", score: { independence: 2 } },
-      { label: "意味を考えがち", score: { intuition: 2 } }
+      { label: "たまに思い出して考えてしまう", score: { intuition: 2 } }
     ]),
 
   q("emotion", "💣", "不安", "anxiety",
     "不安やモヤっとした気持ちがあるときは？",
     ["#0f2027", "#2c5364"],
     [
-      { label: "気持ちが強く揺れる", score: { passion: 3 } },
-      { label: "内側に溜め込む", score: { attachment: 2 } },
-      { label: "考えて整理する", score: { caution: 2 } },
-      { label: "少し距離を取る", score: { independence: 2 } }
+      { label: "気持ちが強く揺れ不安になる", score: { passion: 3 } },
+      { label: "相手に伝えず内側に溜め込む", score: { attachment: 2 } },
+      { label: "一度落ち着いてから考える", score: { caution: 2 } },
+      { label: "考えずにその場から離れる", score: { independence: 2 } }
     ]),
 
   q("romance", "💬", "返信", "response",
@@ -163,7 +163,7 @@ const questions: Question[] = [
     ["#141e30", "#243b55"],
     [
       { label: "何度も見返してしまう", score: { attachment: 3 } },
-      { label: "理由を考える", score: { caution: 2 } },
+      { label: "何故か理由を考える", score: { caution: 2 } },
       { label: "気にしないようにする", score: { reality: 2 } },
       { label: "少し距離を置こうと思う", score: { independence: 2 } }
     ]),
@@ -182,7 +182,7 @@ const questions: Question[] = [
     "相手の態度が少しだけ冷たくなったと感じたときは？",
     ["#000000", "#434343"],
     [
-      { label: "気づかないふりをするけど覚えている", score: { attachment: 2 } },
+      { label: "気づかないふりをする", score: { attachment: 2 } },
       { label: "理由を知りたくなる", score: { caution: 2 } },
       { label: "少し気持ちが冷める", score: { independence: 2 } },
       { label: "考えすぎかもしれないと思う", score: { reality: 2 } }
@@ -192,10 +192,10 @@ const questions: Question[] = [
     "人のことをどれくらい観察していると思う？",
     ["#232526", "#414345"],
     [
-      { label: "かなりよく見ている", score: { caution: 3 } },
-      { label: "なんとなく感じる", score: { intuition: 2 } },
-      { label: "あまり気にしていない", score: { reality: 2 } },
-      { label: "興味があるときだけ", score: { passion: 1 } }
+      { label: "細かい変化までよく見ている", score: { caution: 3 } },
+      { label: "なんとなく観察する程度", score: { intuition: 2 } },
+      { label: "必要な時だけ観察する", score: { reality: 2 } },
+      { label: "興味がある相手だけ", score: { passion: 1 } }
     ]),
 
   q("emotion", "🌙", "夜", "night",
@@ -203,9 +203,9 @@ const questions: Question[] = [
     ["#0f2027", "#2c5364"],
     [
       { label: "過去や人間関係を思い出す", score: { attachment: 2 } },
-      { label: "色々な可能性を考える", score: { caution: 2 } },
-      { label: "あまり深く考えない", score: { reality: 2 } },
-      { label: "感覚的に整理する", score: { intuition: 2 } }
+      { label: "将来の可能性を考える", score: { caution: 2 } },
+      { label: "夜に考え事はしない", score: { reality: 2 } },
+      { label: "ぼんやり考える程度", score: { intuition: 2 } }
     ]),
 
   q("self", "⚡", "衝動", "impulse",
@@ -222,20 +222,20 @@ const questions: Question[] = [
     "好きな人との未来については？",
     ["#232526", "#414345"],
     [
-      { label: "よく想像する", score: { intuition: 3 } },
-      { label: "現実的に考える", score: { reality: 3 } },
-      { label: "あまり考えない", score: { independence: 2 } },
-      { label: "気持ちの流れで変わる", score: { passion: 2 } }
+      { label: "幸せな未来を想像する", score: { intuition: 3 } },
+      { label: "現実的にどうなるか考える", score: { reality: 3 } },
+      { label: "あまり先の事は考えない", score: { independence: 2 } },
+      { label: "その時の気持ちで変わる", score: { passion: 2 } }
     ]),
 
   q("emotion", "🧊", "防御", "defense",
     "傷つきそうだと感じたときは？",
     ["#0f2027", "#000000"],
     [
-      { label: "先に距離を取る", score: { independence: 3 } },
-      { label: "耐える", score: { attachment: 2 } },
-      { label: "考えて整理する", score: { caution: 2 } },
-      { label: "気にしないようにする", score: { reality: 2 } }
+      { label: "先に距離を取り自分を守る", score: { independence: 3 } },
+      { label: "関係を崩さないように耐える", score: { attachment: 2 } },
+      { label: "一度落ち着いて考える", score: { caution: 2 } },
+      { label: "気にしないように割り切る", score: { reality: 2 } }
     ]),
 
   q("social", "🫂", "信頼", "trust",
@@ -243,9 +243,9 @@ const questions: Question[] = [
     ["#141e30", "#243b55"],
     [
       { label: "比較的信じやすい", score: { attachment: 2 } },
-      { label: "慎重に判断する", score: { caution: 2 } },
+      { label: "慎重に判断して信じる", score: { caution: 2 } },
       { label: "あまり深く信じない", score: { independence: 2 } },
-      { label: "状況による", score: { reality: 1 } }
+      { label: "状況を判断して決める", score: { reality: 1 } }
     ]),
 
   q("self", "🎭", "本音", "mask",
@@ -253,19 +253,19 @@ const questions: Question[] = [
     ["#232526", "#414345"],
     [
       { label: "あまり見せない", score: { independence: 2 } },
-      { label: "比較的出す", score: { passion: 2 } },
-      { label: "考えてから出す", score: { caution: 2 } },
+      { label: "気にせずに出す", score: { passion: 2 } },
+      { label: "少し考えてから出す", score: { caution: 2 } },
       { label: "自分でもよくわからない", score: { intuition: 2 } }
     ]),
 
   q("emotion", "🔥", "嫉妬", "jealous",
-    "嫉妬したときは？",
+    "相手に嫉妬したときは？",
     ["#000000", "#ff4e50"],
     [
-      { label: "強く感じる", score: { attachment: 3, passion: 2 } },
+      { label: "強く嫉妬する", score: { attachment: 3, passion: 2 } },
       { label: "少し気になる程度", score: { caution: 1 } },
-      { label: "あまり感じない", score: { reality: 2 } },
-      { label: "距離を取る", score: { independence: 2 } }
+      { label: "あまり嫉妬しない", score: { reality: 2 } },
+      { label: "相手との距離を取る", score: { independence: 2 } }
     ]),
 
   q("romance", "❤️", "怖さ", "fear",
@@ -275,7 +275,7 @@ const questions: Question[] = [
       { label: "関係が終わること", score: { attachment: 3 } },
       { label: "裏切られること", score: { caution: 2 } },
       { label: "縛られること", score: { independence: 3 } },
-      { label: "感情が揺れること", score: { passion: 2 } }
+      { label: "情緒が不安になること", score: { passion: 2 } }
     ])
 ];
 
@@ -890,23 +890,23 @@ export default function App() {
           <div style={styles.kvHero}>
             <img
               src="/images/urban-legend-kv.jpg"
-              alt="都市伝説占い"
+              alt="都市伝説診断"
               style={styles.kvImage}
             />
             <div style={styles.kvOverlay} />
 
             <div style={styles.kvContent}>
               <div style={styles.kvMini}>urban myth . exe</div>
-              <h1 style={styles.kvTitle}>都市伝説.exe</h1>
-              <div style={styles.kvLead}>あなたの内側に棲む怪異を解析します</div>
+              <h1 style={styles.kvTitle}>都市伝説診断</h1>
+              <div style={styles.kvLead}>あなたの内側に棲むもう一つの姿を解析します</div>
 
               <p style={styles.kvText}>
-                深夜、誰もいないはずの場所で視線を感じたり、
-                優しさの奥に少しだけ狂気が混ざっている人を見たことはありませんか。
+                ふとした瞬間に理由もなく自分に違和感を覚えた事はありませんか。
                 <br />
+                それはあなたがまだ知らない本当の自分かもしれません。
                 <br />
-                都市伝説は外にいるだけではなく、
-                たぶん人の内側にも潜んでいます。
+                この診断では、
+                あなたの中に潜む”もう一つの姿”を明らかにします。
               </p>
 
               <div style={styles.genderRow}>
@@ -931,7 +931,7 @@ export default function App() {
               </div>
 
               <div style={styles.kvWarning}>
-                WARNING / 結果には不穏・執着・恋愛ホラー的な表現が含まれます
+                WARNING / 結果にはホラー的な表現が含まれます
               </div>
 
               <button
@@ -968,11 +968,11 @@ export default function App() {
 
             {!resultText && !isGenerating && (
               <button style={styles.generateBtn} onClick={generateAll}>
-                最後の結果を生成する
+                あなたの本当の姿を生成する
               </button>
             )}
 
-            {isGenerating && <div style={styles.loading}>あなたの本当の顔を呼び出しています…</div>}
+            {isGenerating && <div style={styles.loading}>あなたの隠された姿を呼び出しています…</div>}
             {errorMessage && <div style={styles.errorText}>{errorMessage}</div>}
 
             {imageUrl && (
