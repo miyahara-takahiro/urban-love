@@ -21,6 +21,7 @@ type AxisScores = Record<AxisKey, number>;
 type Category = "self" | "emotion" | "romance" | "social";
 type ViewMode = "intro" | "diagnosis" | "result";
 type Gender = "male" | "female" | "other";
+type ResultMode = "single" | "dominant-dual" | "balanced-dual";
 
 type QuestionOption = { label: string; score: Partial<AxisScores> };
 type Question = {
