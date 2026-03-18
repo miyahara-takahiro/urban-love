@@ -1520,6 +1520,8 @@ export default function App() {
       { title: "対人関係", body: splitSections(resultText).relationship },
       { title: "恋愛傾向", body: splitSections(resultText).love },
       { title: "隠れた性格", body: splitSections(resultText).hidden },
+      { title: "⚠ 相性の悪い相手", body: splitSections(resultText).bad },
+      { title: "◎ 相性の良い相手", body: splitSections(resultText).good },
     ]
       .filter((section) => section.body)
       .map((section) => (
