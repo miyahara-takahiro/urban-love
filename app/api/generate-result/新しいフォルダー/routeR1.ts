@@ -66,137 +66,47 @@ type RankedType = {
   score: number;
 };
 
-type ResultMode = "single" | "dominant-dual" | "balanced-dual";
-
 function resolveName(id: string) {
   return CHARACTERS.find((c) => c.id === id)?.name || id;
 }
 
-function inferResultMode(main: RankedType, sub: RankedType): ResultMode {
-  const diff = (main.score ?? 0) - (sub.score ?? 0);
 
-  if (diff >= 12) return "single";
-  if (diff >= 7) return "dominant-dual";
-  return "balanced-dual";
-}
 
-function buildBlendLabel(mode: ResultMode, main: RankedType, sub: RankedType) {
-  if (mode === "single") return `${main.name}単独型`;
-  if (mode === "dominant-dual") return `${main.name}寄り${sub.name}型`;
-  return `${main.name}${sub.name}混成型`;
-}
-
-function buildTemplate(
-  main: RankedType,
-  sub: RankedType,
-  badName: string,
-  goodName: string,
-  mode: ResultMode
-) {
-  const blendLabel = buildBlendLabel(mode, main, sub);
-
-  const dualityLine =
-    mode === "single"
-      ? `今回は${main.name}の性質がかなり明確に強く、全体として一本芯の通った出方になっています。`
-      : mode === "dominant-dual"
-      ? `今回は${main.name}が主軸ですが、内側には${sub.name}らしい反応も残っていて、場面によって印象が少し変わります。`
-      : `今回は${main.name}と${sub.name}の両方がかなり近く出ていて、表に見える顔と感情が動いたときの顔にズレが出やすいタイプです。`;
-
-  const basicBlock =
-    mode === "single"
-      ? `
+function buildTemplate(main: RankedType, sub: RankedType, badName: string, goodName: string) {
+  return `
 【基本性格】
-今回の結果は「${blendLabel}」です。
-普段は${main.traits.behavior}という形で性格が出やすく、外から見た印象もかなり分かりやすいタイプです。
-${main.publicMask}と見られやすい一方で、本音では${main.innerCore}という部分を強く持っています。
-${dualityLine}
-`.trim()
-      : `
-【基本性格】
-今回の結果は「${blendLabel}」です。
-普段は${main.traits.behavior}という形で性格が出やすく、第一印象では${main.publicMask}と見られやすいです。
-ただ本音では${sub.traits.behavior}や${sub.traits.emotion}も混ざり、外から見える印象と内側の濃さに少し差が出ます。
-${dualityLine}
-`.trim();
+普段は${main.name}の性質が強く出やすく、特に「${main.traits.behavior}」という形で表れやすいです。
+一方で内側には${sub.name}らしい「${sub.traits.behavior}」もあり、外から見える印象と本音に少し差があります。
+表向きの顔と、感情的になったときの反応が同じではないタイプです。
 
-  const relationshipBlock =
-    mode === "single"
-      ? `
-【対人関係】
-人との関わり方には${main.traits.behavior}傾向がそのまま出やすいです。
-相手との距離感でも${main.risk}が弱くにじみやすく、曖昧なやり取りをあまりそのままにできません。
-表向きには落ち着いていても、内側では関係の温度差をかなり正確に拾っています。
-だから相手には、あとから印象が強く残りやすいです。
-`.trim()
-      : `
 【対人関係】
 人との関わり方には${main.traits.behavior}傾向が出やすいです。
-ただ関係が深くなると${sub.traits.emotion}がにじみやすく、相手の言動を思った以上に受け取りやすくなります。
-距離感そのものより、相手からどう見えるか、どこまで本音を見せるかに個性が出やすいです。
-そのズレがあるからこそ、関係が浅い時と深い時で印象が変わりやすいです。
-`.trim();
+ただ、関係ができてからは${sub.traits.emotion}がにじみやすく、相手の言動を思った以上に受け取ることがあります。
+距離感そのものより、相手からの見え方に個性が出ます。
 
-  const loveBlock =
-    mode === "single"
-      ? `
 【恋愛傾向】
-恋愛になると${main.traits.love}という出方がかなり強くなります。
-好きな相手には分かりやすく気持ちが向きやすく、曖昧な距離感には我慢し続けにくいです。
-優しさもある一方で、${main.loveWarning}という面が出ると一気に空気が変わります。
-そこで関係が軽く終わらず、相手の中に残りやすくなります。
-`.trim()
-      : `
-【恋愛傾向】
-恋愛になると${main.traits.love}という出方がベースになります。
-そこに${sub.traits.love}傾向が混ざるので、最初の印象と関係が深まってからで見え方が変わりやすいです。
-近づき方は一つに見えても、内側ではかなり細かく温度差を見ています。
-そのため、恋人になると二面性のある恋愛スタイルになりやすいです。
-`.trim();
+恋愛そすると${main.traits.love}のようになりやすいです。
+そこに${sub.traits.love}傾向が混ざるので、最初と関係が深くなってからで印象が変わりやすいです。
+恋人になるとそれが影響し2面性のある恋人になるでしょう。
 
-  const hiddenBlock =
-    mode === "single"
-      ? `
 【隠れた性格】
-あなたの内面には${main.traits.emotion}のような濃さがあります。
-本人は普通に反応しているつもりでも、実際にはかなり強く印象を受け取っていることが多いです。
-特に曖昧さや放置には鈍くなく、納得できる形を求める気持ちが強めです。
-それを表に出し切らない時ほど、静かな圧として残りやすいです。
-`.trim()
-      : `
-【隠れた性格】
-あなたは内面に${sub.traits.emotion}のようなものを秘めています。
+あなたは内面に、${sub.traits.emotion}のようなものを秘めています。
 そのため、曖昧な関係や温度差には思った以上に反応しやすいです。
 表では平気そうでも、内側では納得できる形をかなり求めています。
-その見えにくさがあるぶん、本人より先に相手が濃さに気づくことがあります。
-`.trim();
-
-  return `
-${basicBlock}
-
-${relationshipBlock}
-
-${loveBlock}
-
-${hiddenBlock}
 
 【⚠ 相性の悪い相性】
 ${badName}
-自分の反応を受け止めてもらえない、もしくは主導権の取り合いになりやすい相手です。
-気持ちの濃さや距離感の違いが噛み合わないと、関係が急に重くなりやすいです。
 
 【◎ 相性の良い相手】
 ${goodName}
-あなたの濃さや距離感を無理に否定せず、自然に整えてくれる相手です。
-感情の持ち方やテンポが噛み合うと、関係が深くなっても崩れにくいです。
 `.trim();
 }
 
-function buildSystemPrompt(
-  toneMain: string,
-  toneSub: string,
-  gender: Gender,
-  mode: ResultMode
-) {
+
+
+
+
+function buildSystemPrompt(toneMain: string, toneSub: string, gender: Gender) {
   const genderRule =
     gender === "male"
       ? `
@@ -204,34 +114,13 @@ function buildSystemPrompt(
 - ただし鈍感・不器用と決めつけず、内側の濃さや執着がじわっと出る書き方にする
 `
       : gender === "female"
-      ? `
+        ? `
 - 女性向けの出方として、感情は関係の中で動きやすく、距離感や温度差に反応が出やすいニュアンスを入れる
 - ただし重い・依存的と決めつけず、静かさの奥に濃さがある書き方にする
 `
-      : `
+        : `
 - 性別に寄せすぎず、外から見える顔と内側の濃さにズレがある書き方にする
 - 読めなさや二面性をやや強めに出す
-`;
-
-  const modeRule =
-    mode === "single"
-      ? `
-- 今回は単独型として扱う
-- サブキャラは補助的な参照までに留める
-- 二面性を無理に作らない
-- 全体として一本芯の通った人格像にする
-`
-      : mode === "dominant-dual"
-      ? `
-- 今回はメイン優勢の寄り型として扱う
-- メインキャラを7割、サブキャラを3割くらいの体感で混ぜる
-- 普段の顔はメイン、感情が動いた時だけサブが出る構図にする
-`
-      : `
-- 今回は混成型として扱う
-- 2キャラが近い強さで混ざっている前提で書く
-- 表の顔と内側の反応にズレが出る構図を自然に作る
-- ただしキャラ名の連呼はしない
 `;
 
   return `
@@ -275,7 +164,10 @@ function buildSystemPrompt(
 - 意味が曖昧な怪奇表現で締める
 
 【キャラの混ぜ方】
-${modeRule}
+- 2キャラは役割を分けて使う
+- 片方は普段の顔、もう片方は感情が動いたときの出方
+- もしくは、片方は外から見える印象、もう片方は内側の本音
+- ただし、キャラ名を毎回出さず、行動で見せる
 
 【文体】
 - メインキャラの文体: ${toneMain}
@@ -315,6 +207,8 @@ ${genderRule}
 `.trim();
 }
 
+
+
 export async function POST(req: NextRequest) {
   try {
     const { main, sub, bad, good, gender } = (await req.json()) as {
@@ -326,7 +220,10 @@ export async function POST(req: NextRequest) {
     };
 
     if (!main || !sub || !bad || !good) {
-      return NextResponse.json({ error: "Missing required payload" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required payload" },
+        { status: 400 }
+      );
     }
 
     const badName = resolveName(bad);
@@ -334,10 +231,9 @@ export async function POST(req: NextRequest) {
 
     const toneMain = TONE_MAP[main.id] ?? "静かで自然な語り";
     const toneSub = TONE_MAP[sub.id] ?? "少し不穏さのある語り";
-    const mode = inferResultMode(main, sub);
 
-    const systemPrompt = buildSystemPrompt(toneMain, toneSub, gender ?? "other", mode);
-    const userPrompt = buildTemplate(main, sub, badName, goodName, mode);
+    const systemPrompt = buildSystemPrompt(toneMain, toneSub, gender ?? "other");
+    const userPrompt = buildTemplate(main, sub, badName, goodName);
 
     const completion = await client.chat.completions.create({
       model: "gpt-4.1-mini",
@@ -351,18 +247,18 @@ export async function POST(req: NextRequest) {
     const result = completion.choices[0]?.message?.content?.trim();
 
     if (!result) {
-      return NextResponse.json({ error: "No result generated" }, { status: 500 });
+      return NextResponse.json(
+        { error: "No result generated" },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({
-      result,
-      meta: {
-        mode,
-        label: buildBlendLabel(mode, main, sub),
-      },
-    });
+    return NextResponse.json({ result });
   } catch (error) {
     console.error("generate-result error:", error);
-    return NextResponse.json({ error: "Result generation failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Result generation failed" },
+      { status: 500 }
+    );
   }
 }
