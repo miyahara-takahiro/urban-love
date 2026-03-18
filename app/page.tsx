@@ -1567,18 +1567,6 @@ export default function App() {
                 >
                   <div style={styles.sectionTitle}>最終結果</div>
 
-                  <div style={styles.resultLeadCard}>
-                    <div style={styles.resultLeadLabel}>SUMMARY</div>
-                    <div
-                      style={{
-                        ...styles.resultLeadText,
-                        fontSize: isMobile ? 15 : 15,
-                        lineHeight: isMobile ? 1.68 : 1.65,
-                      }}
-                    >
-                      {trimForCard(sections.basic || resultText, isMobile ? 82 : 120)}
-                    </div>
-                  </div>
 
                   {[
                     { title: "基本性格", body: sections.basic },
