@@ -1690,6 +1690,7 @@ function QuestionVisual({ item }: { item: Question }) {
 
 
 
+
 function ResultHero({
   first,
   second,
@@ -1706,12 +1707,7 @@ function ResultHero({
   imageUrl: string;
 }) {
   return (
-      <div
-      style={{
-        ...styles.resultHero,
-        gridTemplateColumns: imageUrl ? "1.1fr 0.9fr" : "1fr",
-      }}
-    >
+    <div style={styles.resultHero}>
       <div style={styles.resultHeroText}>
         <div style={styles.resultHeroBadge}>診断結果</div>
         <h2 style={styles.resultHeroTitle}>{resultName}</h2>
@@ -1730,23 +1726,22 @@ function ResultHero({
         </p>
       </div>
 
-      {imageUrl ? (
-        <div style={styles.resultHeroImageWrap}>
+      <div style={styles.resultHeroImageWrap}>
+        {imageUrl ? (
           <img
             src={imageUrl}
             alt={resultName}
             style={styles.resultHeroImage}
           />
-        </div>
-      ) : null}
+        ) : (
+          <div style={styles.resultHeroImagePlaceholder}>
+            画像生成前
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-
-
-
-
 
 
 

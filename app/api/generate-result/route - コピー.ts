@@ -19,7 +19,7 @@ type Character = {
 };
 
 // true にするとAI版を使用
-const USE_AI_RESULT_TEXT = true;
+const USE_AI_RESULT_TEXT = false;
 
 // 開発中にリクエスト側から上書きしたい時は true
 const ALLOW_REQUEST_OVERRIDE = true;

@@ -23,33 +23,8 @@ type ViewMode = "intro" | "diagnosis" | "result";
 type Gender = "male" | "female" | "other";
 type ResultMode = "single" | "dominant-dual" | "balanced-dual";
 
-type QuestionVariant = "A" | "B" | "C";
-
-type QuestionGroupId =
-  | "alone-quality"
-  | "help-seeking"
-  | "relationship-maintenance"
-  | "boundary-strength"
-  | "parting-process"
-  | "loneliness-response"
-  | "trust-speed"
-  | "intuition-discomfort"
-  | "evidence-need"
-  | "air-vs-fact"
-  | "unexplainable-attitude"
-  | "meaning-making"
-  | "future-reading"
-  | "true-feelings"
-  | "initial-move"
-  | "risk-tolerance"
-  | "emotion-expression"
-  | "immersion-style"
-  | "conflict-style"
-  | "timing-style";
-
 type QuestionOption = { label: string; score: Partial<AxisScores> };
 type Question = {
-  id: string;
   category: Category;
   text: string;
   visualEmoji: string;
@@ -57,8 +32,6 @@ type Question = {
   visualTag: string;
   colors: [string, string];
   options: QuestionOption[];
-  groupId: QuestionGroupId;
-  variant: QuestionVariant;
 };
 
 type CharacterTraits = {
@@ -103,18 +76,14 @@ const ZERO: AxisScores = {
 };
 
 const q = (
-  id: string,
   category: Category,
   visualEmoji: string,
   visualTitle: string,
   visualTag: string,
   text: string,
   colors: [string, string],
-  options: QuestionOption[],
-  groupId: QuestionGroupId,
-  variant: QuestionVariant
+  options: QuestionOption[]
 ): Question => ({
-  id,
   category,
   visualEmoji,
   visualTitle,
@@ -122,13 +91,16 @@ const q = (
   text,
   colors,
   options,
-  groupId,
-  variant,
 });
 
-const questionPool: Question[] = [
+
+
+
+const questions: Question[] = [
+  // =========================================================
+  // 1. ひとり時間の質
+  // =========================================================
   q(
-    "q1a",
     "self",
     "🌘",
     "ひとり時間",
@@ -140,12 +112,9 @@ const questionPool: Question[] = [
       { label: "少し寂しいが、自分を整える時間としても必要", score: { attachment: 1, independence: 1 } },
       { label: "自分のペースに戻れる大事な時間だと感じる", score: { independence: 2, reality: 1 } },
       { label: "むしろ一人の方が自然で、かなり楽に過ごせる", score: { independence: 3 } },
-    ],
-    "alone-quality",
-    "A"
+    ]
   ),
   q(
-    "q1b",
     "self",
     "🛋️",
     "休日",
@@ -157,12 +126,9 @@ const questionPool: Question[] = [
       { label: "人と会いたいが、少しは一人時間も欲しい", score: { attachment: 1, independence: 1 } },
       { label: "基本は一人で過ごしたい", score: { independence: 2 } },
       { label: "誘われても、一人の予定を優先しがち", score: { independence: 2, caution: 1 } },
-    ],
-    "alone-quality",
-    "B"
+    ]
   ),
   q(
-    "q1c",
     "emotion",
     "📵",
     "無連絡",
@@ -174,12 +140,13 @@ const questionPool: Question[] = [
       { label: "少し気になるが、そのうち慣れる", score: { attachment: 1 } },
       { label: "特に気にならない", score: { independence: 1 } },
       { label: "むしろ快適で集中しやすい", score: { independence: 1, reality: 1 } },
-    ],
-    "alone-quality",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 2. 助けの求め方
+  // =========================================================
   q(
-    "q2a",
     "social",
     "🫂",
     "相談",
@@ -191,12 +158,9 @@ const questionPool: Question[] = [
       { label: "少し考えてから相談する", score: { attachment: 2, caution: 1 } },
       { label: "まずは自分で何とかしようとする", score: { independence: 2, reality: 1 } },
       { label: "基本的に人に頼らず、自分で抱える", score: { independence: 3 } },
-    ],
-    "help-seeking",
-    "A"
+    ]
   ),
   q(
-    "q2b",
     "emotion",
     "🫣",
     "弱音",
@@ -208,12 +172,9 @@ const questionPool: Question[] = [
       { label: "相手によっては見せられる", score: { attachment: 1, caution: 1 } },
       { label: "あまり見せない方だと思う", score: { independence: 2 } },
       { label: "見せるべきではないと感じやすい", score: { independence: 2, caution: 1 } },
-    ],
-    "help-seeking",
-    "B"
+    ]
   ),
   q(
-    "q2c",
     "self",
     "🤝",
     "頼る感覚",
@@ -225,12 +186,13 @@ const questionPool: Question[] = [
       { label: "少し気を使うが、必要なら頼れる", score: { caution: 1, attachment: 1 } },
       { label: "できれば自分で片づけたい", score: { independence: 1 } },
       { label: "頼るのはかなり苦手", score: { independence: 1, caution: 1 } },
-    ],
-    "help-seeking",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 3. 関係維持の優先度
+  // =========================================================
   q(
-    "q3a",
     "social",
     "🪢",
     "関係維持",
@@ -242,12 +204,9 @@ const questionPool: Question[] = [
       { label: "ある程度は合わせる", score: { attachment: 2 } },
       { label: "必要最低限しか変えない", score: { independence: 2 } },
       { label: "自分を曲げてまで続けようとは思わない", score: { independence: 3 } },
-    ],
-    "relationship-maintenance",
-    "A"
+    ]
   ),
   q(
-    "q3b",
     "social",
     "⚖️",
     "価値観差",
@@ -259,12 +218,9 @@ const questionPool: Question[] = [
       { label: "まず話し合って落としどころを探す", score: { reality: 1, caution: 1 } },
       { label: "自分の考えを優先する", score: { independence: 2 } },
       { label: "無理だと思ったら距離を置く", score: { independence: 2, caution: 1 } },
-    ],
-    "relationship-maintenance",
-    "B"
+    ]
   ),
   q(
-    "q3c",
     "emotion",
     "🎚️",
     "我慢",
@@ -276,12 +232,13 @@ const questionPool: Question[] = [
       { label: "必要ならする", score: { caution: 1 } },
       { label: "あまりしない", score: { independence: 1 } },
       { label: "基本しない", score: { independence: 1, passion: 1 } },
-    ],
-    "relationship-maintenance",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 4. 境界線の強さ
+  // =========================================================
   q(
-    "q4a",
     "social",
     "🚧",
     "境界線",
@@ -293,12 +250,9 @@ const questionPool: Question[] = [
       { label: "少し気になるが、流すことが多い", score: { attachment: 1, caution: 1 } },
       { label: "距離感を調整する", score: { independence: 2, reality: 1 } },
       { label: "はっきり境界を示す", score: { independence: 3 } },
-    ],
-    "boundary-strength",
-    "A"
+    ]
   ),
   q(
-    "q4b",
     "social",
     "🔒",
     "プライベート",
@@ -310,12 +264,9 @@ const questionPool: Question[] = [
       { label: "ある程度までは答える", score: { attachment: 1, caution: 1 } },
       { label: "あまり深くは話さない", score: { independence: 2 } },
       { label: "基本的に話したくない", score: { independence: 2, caution: 1 } },
-    ],
-    "boundary-strength",
-    "B"
+    ]
   ),
   q(
-    "q4c",
     "social",
     "📏",
     "距離感",
@@ -327,12 +278,13 @@ const questionPool: Question[] = [
       { label: "相手次第で変わる", score: { caution: 1 } },
       { label: "少し距離がある方が楽", score: { independence: 1 } },
       { label: "はっきり距離がある方が安心する", score: { independence: 1, reality: 1 } },
-    ],
-    "boundary-strength",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 5. 離別の処理
+  // =========================================================
   q(
-    "q5a",
     "emotion",
     "🕯️",
     "別れ",
@@ -344,12 +296,9 @@ const questionPool: Question[] = [
       { label: "時間はかかるが、少しずつ整理する", score: { attachment: 2, caution: 1 } },
       { label: "割と切り替えは早い", score: { independence: 2 } },
       { label: "終わったらすぐ次へ向かう", score: { independence: 3 } },
-    ],
-    "parting-process",
-    "A"
+    ]
   ),
   q(
-    "q5b",
     "emotion",
     "📦",
     "思い出",
@@ -361,12 +310,9 @@ const questionPool: Question[] = [
       { label: "ときどき思い出す程度", score: { intuition: 1 } },
       { label: "あまり振り返らない", score: { independence: 2 } },
       { label: "できるだけ消して整理したい", score: { independence: 2, reality: 1 } },
-    ],
-    "parting-process",
-    "B"
+    ]
   ),
   q(
-    "q5c",
     "social",
     "📭",
     "その後",
@@ -378,12 +324,13 @@ const questionPool: Question[] = [
       { label: "たまになら取れる", score: { caution: 1 } },
       { label: "基本しない", score: { independence: 1 } },
       { label: "完全に断つ方が楽", score: { independence: 1, reality: 1 } },
-    ],
-    "parting-process",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 6. 寂しさへの反応
+  // =========================================================
   q(
-    "q6a",
     "emotion",
     "🌫️",
     "寂しさ",
@@ -395,12 +342,9 @@ const questionPool: Question[] = [
       { label: "誰かに連絡したくなる", score: { attachment: 2 } },
       { label: "一人でやり過ごそうとする", score: { independence: 2 } },
       { label: "感情を切り離して何もしない", score: { independence: 2, caution: 1 } },
-    ],
-    "loneliness-response",
-    "A"
+    ]
   ),
   q(
-    "q6b",
     "emotion",
     "📝",
     "感情処理",
@@ -412,12 +356,9 @@ const questionPool: Question[] = [
       { label: "書いたり考えたりして整える", score: { caution: 1, intuition: 1 } },
       { label: "自分の中で消化する", score: { independence: 2 } },
       { label: "押し込めて外には出さない", score: { independence: 2, caution: 1 } },
-    ],
-    "loneliness-response",
-    "B"
+    ]
   ),
   q(
-    "q6c",
     "emotion",
     "🌙",
     "孤独耐性",
@@ -429,12 +370,13 @@ const questionPool: Question[] = [
       { label: "少し苦手", score: { attachment: 1 } },
       { label: "慣れている", score: { independence: 1 } },
       { label: "むしろ好きな面もある", score: { independence: 1, intuition: 1 } },
-    ],
-    "loneliness-response",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 7. 信頼形成の速度
+  // =========================================================
   q(
-    "q7a",
     "social",
     "🫱",
     "信頼",
@@ -446,12 +388,9 @@ const questionPool: Question[] = [
       { label: "わりと早い", score: { attachment: 2 } },
       { label: "時間をかけて見極める", score: { caution: 2, reality: 1 } },
       { label: "なかなか深くは信じない", score: { caution: 3 } },
-    ],
-    "trust-speed",
-    "A"
+    ]
   ),
   q(
-    "q7b",
     "social",
     "👤",
     "初対面",
@@ -463,12 +402,9 @@ const questionPool: Question[] = [
       { label: "普通に接する", score: { reality: 1 } },
       { label: "少し警戒する", score: { caution: 2 } },
       { label: "かなり警戒して様子を見る", score: { caution: 2, intuition: 1 } },
-    ],
-    "trust-speed",
-    "B"
+    ]
   ),
   q(
-    "q7c",
     "emotion",
     "🪨",
     "裏切り",
@@ -480,12 +416,13 @@ const questionPool: Question[] = [
       { label: "落ち込むが、理由も考える", score: { attachment: 1, caution: 1 } },
       { label: "学習として受け止める", score: { reality: 1 } },
       { label: "次から距離を取るようになる", score: { independence: 1 } },
-    ],
-    "trust-speed",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 8. 違和感の扱い
+  // =========================================================
   q(
-    "q8a",
     "social",
     "👁️",
     "違和感",
@@ -497,12 +434,9 @@ const questionPool: Question[] = [
       { label: "感覚は大事だが、少し様子を見る", score: { intuition: 1, caution: 1 } },
       { label: "確認できる材料を集めて判断する", score: { reality: 2, caution: 1 } },
       { label: "根拠がない限り、ほぼ動かない", score: { reality: 3 } },
-    ],
-    "intuition-discomfort",
-    "A"
+    ]
   ),
   q(
-    "q8b",
     "social",
     "🧩",
     "引っかかり",
@@ -514,12 +448,9 @@ const questionPool: Question[] = [
       { label: "半分くらいは当たる", score: { intuition: 1, reality: 1 } },
       { label: "確認しないと信用できない", score: { reality: 2 } },
       { label: "感覚だけでは判断しない", score: { reality: 2, caution: 1 } },
-    ],
-    "intuition-discomfort",
-    "B"
+    ]
   ),
   q(
-    "q8c",
     "self",
     "🫧",
     "直感使用率",
@@ -531,12 +462,13 @@ const questionPool: Question[] = [
       { label: "ときどき使う", score: { intuition: 1 } },
       { label: "あまり使わない", score: { reality: 1 } },
       { label: "ほとんど使わない", score: { reality: 1 } },
-    ],
-    "intuition-discomfort",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 9. 根拠の必要量
+  // =========================================================
   q(
-    "q9a",
     "self",
     "📚",
     "根拠",
@@ -548,12 +480,9 @@ const questionPool: Question[] = [
       { label: "ある程度の材料があれば十分", score: { intuition: 1, reality: 1 } },
       { label: "しっかり理由がほしい", score: { reality: 2, caution: 1 } },
       { label: "納得できる根拠がないと決めにくい", score: { reality: 3 } },
-    ],
-    "evidence-need",
-    "A"
+    ]
   ),
   q(
-    "q9b",
     "self",
     "🗣️",
     "説明",
@@ -565,12 +494,9 @@ const questionPool: Question[] = [
       { label: "なんとなくの理由なら言える", score: { intuition: 1 } },
       { label: "ちゃんと筋道を立てて説明したい", score: { reality: 2 } },
       { label: "説明できない選択は避けたい", score: { reality: 2, caution: 1 } },
-    ],
-    "evidence-need",
-    "B"
+    ]
   ),
   q(
-    "q9c",
     "self",
     "⚙️",
     "判断材料",
@@ -582,12 +508,13 @@ const questionPool: Question[] = [
       { label: "感覚と事実の両方", score: { intuition: 1, reality: 1 } },
       { label: "事実や数字", score: { reality: 1 } },
       { label: "再現できる客観情報", score: { reality: 1, caution: 1 } },
-    ],
-    "evidence-need",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 10. 空気と事実の優先
+  // =========================================================
   q(
-    "q10a",
     "social",
     "🌡️",
     "空気",
@@ -599,12 +526,9 @@ const questionPool: Question[] = [
       { label: "まず空気を読むが、確信は保留する", score: { intuition: 1, caution: 1 } },
       { label: "事実を確認してから考える", score: { reality: 2, caution: 1 } },
       { label: "空気より、確認できる情報を優先する", score: { reality: 3 } },
-    ],
-    "air-vs-fact",
-    "A"
+    ]
   ),
   q(
-    "q10b",
     "social",
     "👥",
     "会話",
@@ -616,12 +540,9 @@ const questionPool: Question[] = [
       { label: "少し気にしつつ様子を見る", score: { intuition: 1, caution: 1 } },
       { label: "言葉の内容を基準に考える", score: { reality: 2 } },
       { label: "追加で確認できる材料がほしい", score: { reality: 2, caution: 1 } },
-    ],
-    "air-vs-fact",
-    "B"
+    ]
   ),
   q(
-    "q10c",
     "social",
     "🧾",
     "事実確認",
@@ -633,12 +554,13 @@ const questionPool: Question[] = [
       { label: "気になる部分だけ確認する", score: { intuition: 1, reality: 1 } },
       { label: "内容を整理して理解する", score: { reality: 1 } },
       { label: "事実関係をはっきりさせたい", score: { reality: 1, caution: 1 } },
-    ],
-    "air-vs-fact",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 11. 説明不能なものへの態度
+  // =========================================================
   q(
-    "q11a",
     "self",
     "🌀",
     "説明不能",
@@ -650,12 +572,9 @@ const questionPool: Question[] = [
       { label: "少し気にするし、記憶に残る", score: { intuition: 2 } },
       { label: "面白いとは思うが、判断材料にはしない", score: { reality: 2 } },
       { label: "ほぼ偶然として処理する", score: { reality: 3 } },
-    ],
-    "unexplainable-attitude",
-    "A"
+    ]
   ),
   q(
-    "q11b",
     "emotion",
     "🔮",
     "兆し",
@@ -667,12 +586,9 @@ const questionPool: Question[] = [
       { label: "少し気に留めておく", score: { intuition: 1 } },
       { label: "当たることもあるが、参考程度", score: { reality: 1 } },
       { label: "予感だけでは動かない", score: { reality: 2, caution: 1 } },
-    ],
-    "unexplainable-attitude",
-    "B"
+    ]
   ),
   q(
-    "q11c",
     "self",
     "🧠",
     "非言語感覚",
@@ -684,12 +600,13 @@ const questionPool: Question[] = [
       { label: "無視はしない", score: { intuition: 1 } },
       { label: "いったん保留する", score: { reality: 1 } },
       { label: "理由がなければ採用しない", score: { reality: 1 } },
-    ],
-    "unexplainable-attitude",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 12. 意味づけの癖
+  // =========================================================
   q(
-    "q12a",
     "emotion",
     "🧵",
     "意味づけ",
@@ -701,12 +618,9 @@ const questionPool: Question[] = [
       { label: "少し意味を考える", score: { intuition: 2 } },
       { label: "たまたま起きたこととして受け取る", score: { reality: 2 } },
       { label: "因果関係がない限り意味づけしない", score: { reality: 3 } },
-    ],
-    "meaning-making",
-    "A"
+    ]
   ),
   q(
-    "q12b",
     "emotion",
     "🔁",
     "偶然",
@@ -718,12 +632,9 @@ const questionPool: Question[] = [
       { label: "少し気になる", score: { intuition: 1 } },
       { label: "珍しいが偶然だと思う", score: { reality: 2 } },
       { label: "数字や事実の方が気になる", score: { reality: 2, caution: 1 } },
-    ],
-    "meaning-making",
-    "B"
+    ]
   ),
   q(
-    "q12c",
     "self",
     "🧭",
     "解釈",
@@ -735,12 +646,13 @@ const questionPool: Question[] = [
       { label: "感覚的な印象を大事にする", score: { intuition: 1 } },
       { label: "起きた事実をそのまま捉える", score: { reality: 1 } },
       { label: "解釈より確認を優先する", score: { reality: 1, caution: 1 } },
-    ],
-    "meaning-making",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 13. 未来の読み方
+  // =========================================================
   q(
-    "q13a",
     "self",
     "🌫️",
     "未来感覚",
@@ -752,12 +664,9 @@ const questionPool: Question[] = [
       { label: "感覚も条件も両方見る", score: { intuition: 1, reality: 1 } },
       { label: "条件や状況から先を考える", score: { reality: 2, caution: 1 } },
       { label: "見通しは具体材料がないと立てにくい", score: { reality: 3 } },
-    ],
-    "future-reading",
-    "A"
+    ]
   ),
   q(
-    "q13b",
     "romance",
     "💭",
     "先読み",
@@ -769,12 +678,9 @@ const questionPool: Question[] = [
       { label: "相手の空気感から想像する", score: { intuition: 1, attachment: 1 } },
       { label: "今ある行動や状況から考える", score: { reality: 2 } },
       { label: "根拠のない予想はあまりしない", score: { reality: 2, caution: 1 } },
-    ],
-    "future-reading",
-    "B"
+    ]
   ),
   q(
-    "q13c",
     "self",
     "📈",
     "見通し",
@@ -786,12 +692,13 @@ const questionPool: Question[] = [
       { label: "空気の変化", score: { intuition: 1 } },
       { label: "実際の条件", score: { reality: 1 } },
       { label: "現時点のデータや実績", score: { reality: 1, caution: 1 } },
-    ],
-    "future-reading",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 14. 人の本音の捉え方
+  // =========================================================
   q(
-    "q14a",
     "social",
     "🫰",
     "本音",
@@ -803,12 +710,9 @@ const questionPool: Question[] = [
       { label: "言葉と空気のズレ", score: { intuition: 2, caution: 1 } },
       { label: "本人が言った内容そのもの", score: { reality: 2 } },
       { label: "継続した行動の事実", score: { reality: 3 } },
-    ],
-    "true-feelings",
-    "A"
+    ]
   ),
   q(
-    "q14b",
     "social",
     "👂",
     "言葉と空気",
@@ -820,12 +724,9 @@ const questionPool: Question[] = [
       { label: "少し引っかかるが様子を見る", score: { intuition: 1, caution: 1 } },
       { label: "まずは言葉どおり受け取る", score: { reality: 2 } },
       { label: "行動が伴うかを見て判断する", score: { reality: 2, caution: 1 } },
-    ],
-    "true-feelings",
-    "B"
+    ]
   ),
   q(
-    "q14c",
     "social",
     "🪞",
     "読み取り",
@@ -837,12 +738,13 @@ const questionPool: Question[] = [
       { label: "空気の変化に敏感", score: { intuition: 1 } },
       { label: "言葉をそのまま受け取りやすい", score: { reality: 1 } },
       { label: "事実ベースで理解する", score: { reality: 1, caution: 1 } },
-    ],
-    "true-feelings",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 15. 初動の速さ
+  // =========================================================
   q(
-    "q15a",
     "self",
     "⚡",
     "初動",
@@ -854,12 +756,9 @@ const questionPool: Question[] = [
       { label: "かなり早めに手をつける", score: { passion: 2 } },
       { label: "少し考えてから動く", score: { caution: 2, reality: 1 } },
       { label: "かなり整ってからでないと動かない", score: { caution: 3 } },
-    ],
-    "initial-move",
-    "A"
+    ]
   ),
   q(
-    "q15b",
     "self",
     "🚀",
     "着手",
@@ -871,12 +770,9 @@ const questionPool: Question[] = [
       { label: "少し迷うが、比較的乗る方", score: { passion: 1 } },
       { label: "条件を見てから判断する", score: { caution: 2 } },
       { label: "リスクが見えると止まる", score: { caution: 2, reality: 1 } },
-    ],
-    "initial-move",
-    "B"
+    ]
   ),
   q(
-    "q15c",
     "self",
     "⏱️",
     "反応速度",
@@ -888,12 +784,13 @@ const questionPool: Question[] = [
       { label: "場面による", score: { intuition: 1 } },
       { label: "慎重な方だと思う", score: { caution: 1 } },
       { label: "かなり慎重", score: { caution: 1 } },
-    ],
-    "initial-move",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 16. リスク許容
+  // =========================================================
   q(
-    "q16a",
     "self",
     "🎲",
     "リスク",
@@ -905,12 +802,9 @@ const questionPool: Question[] = [
       { label: "条件次第では行く", score: { passion: 1, reality: 1 } },
       { label: "できれば避けたい", score: { caution: 2 } },
       { label: "失敗コストが見えるとほぼ行かない", score: { caution: 3 } },
-    ],
-    "risk-tolerance",
-    "A"
+    ]
   ),
   q(
-    "q16b",
     "self",
     "🪂",
     "勝負",
@@ -922,12 +816,9 @@ const questionPool: Question[] = [
       { label: "少し心が動く", score: { passion: 1 } },
       { label: "慎重に比較する", score: { caution: 2, reality: 1 } },
       { label: "安定を崩したくない", score: { caution: 2, attachment: 1 } },
-    ],
-    "risk-tolerance",
-    "B"
+    ]
   ),
   q(
-    "q16c",
     "self",
     "🧮",
     "損失感覚",
@@ -939,12 +830,13 @@ const questionPool: Question[] = [
       { label: "迷うが、惹かれはする", score: { passion: 1 } },
       { label: "まず損失を考える", score: { caution: 1 } },
       { label: "安全な方を選びがち", score: { caution: 1, reality: 1 } },
-    ],
-    "risk-tolerance",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 17. 感情の出し方
+  // =========================================================
   q(
-    "q17a",
     "emotion",
     "🔥",
     "感情表現",
@@ -956,12 +848,9 @@ const questionPool: Question[] = [
       { label: "わりと表情や言葉に出る", score: { passion: 2 } },
       { label: "できるだけ抑える", score: { caution: 2 } },
       { label: "ほとんど外には出さない", score: { caution: 3 } },
-    ],
-    "emotion-expression",
-    "A"
+    ]
   ),
   q(
-    "q17b",
     "emotion",
     "🌊",
     "波",
@@ -973,12 +862,9 @@ const questionPool: Question[] = [
       { label: "近い人には伝わる", score: { passion: 1, attachment: 1 } },
       { label: "なるべく見せないようにする", score: { caution: 2 } },
       { label: "外からはほぼ読まれない", score: { caution: 2, independence: 1 } },
-    ],
-    "emotion-expression",
-    "B"
+    ]
   ),
   q(
-    "q17c",
     "emotion",
     "🤐",
     "感情抑制",
@@ -990,12 +876,13 @@ const questionPool: Question[] = [
       { label: "ときどき漏れる", score: { passion: 1 } },
       { label: "基本は整える", score: { caution: 1 } },
       { label: "外に出さない方が自然", score: { caution: 1 } },
-    ],
-    "emotion-expression",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 18. 熱中の仕方
+  // =========================================================
   q(
-    "q18a",
     "self",
     "🔥",
     "熱中",
@@ -1007,12 +894,9 @@ const questionPool: Question[] = [
       { label: "かなり熱量高く続ける", score: { passion: 2 } },
       { label: "ペースを崩さないよう調整する", score: { caution: 2, reality: 1 } },
       { label: "熱くなりすぎないよう自然に抑える", score: { caution: 3 } },
-    ],
-    "immersion-style",
-    "A"
+    ]
   ),
   q(
-    "q18b",
     "self",
     "🧯",
     "温度管理",
@@ -1024,12 +908,9 @@ const questionPool: Question[] = [
       { label: "波はあるが勢いで進めることも多い", score: { passion: 1 } },
       { label: "熱量はあるが管理できる", score: { caution: 2 } },
       { label: "暴走しないことを重視する", score: { caution: 2, reality: 1 } },
-    ],
-    "immersion-style",
-    "B"
+    ]
   ),
   q(
-    "q18c",
     "self",
     "🎚️",
     "入り方",
@@ -1041,12 +922,13 @@ const questionPool: Question[] = [
       { label: "興味があれば早い", score: { passion: 1 } },
       { label: "様子を見てから入る", score: { caution: 1 } },
       { label: "慎重にしか入らない", score: { caution: 1 } },
-    ],
-    "immersion-style",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 19. 衝突時の出方
+  // =========================================================
   q(
-    "q19a",
     "social",
     "💥",
     "衝突",
@@ -1058,12 +940,9 @@ const questionPool: Question[] = [
       { label: "感情は出るが、言い方は考える", score: { passion: 2, caution: 1 } },
       { label: "できるだけ冷静に整えようとする", score: { caution: 2, reality: 1 } },
       { label: "衝突自体を避ける方向に動く", score: { caution: 3 } },
-    ],
-    "conflict-style",
-    "A"
+    ]
   ),
   q(
-    "q19b",
     "social",
     "🗯️",
     "言い返し",
@@ -1075,12 +954,9 @@ const questionPool: Question[] = [
       { label: "タイミングを見て伝える", score: { passion: 1, caution: 1 } },
       { label: "整理してから話す", score: { caution: 2 } },
       { label: "まずは飲み込むことが多い", score: { caution: 2, attachment: 1 } },
-    ],
-    "conflict-style",
-    "B"
+    ]
   ),
   q(
-    "q19c",
     "social",
     "🧊",
     "対立姿勢",
@@ -1092,12 +968,13 @@ const questionPool: Question[] = [
       { label: "避けたくはないが疲れる", score: { passion: 1, caution: 1 } },
       { label: "できれば穏便に済ませたい", score: { caution: 1 } },
       { label: "かなり避けたい", score: { caution: 1 } },
-    ],
-    "conflict-style",
-    "C"
+    ]
   ),
+
+  // =========================================================
+  // 20. 勝負どころの選び方
+  // =========================================================
   q(
-    "q20a",
     "self",
     "🎯",
     "勝負どき",
@@ -1109,12 +986,9 @@ const questionPool: Question[] = [
       { label: "行けそうなら勢いで乗る", score: { passion: 2 } },
       { label: "条件を見てから判断する", score: { caution: 2, reality: 1 } },
       { label: "安全圏が見えるまで待つ", score: { caution: 3 } },
-    ],
-    "timing-style",
-    "A"
+    ]
   ),
   q(
-    "q20b",
     "self",
     "🪜",
     "攻め時",
@@ -1126,12 +1000,9 @@ const questionPool: Question[] = [
       { label: "感覚が合えば前へ出る", score: { passion: 1, intuition: 1 } },
       { label: "崩れない進め方を選ぶ", score: { caution: 2 } },
       { label: "失敗しないルートを優先する", score: { caution: 2, reality: 1 } },
-    ],
-    "timing-style",
-    "B"
+    ]
   ),
   q(
-    "q20c",
     "self",
     "🧠",
     "最終判断",
@@ -1143,11 +1014,31 @@ const questionPool: Question[] = [
       { label: "直感の手応え", score: { passion: 1, intuition: 1 } },
       { label: "損しないかどうか", score: { caution: 1 } },
       { label: "現実的に通るかどうか", score: { caution: 1, reality: 1 } },
-    ],
-    "timing-style",
-    "C"
+    ]
   ),
 ];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const types: TypeDef[] = [
   {
@@ -1350,6 +1241,72 @@ const GOOD_MATCH: Record<string, string[]> = {
   tengu: ["kijo", "kuchisake"],
 };
 
+const characterAdjustments: Record<string, string> = {
+  花子さん: `slightly unsettling smile
+not friendly
+quiet but watching you`,
+  人面犬: `awkward human-like face
+slightly annoying expression
+not cute`,
+  モスマン: `not too scary
+not horror
+slightly awkward posture
+not powerful`,
+  ビッグフット: `not heroic
+not cool
+slightly clumsy presence
+a bit awkward`,
+  口裂け女: `not too violent
+no excessive blood
+unsettling but not horror`,
+  ツチノコ: `fat body
+short and stubby
+lazy posture
+slightly stupid expression
+not cool
+not cute`,
+  雪女: `emotionless expression
+slightly uncanny beauty
+not elegant
+not majestic`,
+  ネッシー: `not realistic
+slightly strange proportions
+not majestic
+a bit awkward`,
+  チュパカブラ: `no blood
+no gore
+not horror
+slightly weird expression`,
+  天狗: `not heroic
+not cool
+slightly strange proportions
+a bit unsettling`,
+  河童: `not cute
+slightly creepy
+awkward expression`,
+  鵺: `strange hybrid creature
+not cool
+not powerful
+slightly unsettling`,
+  座敷童: `slightly unsettling eyes
+too calm expression
+not fully innocent`,
+  海坊主: `not too scary
+not horror
+simple face
+slightly uncanny`,
+  一つ目小僧: `not cute
+slightly awkward
+unsettling single eye`,
+  ぬらりひょん: `not cool
+petty
+sneaky
+annoying
+uninvited guest
+slightly ugly
+comical but creepy`,
+};
+
 // ===== diagnosis engine =====
 
 function buildAxisMaxScores(questionsList: Question[]): AxisScores {
@@ -1382,62 +1339,21 @@ function buildAxisExposureScores(questionsList: Question[]): AxisScores {
   return totals;
 }
 
-const QUESTION_GROUP_ORDER: QuestionGroupId[] = [
-  "alone-quality",
-  "help-seeking",
-  "relationship-maintenance",
-  "boundary-strength",
-  "parting-process",
-  "loneliness-response",
-  "trust-speed",
-  "intuition-discomfort",
-  "evidence-need",
-  "air-vs-fact",
-  "unexplainable-attitude",
-  "meaning-making",
-  "future-reading",
-  "true-feelings",
-  "initial-move",
-  "risk-tolerance",
-  "emotion-expression",
-  "immersion-style",
-  "conflict-style",
-  "timing-style",
-];
+const AXIS_MAX_SCORES = buildAxisMaxScores(questions);
+const AXIS_EXPOSURE_SCORES = buildAxisExposureScores(questions);
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const next = [...arr];
-  for (let i = next.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [next[i], next[j]] = [next[j], next[i]];
-  }
-  return next;
-}
+const AXIS_SIMILARITY_WEIGHTS: AxisScores = (() => {
+  const result = { ...ZERO };
+  const values = AXES.map((axis) => AXIS_EXPOSURE_SCORES[axis] || 1);
+  const avg = values.reduce((a, b) => a + b, 0) / values.length;
 
-function pickOneQuestionPerGroup(pool: Question[]): Question[] {
-  const byGroup = new Map<QuestionGroupId, Question[]>();
-
-  for (const item of pool) {
-    const list = byGroup.get(item.groupId) ?? [];
-    list.push(item);
-    byGroup.set(item.groupId, list);
+  for (const axis of AXES) {
+    const exposure = AXIS_EXPOSURE_SCORES[axis] || 1;
+    result[axis] = Math.sqrt(avg / exposure);
   }
 
-  const selected: Question[] = [];
-
-  for (const groupId of QUESTION_GROUP_ORDER) {
-    const candidates = byGroup.get(groupId) ?? [];
-
-    if (candidates.length === 0) {
-      throw new Error(`質問グループが不足しています: ${groupId}`);
-    }
-
-    const picked = candidates[Math.floor(Math.random() * candidates.length)];
-    selected.push(picked);
-  }
-
-  return shuffleArray(selected);
-}
+  return result;
+})();
 
 function normalizeVectorToPercent(axis: AxisScores): AxisScores {
   const sum = AXES.reduce((acc, key) => acc + Math.max(0, axis[key]), 0) || 1;
@@ -1450,11 +1366,11 @@ function normalizeVectorToPercent(axis: AxisScores): AxisScores {
   return result;
 }
 
-function normalizeUserAxisScores(raw: AxisScores, axisMaxScores: AxisScores): AxisScores {
+function normalizeUserAxisScores(raw: AxisScores): AxisScores {
   const corrected = { ...ZERO };
 
   for (const key of AXES) {
-    const maxScore = axisMaxScores[key] || 1;
+    const maxScore = AXIS_MAX_SCORES[key] || 1;
     corrected[key] = raw[key] / maxScore;
   }
 
@@ -1465,17 +1381,13 @@ function normalizeTypeAxisScores(axis: AxisScores): AxisScores {
   return normalizeVectorToPercent(axis);
 }
 
-function weightedCosineSimilarity(
-  user: AxisScores,
-  target: AxisScores,
-  weights: AxisScores
-): number {
+function weightedCosineSimilarity(user: AxisScores, target: AxisScores): number {
   let dot = 0;
   let userNorm = 0;
   let targetNorm = 0;
 
   for (const key of AXES) {
-    const w = weights[key];
+    const w = AXIS_SIMILARITY_WEIGHTS[key];
     const u = user[key] * w;
     const t = target[key] * w;
 
@@ -1499,8 +1411,9 @@ function getPrimaryAxisGap(axis: AxisScores): number {
   return (sorted[0] ?? 0) - (sorted[1] ?? 0);
 }
 
-function similarity(user: AxisScores, target: AxisScores, weights: AxisScores): number {
-  const base = weightedCosineSimilarity(user, target, weights);
+
+function similarity(user: AxisScores, target: AxisScores): number {
+  const base = weightedCosineSimilarity(user, target);
 
   const userTop = getTopAxes(user, 2);
   const targetTop = getTopAxes(target, 2);
@@ -1508,12 +1421,15 @@ function similarity(user: AxisScores, target: AxisScores, weights: AxisScores): 
 
   const overlapBonus = overlap === 2 ? 2 : overlap === 1 ? 1 : 0;
   const sharpness = getPrimaryAxisGap(user);
-  const sharpnessBonus = sharpness >= 10 && userTop[0] === targetTop[0] ? 1 : 0;
+  const sharpnessBonus =
+    sharpness >= 10 && userTop[0] === targetTop[0] ? 1 : 0;
 
   return Number(
     Math.max(0, Math.min(100, base + overlapBonus + sharpnessBonus)).toFixed(2)
   );
 }
+
+
 
 function inferResultMode(firstScore: number, secondScore: number): ResultMode {
   const diff = firstScore - secondScore;
@@ -1544,11 +1460,6 @@ function topTwoBlend(firstScore: number, secondScore: number) {
 }
 
 
-
-
-
-
-
 function buildResultName(first: RankedType, second: RankedType, p1: number) {
   if (p1 >= 95) return `${first.name}単独型`;
   if (p1 >= 65) return `${first.name}寄り${second.name}型`;
@@ -1557,6 +1468,7 @@ function buildResultName(first: RankedType, second: RankedType, p1: number) {
 
 
 
+ 
 
 
 
@@ -1585,16 +1497,6 @@ function splitSections(resultText: string) {
     };
   }
 
-
-
-
-
-
-
-
-
-
-
   const get = (start: string, end?: string) => {
     const s = resultText.indexOf(start);
     if (s === -1) return "";
@@ -1607,26 +1509,11 @@ function splitSections(resultText: string) {
     basic: get("【基本性格】", "【対人関係】"),
     relationship: get("【対人関係】", "【恋愛傾向】"),
     love: get("【恋愛傾向】", "【隠れた性格】"),
-    hidden: get("【隠れた性格】", "【⚠ 相性の悪い相手】"),
-    bad: get("【⚠ 相性の悪い相手】", "【◎ 相性の良い相手】"),
+    hidden: get("【隠れた性格】", "【⚠ 相性の悪い相性】"),
+    bad: get("【⚠ 相性の悪い相性】", "【◎ 相性の良い相手】"),
     good: get("【◎ 相性の良い相手】"),
   };
 }
-
-const characterAdjustments: Record<string, string> = {
-  "口裂け女": "sharp mouth motif, anxious beauty, uneasy smile",
-  "花子さん": "school ghost atmosphere, quiet presence, nostalgic eeriness",
-  "貞子": "long dark hair, static-like unease, lingering presence",
-  "ろくろ首": "stretched-neck creepiness expressed subtly in silhouette or posture",
-  "鬼女": "intense rage, strong presence, wild emotional energy",
-  "雪女": "cold beauty, stillness, icy elegance",
-  "一つ目小僧": "single-eye motif, observant and uncanny",
-  "のっぺらぼう": "blank-faced unease, hidden emotion, smooth facial minimalism",
-  "ぬらりひょん": "slippery, elusive, refined but uncanny old-spirit feeling",
-  "座敷童": "protective domestic spirit, warmth mixed with uncanny childlike presence",
-  "河童": "earthy water-creature feeling, practical and rustic yokai details",
-  "天狗": "pride, conviction, sharp avian-yokai authority",
-};
 
 function buildFusionPrompt(first: TypeDef, second: TypeDef, p1: number, p2: number) {
   const firstAdjust = characterAdjustments[first.name] ?? "";
@@ -1674,18 +1561,116 @@ ${secondAdjust}
 `.trim();
 }
 
+function buildMockResult(
+  first: RankedType,
+  second: RankedType,
+  p1: number,
+  p2: number,
+  axis: AxisScores,
+  gender: Gender
+) {
+  const intense =
+    axis.attachment >= axis.independence
+      ? "相手の温度差を静かに記憶していく"
+      : "平気そうな顔で一歩引いて支配権を渡さない";
 
-function QuestionVisual({ item }: { item: Question }) {
-  if (!item) return null;
+  const genderLine =
+    gender === "male"
+      ? "一見すると余裕がありそうに見えるのに、内側では想像以上に執着が深いタイプとして出やすいです。"
+      : gender === "female"
+      ? "柔らかく見えても、感情の持ち方がかなり濃く、曖昧さに対して静かに怖くなるタイプとして出やすいです。"
+      : "性別の印象に縛られず、外から見える顔と内側の濃さにかなり差があるタイプとして出やすいです。";
 
-  return (
-    <div style={styles.visualWrap}>
-      <div style={styles.visualEmoji}>{item.visualEmoji}</div>
-      <div style={styles.visualTitle}>{item.visualTitle}</div>
-      <div style={styles.visualTag}>{item.visualTag}</div>
-    </div>
-  );
+  return `【基本性格】
+普段は${first.name}の性質が強く出やすく、特に「${first.traits.behavior}」という形で表れやすいです。一方で内側には${second.name}らしい「${second.traits.behavior}」もあり、外から見える印象と本音に少し差があります。${genderLine}
+
+【対人関係】
+人との関わり方には${first.traits.behavior}傾向が出やすいです。ただ、関係ができてからは${second.traits.emotion}がにじみやすく、相手の言動を思った以上に受け取ることがあります。距離感そのものより、相手からの見え方に個性が出ます。
+
+【恋愛傾向】
+恋愛をすると${first.traits.love}のようになりやすいです。そこに${second.traits.love}傾向が混ざるので、最初と関係が深くなってからで印象が変わりやすいです。しかもあなたは${intense}タイプです。
+
+【隠れた性格】
+あなたは内面に${second.traits.emotion}のようなものを秘めています。そのため、曖昧な関係や温度差には思った以上に反応しやすいです。表では平気そうでも、内側では納得できる形をかなり求めています。
+
+【⚠ 相性の悪い相性】
+${BAD_MATCH[first.id]?.[0] ?? "鬼女"}
+
+【◎ 相性の良い相手】
+${GOOD_MATCH[first.id]?.[0] ?? "雪女"}`;
 }
+
+function mockImageUrl(first: RankedType, second: RankedType) {
+  const text = encodeURIComponent(`${first.name} × ${second.name}`);
+  return `https://placehold.co/1024x1024/111827/f8fafc?text=${text}`;
+}
+
+
+
+async function requestResult(payload: GenerateResultPayload) {
+  if (USE_MOCK) {
+    return buildMockResult(payload.main, payload.sub, 60, 40, ZERO, payload.gender);
+  }
+
+  const response = await fetch(RESULT_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      main: payload.main,
+      sub: payload.sub,
+      mode: payload.mode,
+      bad: payload.bad,
+      good: payload.good,
+      gender: payload.gender,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "結果文の生成に失敗しました。");
+  return (data.text ?? data.result) as string;
+}
+
+
+
+
+
+
+
+async function requestImage({
+  prompt,
+  first,
+  second,
+  blend,
+  mode,
+}: {
+  prompt: string;
+  first: RankedType;
+  second: RankedType;
+  blend: { p1: number; p2: number };
+  mode: ResultMode;
+}) {
+  if (USE_MOCK) return mockImageUrl(first, second);
+
+  const response = await fetch(IMAGE_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prompt,
+      first,
+      second,
+      blend,
+      mode,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "画像生成に失敗しました。");
+  return data.imageUrl as string;
+}
+
+
+
+
 
 
 
@@ -1696,49 +1681,53 @@ function ResultHero({
   p1,
   p2,
   resultName,
-  imageUrl,
 }: {
+
+
+
+
+
   first: RankedType;
   second: RankedType;
   p1: number;
   p2: number;
   resultName: string;
-  imageUrl: string;
 }) {
   return (
-      <div
+    <div
       style={{
-        ...styles.resultHero,
-        gridTemplateColumns: imageUrl ? "1.1fr 0.9fr" : "1fr",
+        ...styles.hero,
+        background: `linear-gradient(135deg, ${first.colors[0]}, ${second.colors[1]})`,
       }}
     >
-      <div style={styles.resultHeroText}>
-        <div style={styles.resultHeroBadge}>診断結果</div>
-        <h2 style={styles.resultHeroTitle}>{resultName}</h2>
-
-        <div style={styles.resultHeroBlend}>
-          <span>{first.name}</span>
-          <span>{p1}%</span>
-          <span>×</span>
-          <span>{second.name}</span>
-          <span>{p2}%</span>
-        </div>
-
-        <p style={styles.resultHeroVibe}>
-          {first.vibe}
-          {p2 > 0 ? ` × ${second.vibe}` : ""}
-        </p>
+      <div style={styles.heroNoise} />
+      <div style={styles.heroChip}>都市伝説占い RESULT</div>
+      <div style={styles.heroName}>{resultName}</div>
+      <div style={styles.heroMix}>
+        {first.name} × {second.name}
       </div>
+      <div style={styles.heroPercent}>
+        {p1}% / {p2}%
+      </div>
+      <div style={styles.heroSub}>{p1 >= 95 ? first.loveWarning : `${first.loveWarning} / ${second.loveWarning}`}</div>
+    </div>
+  );
+}
 
-      {imageUrl ? (
-        <div style={styles.resultHeroImageWrap}>
-          <img
-            src={imageUrl}
-            alt={resultName}
-            style={styles.resultHeroImage}
-          />
-        </div>
-      ) : null}
+function QuestionVisual({ item }: { item: Question }) {
+  return (
+    <div
+      style={{
+        ...styles.questionVisual,
+        background: `linear-gradient(135deg, ${item.colors[0]}, ${item.colors[1]})`,
+      }}
+    >
+      <div style={styles.questionVisualNoise} />
+      <div style={styles.questionEmoji}>{item.visualEmoji}</div>
+      <div style={styles.questionTitleWrap}>
+        <div style={styles.questionTitle}>{item.visualTitle}</div>
+        <div style={styles.questionTag}>{item.visualTag}</div>
+      </div>
     </div>
   );
 }
@@ -1746,51 +1735,53 @@ function ResultHero({
 
 
 
-
-
-
-
-
+const AXIS_LABELS_JP: Record<AxisKey, string> = {
+  passion: "情熱",
+  caution: "慎重さ",
+  intuition: "直感",
+  reality: "現実感",
+  attachment: "執着",
+  independence: "自立",
+};
 
 function AxisMeter({ axis }: { axis: AxisScores }) {
-  const axisItems: { key: AxisKey; label: string }[] = [
-    { key: "passion", label: "passion" },
-    { key: "caution", label: "caution" },
-    { key: "intuition", label: "intuition" },
-    { key: "reality", label: "reality" },
-    { key: "attachment", label: "attachment" },
-    { key: "independence", label: "independence" },
-  ];
+  const sorted = [...AXES]
+    .map((key) => ({ key, value: axis[key] }))
+    .sort((a, b) => b.value - a.value);
 
   return (
     <div style={styles.axisCard}>
-      <div style={styles.sectionTitle}>AXIS METER</div>
+      <div style={styles.sectionTitle}>あなたの内側にある6つの要素</div>
 
       <div style={styles.axisList}>
-        {axisItems.map(({ key, label }) => {
-          const value = Math.max(0, Math.min(100, axis[key] ?? 0));
-
-          return (
-            <div key={key} style={styles.axisRow}>
-              <div style={styles.axisLabel}>{label}</div>
-
-              <div style={styles.axisTrack}>
-                <div
-                  style={{
-                    ...styles.axisFill,
-                    width: `${value}%`,
-                  }}
-                />
-              </div>
-
-              <div style={styles.axisValue}>{Math.round(value)}</div>
+        {sorted.map((item) => (
+          <div key={item.key} style={styles.axisRow}>
+            {/* 日本語ラベル */}
+            <div style={styles.axisLabel}>
+              {AXIS_LABELS_JP[item.key]}
             </div>
-          );
-        })}
+
+            {/* バー */}
+            <div style={styles.axisTrack}>
+              <div
+                style={{
+                  ...styles.axisFill,
+                  width: `${item.value}%`,
+                }}
+              />
+            </div>
+
+            {/* 数値（%つけると良い） */}
+            <div style={styles.axisValue}>
+              {Math.round(item.value)}%
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+
 
 
 
@@ -1814,11 +1805,15 @@ function CaptureCard({
   normalizedAxis: AxisScores;
 }) {
   const sections = splitSections(resultText);
+  const topAxes = [...AXES]
+    .map((key) => ({ key, value: normalizedAxis[key] }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 3);
 
   return (
     <div style={styles.captureFixed}>
       <div style={styles.captureHeader}>
-        <div style={styles.captureBadge}>診断結果</div>
+        <div style={styles.captureBadge}>都市伝説占い</div>
         <div style={styles.captureTitle}>{resultName}</div>
         <div style={styles.captureSub}>
           {first.name} {blend.p1}% × {second.name} {blend.p2}%
@@ -1828,38 +1823,41 @@ function CaptureCard({
       <div style={styles.captureMainGrid}>
         <div style={styles.captureImagePanel}>
           {imageUrl ? (
-            <img src={imageUrl} alt={resultName} style={styles.captureImage} />
+            <img src={imageUrl} alt="診断イメージ" style={styles.captureImage} />
           ) : (
-            <div style={styles.captureImagePlaceholder}>NO IMAGE</div>
+            <div style={styles.captureImagePlaceholder}>IMAGE NOT GENERATED</div>
           )}
         </div>
 
         <div style={styles.captureTextPanel}>
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>基本性格</div>
-            <div style={styles.captureMiniBody}>{sections.basic || "..."}</div>
+            <div style={styles.captureMiniLabel}>表向き</div>
+            <div style={styles.captureMiniBody}>{first.publicMask}</div>
           </div>
 
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>対人関係</div>
+            <div style={styles.captureMiniLabel}>内側</div>
+            <div style={styles.captureMiniBody}>{first.innerCore}</div>
+          </div>
+
+          <div style={styles.captureMiniSection}>
+            <div style={styles.captureMiniLabel}>危うさ</div>
             <div style={styles.captureMiniBody}>
-              {sections.relationship || "..."}
+              {blend.p1 >= 95 ? first.risk : `${first.risk} / ${second.risk}`}
             </div>
           </div>
 
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>恋愛傾向</div>
-            <div style={styles.captureMiniBody}>{sections.love || "..."}</div>
+            <div style={styles.captureMiniLabel}>魅力</div>
+            <div style={styles.captureMiniBody}>
+              {blend.p1 >= 95 ? first.gift : `${first.gift} / ${second.gift}`}
+            </div>
           </div>
 
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>主要軸</div>
-            <div style={styles.captureAxisTags}>
-              {AXES.map((key) => (
-                <div key={key} style={styles.captureAxisTag}>
-                  {key}: {Math.round(normalizedAxis[key] ?? 0)}
-                </div>
-              ))}
+            <div style={styles.captureMiniLabel}>要約</div>
+            <div style={styles.captureSummary}>
+              {trimForCard(sections.basic || resultText, 190)}
             </div>
           </div>
         </div>
@@ -1867,96 +1865,17 @@ function CaptureCard({
 
       <div style={styles.captureFooter}>
         <div style={styles.captureFooterBlock}>
-          <div style={styles.captureMiniLabel}>相性の悪い相手</div>
-          <div style={styles.captureFooterText}>{sections.bad || "..."}</div>
+          <div style={styles.captureMiniLabel}>恋愛傾向</div>
+          <div style={styles.captureFooterText}>{trimForCard(sections.love || "", 120)}</div>
         </div>
-
         <div style={styles.captureFooterBlock}>
-          <div style={styles.captureMiniLabel}>相性の良い相手</div>
-          <div style={styles.captureFooterText}>{sections.good || "..."}</div>
+          <div style={styles.captureMiniLabel}>隠れた性格</div>
+          <div style={styles.captureFooterText}>{trimForCard(sections.hidden || "", 120)}</div>
         </div>
       </div>
     </div>
   );
 }
-
-
-
-
-
-async function requestResult(params: {
-  main: RankedType;
-  sub?: RankedType;
-  mode: "single" | "dominant-dual" | "balanced-dual";
-  gender: Gender;
-}) {
-  const { main, sub, mode } = params;
-
-  console.log("requestResult payload", { main, sub, mode });
-
-  const res = await fetch("/api/generate-result", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      main,
-      sub,
-      mode,
-    }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    console.error("generate-result error", data);
-    throw new Error(data?.error || "結果文の生成に失敗しました");
-  }
-
-  return data?.text ?? "";
-}
-
-
-
-
-
-
-
-async function requestImage(params: {
-  prompt: string;
-  first: RankedType;
-  second: RankedType;
-  blend: { p1: number; p2: number };
-  mode: "single" | "dominant-dual" | "balanced-dual";
-}) {
-  const { prompt, first, second, blend, mode } = params;
-
-  const res = await fetch("/api/generate-image", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt,
-      first,
-      second,
-      blend,
-      mode,
-    }),
-  });
-
-  const data = await res.json();
-
-  console.log("requestImage response", data);
-
-  if (!res.ok) {
-    throw new Error(data?.error || "画像生成に失敗しました");
-  }
-
-  return data?.imageUrl ?? data?.url ?? "";
-}
-
-
 
 
 
@@ -1974,9 +1893,6 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isCapturePreparing, setIsCapturePreparing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [sessionQuestions, setSessionQuestions] = useState<Question[]>(() =>
-    pickOneQuestionPerGroup(questionPool)
-  );
 
   const captureRef = useRef<HTMLDivElement | null>(null);
 
@@ -1988,32 +1904,8 @@ export default function App() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const current = sessionQuestions[Math.min(step, sessionQuestions.length - 1)];
-
-  const axisMaxScores = useMemo(() => buildAxisMaxScores(sessionQuestions), [sessionQuestions]);
-
-  const axisExposureScores = useMemo(
-    () => buildAxisExposureScores(sessionQuestions),
-    [sessionQuestions]
-  );
-
-  const axisSimilarityWeights = useMemo<AxisScores>(() => {
-    const result = { ...ZERO };
-    const values = AXES.map((axis) => axisExposureScores[axis] || 1);
-    const avg = values.reduce((a, b) => a + b, 0) / values.length;
-
-    for (const axis of AXES) {
-      const exposure = axisExposureScores[axis] || 1;
-      result[axis] = Math.sqrt(avg / exposure);
-    }
-
-    return result;
-  }, [axisExposureScores]);
-
-  const normalizedAxis = useMemo(
-    () => normalizeUserAxisScores(axis, axisMaxScores),
-    [axis, axisMaxScores]
-  );
+  const current = questions[Math.min(step, questions.length - 1)];
+  const normalizedAxis = useMemo(() => normalizeUserAxisScores(axis), [axis]);
 
   const ranked = useMemo(() => {
     return [...types]
@@ -2021,11 +1913,11 @@ export default function App() {
         const normalizedTypeAxis = normalizeTypeAxisScores(item.axis);
         return {
           ...item,
-          score: similarity(normalizedAxis, normalizedTypeAxis, axisSimilarityWeights),
+          score: similarity(normalizedAxis, normalizedTypeAxis),
         };
       })
       .sort((a, b) => b.score - a.score) as RankedType[];
-  }, [normalizedAxis, axisSimilarityWeights]);
+  }, [normalizedAxis]);
 
   
       const first = ranked[0] ?? ({ ...types[0], score: 50 } as RankedType);
@@ -2052,7 +1944,7 @@ export default function App() {
       return next;
     });
 
-    if (step + 1 >= sessionQuestions.length) {
+    if (step + 1 >= questions.length) {
       setViewMode("result");
     }
 
@@ -2068,7 +1960,6 @@ export default function App() {
     setErrorMessage("");
     setIsGenerating(false);
     setIsCapturePreparing(false);
-    setSessionQuestions(pickOneQuestionPerGroup(questionPool));
   };
 
   const generateAll = async () => {
@@ -2080,19 +1971,17 @@ export default function App() {
       const bad = BAD_MATCH[first.id]?.[0] ?? "kijo";
       const good = GOOD_MATCH[first.id]?.[0] ?? "yukionna";
 
-
-
       const text = await requestResult({
         main: first,
         sub: second,
         mode,
+        bad,
+        good,
         gender,
       });
 
+
       setResultText(text);
-
-
-
 
       try {
         const img = await requestImage({
@@ -2114,126 +2003,68 @@ export default function App() {
     }
   };
 
+  const downloadResultImage = async () => {
+    if (!captureRef.current) return;
 
+    try {
+      setIsCapturePreparing(true);
 
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
 
+      await new Promise((resolve) => setTimeout(resolve, 80));
 
-
-
-const downloadResultImage = async () => {
-  const target = captureRef.current;
-  if (!target) return;
-
-  try {
-    setErrorMessage("");
-
-    if (document.fonts?.ready) {
-      await document.fonts.ready;
-    }
-
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
-    await new Promise((resolve) => setTimeout(resolve, 150));
-
-    const canvas = await html2canvas(target, {
-      backgroundColor: "#0b0b12",
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      width: 1080,
-      height: 1350,
-      windowWidth: 1080,
-      windowHeight: 1350,
-      removeContainer: true,
-    });
-
-    const dataUrl = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = `${resultName || "result"}.png`;
-    link.click();
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("画像の保存に失敗しました。");
-  }
-};
-
-
-
-const shareResultImage = async () => {
-  const target = captureRef.current;
-  if (!target) return;
-
-  try {
-    setErrorMessage("");
-
-    if (document.fonts?.ready) {
-      await document.fonts.ready;
-    }
-
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
-    await new Promise((resolve) => setTimeout(resolve, 150));
-
-    const canvas = await html2canvas(target, {
-      backgroundColor: "#0b0b12",
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      width: 1080,
-      height: 1350,
-      windowWidth: 1080,
-      windowHeight: 1350,
-      removeContainer: true,
-    });
-
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/png")
-    );
-
-    if (!blob) {
-      throw new Error("PNGの生成に失敗しました");
-    }
-
-    const file = new File([blob], "urban-legend-result.png", {
-      type: "image/png",
-    });
-
-    if (
-      typeof navigator !== "undefined" &&
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({ files: [file] })
-    ) {
-      await navigator.share({
-        title: "都市伝説占い",
-        text: "診断結果を共有する",
-        files: [file],
+      const canvas = await html2canvas(captureRef.current, {
+        backgroundColor: "#0b0b12",
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: 1080,
+        height: 1350,
+        windowWidth: 1080,
+        windowHeight: 1350,
       });
-      return;
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png")
+      );
+
+      if (!blob) {
+        throw new Error("PNGの生成に失敗しました");
+      }
+
+      const file = new File([blob], "urban-legend-result.png", {
+        type: "image/png",
+      });
+
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({ files: [file] })
+      ) {
+        await navigator.share({
+          title: "都市伝説占い",
+          text: "診断結果を共有する",
+          files: [file],
+        });
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "urban-legend-result.png";
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      alert("画像の共有または保存に失敗しました");
+    } finally {
+      setIsCapturePreparing(false);
     }
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "urban-legend-result.png";
-    link.click();
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("画像の共有または保存に失敗しました。");
-  }
-};
-
-
-
-
-
-
-
-
+  };
 
   if (viewMode === "intro") {
     return (
@@ -2526,7 +2357,7 @@ const shareResultImage = async () => {
       <div style={styles.card}>
         <div style={styles.progressRow}>
           <div style={styles.badge}>
-            質問 {step + 1} / {sessionQuestions.length}
+            質問 {step + 1} / {questions.length}
           </div>
           <div style={styles.progressText}>analysis running...</div>
         </div>
@@ -2535,7 +2366,7 @@ const shareResultImage = async () => {
           <div
             style={{
               ...styles.progressFill,
-              width: `${((step + 1) / sessionQuestions.length) * 100}%`,
+              width: `${((step + 1) / questions.length) * 100}%`,
             }}
           />
         </div>
@@ -2556,18 +2387,6 @@ const shareResultImage = async () => {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 const styles: Record<string, React.CSSProperties> = {
   horrorPage: {
@@ -3406,106 +3225,5 @@ const styles: Record<string, React.CSSProperties> = {
     color: "rgba(255,255,255,0.9)",
     wordBreak: "break-word",
     overflowWrap: "anywhere",
-  },
-
-
-
-
-
-
-
-  visualWrap: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 16,
-  },
-
-  visualEmoji: {
-    fontSize: 40,
-  },
-
-  visualTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-  },
-
-  visualTag: {
-    fontSize: 12,
-    opacity: 0.7,
-  },
-
-  resultHero: {
-    display: "grid",
-    gridTemplateColumns: "1.1fr 0.9fr",
-    gap: 24,
-    alignItems: "center",
-    padding: 24,
-    borderRadius: 24,
-    background: "linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
-    border: "1px solid rgba(255,255,255,0.08)",
-  },
-
-  resultHeroText: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
-  },
-
-  resultHeroBadge: {
-    display: "inline-flex",
-    alignSelf: "flex-start",
-    padding: "6px 10px",
-    borderRadius: 999,
-    fontSize: 12,
-    letterSpacing: "0.08em",
-    background: "rgba(255,255,255,0.08)",
-  },
-
-  resultHeroTitle: {
-    margin: 0,
-    fontSize: 32,
-    lineHeight: 1.2,
-    fontWeight: 800,
-  },
-
-  resultHeroBlend: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 8,
-    alignItems: "center",
-    fontSize: 14,
-    opacity: 0.9,
-  },
-
-  resultHeroVibe: {
-    margin: 0,
-    fontSize: 14,
-    lineHeight: 1.7,
-    opacity: 0.85,
-  },
-
-  resultHeroImageWrap: {
-    width: "100%",
-  },
-
-  resultHeroImage: {
-    display: "block",
-    width: "100%",
-    borderRadius: 20,
-    objectFit: "cover",
-    border: "1px solid rgba(255,255,255,0.08)",
-  },
-
-  resultHeroImagePlaceholder: {
-    minHeight: 320,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    border: "1px dashed rgba(255,255,255,0.2)",
-    background: "rgba(255,255,255,0.03)",
-    color: "rgba(255,255,255,0.55)",
   },
 };

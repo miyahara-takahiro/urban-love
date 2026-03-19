@@ -61,47 +61,6 @@ type Question = {
   variant: QuestionVariant;
 };
 
-type CharacterTraits = {
-  behavior: string;
-  emotion: string;
-  love: string;
-};
-
-type TypeDef = {
-  id: string;
-  name: string;
-  vibe: string;
-  axis: AxisScores;
-  colors: [string, string];
-  publicMask: string;
-  innerCore: string;
-  risk: string;
-  gift: string;
-  scaryTitle: string;
-  loveWarning: string;
-  traits: CharacterTraits;
-  introHint?: string;
-};
-
-type RankedType = TypeDef & { score: number };
-
-type GenerateResultPayload = {
-  main: RankedType;
-  sub: RankedType;
-  bad: string;
-  good: string;
-  gender: Gender;
-};
-
-const ZERO: AxisScores = {
-  passion: 0,
-  caution: 0,
-  intuition: 0,
-  reality: 0,
-  attachment: 0,
-  independence: 0,
-};
-
 const q = (
   id: string,
   category: Category,
@@ -1350,6 +1309,72 @@ const GOOD_MATCH: Record<string, string[]> = {
   tengu: ["kijo", "kuchisake"],
 };
 
+const characterAdjustments: Record<string, string> = {
+  花子さん: `slightly unsettling smile
+not friendly
+quiet but watching you`,
+  人面犬: `awkward human-like face
+slightly annoying expression
+not cute`,
+  モスマン: `not too scary
+not horror
+slightly awkward posture
+not powerful`,
+  ビッグフット: `not heroic
+not cool
+slightly clumsy presence
+a bit awkward`,
+  口裂け女: `not too violent
+no excessive blood
+unsettling but not horror`,
+  ツチノコ: `fat body
+short and stubby
+lazy posture
+slightly stupid expression
+not cool
+not cute`,
+  雪女: `emotionless expression
+slightly uncanny beauty
+not elegant
+not majestic`,
+  ネッシー: `not realistic
+slightly strange proportions
+not majestic
+a bit awkward`,
+  チュパカブラ: `no blood
+no gore
+not horror
+slightly weird expression`,
+  天狗: `not heroic
+not cool
+slightly strange proportions
+a bit unsettling`,
+  河童: `not cute
+slightly creepy
+awkward expression`,
+  鵺: `strange hybrid creature
+not cool
+not powerful
+slightly unsettling`,
+  座敷童: `slightly unsettling eyes
+too calm expression
+not fully innocent`,
+  海坊主: `not too scary
+not horror
+simple face
+slightly uncanny`,
+  一つ目小僧: `not cute
+slightly awkward
+unsettling single eye`,
+  ぬらりひょん: `not cool
+petty
+sneaky
+annoying
+uninvited guest
+slightly ugly
+comical but creepy`,
+};
+
 // ===== diagnosis engine =====
 
 function buildAxisMaxScores(questionsList: Question[]): AxisScores {
@@ -1544,11 +1569,6 @@ function topTwoBlend(firstScore: number, secondScore: number) {
 }
 
 
-
-
-
-
-
 function buildResultName(first: RankedType, second: RankedType, p1: number) {
   if (p1 >= 95) return `${first.name}単独型`;
   if (p1 >= 65) return `${first.name}寄り${second.name}型`;
@@ -1557,6 +1577,7 @@ function buildResultName(first: RankedType, second: RankedType, p1: number) {
 
 
 
+ 
 
 
 
@@ -1585,16 +1606,6 @@ function splitSections(resultText: string) {
     };
   }
 
-
-
-
-
-
-
-
-
-
-
   const get = (start: string, end?: string) => {
     const s = resultText.indexOf(start);
     if (s === -1) return "";
@@ -1607,26 +1618,11 @@ function splitSections(resultText: string) {
     basic: get("【基本性格】", "【対人関係】"),
     relationship: get("【対人関係】", "【恋愛傾向】"),
     love: get("【恋愛傾向】", "【隠れた性格】"),
-    hidden: get("【隠れた性格】", "【⚠ 相性の悪い相手】"),
-    bad: get("【⚠ 相性の悪い相手】", "【◎ 相性の良い相手】"),
+    hidden: get("【隠れた性格】", "【⚠ 相性の悪い相性】"),
+    bad: get("【⚠ 相性の悪い相性】", "【◎ 相性の良い相手】"),
     good: get("【◎ 相性の良い相手】"),
   };
 }
-
-const characterAdjustments: Record<string, string> = {
-  "口裂け女": "sharp mouth motif, anxious beauty, uneasy smile",
-  "花子さん": "school ghost atmosphere, quiet presence, nostalgic eeriness",
-  "貞子": "long dark hair, static-like unease, lingering presence",
-  "ろくろ首": "stretched-neck creepiness expressed subtly in silhouette or posture",
-  "鬼女": "intense rage, strong presence, wild emotional energy",
-  "雪女": "cold beauty, stillness, icy elegance",
-  "一つ目小僧": "single-eye motif, observant and uncanny",
-  "のっぺらぼう": "blank-faced unease, hidden emotion, smooth facial minimalism",
-  "ぬらりひょん": "slippery, elusive, refined but uncanny old-spirit feeling",
-  "座敷童": "protective domestic spirit, warmth mixed with uncanny childlike presence",
-  "河童": "earthy water-creature feeling, practical and rustic yokai details",
-  "天狗": "pride, conviction, sharp avian-yokai authority",
-};
 
 function buildFusionPrompt(first: TypeDef, second: TypeDef, p1: number, p2: number) {
   const firstAdjust = characterAdjustments[first.name] ?? "";
@@ -1674,18 +1670,116 @@ ${secondAdjust}
 `.trim();
 }
 
+function buildMockResult(
+  first: RankedType,
+  second: RankedType,
+  p1: number,
+  p2: number,
+  axis: AxisScores,
+  gender: Gender
+) {
+  const intense =
+    axis.attachment >= axis.independence
+      ? "相手の温度差を静かに記憶していく"
+      : "平気そうな顔で一歩引いて支配権を渡さない";
 
-function QuestionVisual({ item }: { item: Question }) {
-  if (!item) return null;
+  const genderLine =
+    gender === "male"
+      ? "一見すると余裕がありそうに見えるのに、内側では想像以上に執着が深いタイプとして出やすいです。"
+      : gender === "female"
+      ? "柔らかく見えても、感情の持ち方がかなり濃く、曖昧さに対して静かに怖くなるタイプとして出やすいです。"
+      : "性別の印象に縛られず、外から見える顔と内側の濃さにかなり差があるタイプとして出やすいです。";
 
-  return (
-    <div style={styles.visualWrap}>
-      <div style={styles.visualEmoji}>{item.visualEmoji}</div>
-      <div style={styles.visualTitle}>{item.visualTitle}</div>
-      <div style={styles.visualTag}>{item.visualTag}</div>
-    </div>
-  );
+  return `【基本性格】
+普段は${first.name}の性質が強く出やすく、特に「${first.traits.behavior}」という形で表れやすいです。一方で内側には${second.name}らしい「${second.traits.behavior}」もあり、外から見える印象と本音に少し差があります。${genderLine}
+
+【対人関係】
+人との関わり方には${first.traits.behavior}傾向が出やすいです。ただ、関係ができてからは${second.traits.emotion}がにじみやすく、相手の言動を思った以上に受け取ることがあります。距離感そのものより、相手からの見え方に個性が出ます。
+
+【恋愛傾向】
+恋愛をすると${first.traits.love}のようになりやすいです。そこに${second.traits.love}傾向が混ざるので、最初と関係が深くなってからで印象が変わりやすいです。しかもあなたは${intense}タイプです。
+
+【隠れた性格】
+あなたは内面に${second.traits.emotion}のようなものを秘めています。そのため、曖昧な関係や温度差には思った以上に反応しやすいです。表では平気そうでも、内側では納得できる形をかなり求めています。
+
+【⚠ 相性の悪い相性】
+${BAD_MATCH[first.id]?.[0] ?? "鬼女"}
+
+【◎ 相性の良い相手】
+${GOOD_MATCH[first.id]?.[0] ?? "雪女"}`;
 }
+
+function mockImageUrl(first: RankedType, second: RankedType) {
+  const text = encodeURIComponent(`${first.name} × ${second.name}`);
+  return `https://placehold.co/1024x1024/111827/f8fafc?text=${text}`;
+}
+
+
+
+async function requestResult(payload: GenerateResultPayload) {
+  if (USE_MOCK) {
+    return buildMockResult(payload.main, payload.sub, 60, 40, ZERO, payload.gender);
+  }
+
+  const response = await fetch(RESULT_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      main: payload.main,
+      sub: payload.sub,
+      mode: payload.mode,
+      bad: payload.bad,
+      good: payload.good,
+      gender: payload.gender,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "結果文の生成に失敗しました。");
+  return (data.text ?? data.result) as string;
+}
+
+
+
+
+
+
+
+async function requestImage({
+  prompt,
+  first,
+  second,
+  blend,
+  mode,
+}: {
+  prompt: string;
+  first: RankedType;
+  second: RankedType;
+  blend: { p1: number; p2: number };
+  mode: ResultMode;
+}) {
+  if (USE_MOCK) return mockImageUrl(first, second);
+
+  const response = await fetch(IMAGE_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      prompt,
+      first,
+      second,
+      blend,
+      mode,
+    }),
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "画像生成に失敗しました。");
+  return data.imageUrl as string;
+}
+
+
+
+
 
 
 
@@ -1696,49 +1790,53 @@ function ResultHero({
   p1,
   p2,
   resultName,
-  imageUrl,
 }: {
+
+
+
+
+
   first: RankedType;
   second: RankedType;
   p1: number;
   p2: number;
   resultName: string;
-  imageUrl: string;
 }) {
   return (
-      <div
+    <div
       style={{
-        ...styles.resultHero,
-        gridTemplateColumns: imageUrl ? "1.1fr 0.9fr" : "1fr",
+        ...styles.hero,
+        background: `linear-gradient(135deg, ${first.colors[0]}, ${second.colors[1]})`,
       }}
     >
-      <div style={styles.resultHeroText}>
-        <div style={styles.resultHeroBadge}>診断結果</div>
-        <h2 style={styles.resultHeroTitle}>{resultName}</h2>
-
-        <div style={styles.resultHeroBlend}>
-          <span>{first.name}</span>
-          <span>{p1}%</span>
-          <span>×</span>
-          <span>{second.name}</span>
-          <span>{p2}%</span>
-        </div>
-
-        <p style={styles.resultHeroVibe}>
-          {first.vibe}
-          {p2 > 0 ? ` × ${second.vibe}` : ""}
-        </p>
+      <div style={styles.heroNoise} />
+      <div style={styles.heroChip}>都市伝説占い RESULT</div>
+      <div style={styles.heroName}>{resultName}</div>
+      <div style={styles.heroMix}>
+        {first.name} × {second.name}
       </div>
+      <div style={styles.heroPercent}>
+        {p1}% / {p2}%
+      </div>
+      <div style={styles.heroSub}>{p1 >= 95 ? first.loveWarning : `${first.loveWarning} / ${second.loveWarning}`}</div>
+    </div>
+  );
+}
 
-      {imageUrl ? (
-        <div style={styles.resultHeroImageWrap}>
-          <img
-            src={imageUrl}
-            alt={resultName}
-            style={styles.resultHeroImage}
-          />
-        </div>
-      ) : null}
+function QuestionVisual({ item }: { item: Question }) {
+  return (
+    <div
+      style={{
+        ...styles.questionVisual,
+        background: `linear-gradient(135deg, ${item.colors[0]}, ${item.colors[1]})`,
+      }}
+    >
+      <div style={styles.questionVisualNoise} />
+      <div style={styles.questionEmoji}>{item.visualEmoji}</div>
+      <div style={styles.questionTitleWrap}>
+        <div style={styles.questionTitle}>{item.visualTitle}</div>
+        <div style={styles.questionTag}>{item.visualTag}</div>
+      </div>
     </div>
   );
 }
@@ -1746,51 +1844,53 @@ function ResultHero({
 
 
 
-
-
-
-
-
+const AXIS_LABELS_JP: Record<AxisKey, string> = {
+  passion: "情熱",
+  caution: "慎重さ",
+  intuition: "直感",
+  reality: "現実感",
+  attachment: "執着",
+  independence: "自立",
+};
 
 function AxisMeter({ axis }: { axis: AxisScores }) {
-  const axisItems: { key: AxisKey; label: string }[] = [
-    { key: "passion", label: "passion" },
-    { key: "caution", label: "caution" },
-    { key: "intuition", label: "intuition" },
-    { key: "reality", label: "reality" },
-    { key: "attachment", label: "attachment" },
-    { key: "independence", label: "independence" },
-  ];
+  const sorted = [...AXES]
+    .map((key) => ({ key, value: axis[key] }))
+    .sort((a, b) => b.value - a.value);
 
   return (
     <div style={styles.axisCard}>
-      <div style={styles.sectionTitle}>AXIS METER</div>
+      <div style={styles.sectionTitle}>あなたの内側にある6つの要素</div>
 
       <div style={styles.axisList}>
-        {axisItems.map(({ key, label }) => {
-          const value = Math.max(0, Math.min(100, axis[key] ?? 0));
-
-          return (
-            <div key={key} style={styles.axisRow}>
-              <div style={styles.axisLabel}>{label}</div>
-
-              <div style={styles.axisTrack}>
-                <div
-                  style={{
-                    ...styles.axisFill,
-                    width: `${value}%`,
-                  }}
-                />
-              </div>
-
-              <div style={styles.axisValue}>{Math.round(value)}</div>
+        {sorted.map((item) => (
+          <div key={item.key} style={styles.axisRow}>
+            {/* 日本語ラベル */}
+            <div style={styles.axisLabel}>
+              {AXIS_LABELS_JP[item.key]}
             </div>
-          );
-        })}
+
+            {/* バー */}
+            <div style={styles.axisTrack}>
+              <div
+                style={{
+                  ...styles.axisFill,
+                  width: `${item.value}%`,
+                }}
+              />
+            </div>
+
+            {/* 数値（%つけると良い） */}
+            <div style={styles.axisValue}>
+              {Math.round(item.value)}%
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
+
 
 
 
@@ -1814,11 +1914,15 @@ function CaptureCard({
   normalizedAxis: AxisScores;
 }) {
   const sections = splitSections(resultText);
+  const topAxes = [...AXES]
+    .map((key) => ({ key, value: normalizedAxis[key] }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 3);
 
   return (
     <div style={styles.captureFixed}>
       <div style={styles.captureHeader}>
-        <div style={styles.captureBadge}>診断結果</div>
+        <div style={styles.captureBadge}>都市伝説占い</div>
         <div style={styles.captureTitle}>{resultName}</div>
         <div style={styles.captureSub}>
           {first.name} {blend.p1}% × {second.name} {blend.p2}%
@@ -1828,38 +1932,41 @@ function CaptureCard({
       <div style={styles.captureMainGrid}>
         <div style={styles.captureImagePanel}>
           {imageUrl ? (
-            <img src={imageUrl} alt={resultName} style={styles.captureImage} />
+            <img src={imageUrl} alt="診断イメージ" style={styles.captureImage} />
           ) : (
-            <div style={styles.captureImagePlaceholder}>NO IMAGE</div>
+            <div style={styles.captureImagePlaceholder}>IMAGE NOT GENERATED</div>
           )}
         </div>
 
         <div style={styles.captureTextPanel}>
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>基本性格</div>
-            <div style={styles.captureMiniBody}>{sections.basic || "..."}</div>
+            <div style={styles.captureMiniLabel}>表向き</div>
+            <div style={styles.captureMiniBody}>{first.publicMask}</div>
           </div>
 
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>対人関係</div>
+            <div style={styles.captureMiniLabel}>内側</div>
+            <div style={styles.captureMiniBody}>{first.innerCore}</div>
+          </div>
+
+          <div style={styles.captureMiniSection}>
+            <div style={styles.captureMiniLabel}>危うさ</div>
             <div style={styles.captureMiniBody}>
-              {sections.relationship || "..."}
+              {blend.p1 >= 95 ? first.risk : `${first.risk} / ${second.risk}`}
             </div>
           </div>
 
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>恋愛傾向</div>
-            <div style={styles.captureMiniBody}>{sections.love || "..."}</div>
+            <div style={styles.captureMiniLabel}>魅力</div>
+            <div style={styles.captureMiniBody}>
+              {blend.p1 >= 95 ? first.gift : `${first.gift} / ${second.gift}`}
+            </div>
           </div>
 
           <div style={styles.captureMiniSection}>
-            <div style={styles.captureMiniLabel}>主要軸</div>
-            <div style={styles.captureAxisTags}>
-              {AXES.map((key) => (
-                <div key={key} style={styles.captureAxisTag}>
-                  {key}: {Math.round(normalizedAxis[key] ?? 0)}
-                </div>
-              ))}
+            <div style={styles.captureMiniLabel}>要約</div>
+            <div style={styles.captureSummary}>
+              {trimForCard(sections.basic || resultText, 190)}
             </div>
           </div>
         </div>
@@ -1867,96 +1974,17 @@ function CaptureCard({
 
       <div style={styles.captureFooter}>
         <div style={styles.captureFooterBlock}>
-          <div style={styles.captureMiniLabel}>相性の悪い相手</div>
-          <div style={styles.captureFooterText}>{sections.bad || "..."}</div>
+          <div style={styles.captureMiniLabel}>恋愛傾向</div>
+          <div style={styles.captureFooterText}>{trimForCard(sections.love || "", 120)}</div>
         </div>
-
         <div style={styles.captureFooterBlock}>
-          <div style={styles.captureMiniLabel}>相性の良い相手</div>
-          <div style={styles.captureFooterText}>{sections.good || "..."}</div>
+          <div style={styles.captureMiniLabel}>隠れた性格</div>
+          <div style={styles.captureFooterText}>{trimForCard(sections.hidden || "", 120)}</div>
         </div>
       </div>
     </div>
   );
 }
-
-
-
-
-
-async function requestResult(params: {
-  main: RankedType;
-  sub?: RankedType;
-  mode: "single" | "dominant-dual" | "balanced-dual";
-  gender: Gender;
-}) {
-  const { main, sub, mode } = params;
-
-  console.log("requestResult payload", { main, sub, mode });
-
-  const res = await fetch("/api/generate-result", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      main,
-      sub,
-      mode,
-    }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    console.error("generate-result error", data);
-    throw new Error(data?.error || "結果文の生成に失敗しました");
-  }
-
-  return data?.text ?? "";
-}
-
-
-
-
-
-
-
-async function requestImage(params: {
-  prompt: string;
-  first: RankedType;
-  second: RankedType;
-  blend: { p1: number; p2: number };
-  mode: "single" | "dominant-dual" | "balanced-dual";
-}) {
-  const { prompt, first, second, blend, mode } = params;
-
-  const res = await fetch("/api/generate-image", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt,
-      first,
-      second,
-      blend,
-      mode,
-    }),
-  });
-
-  const data = await res.json();
-
-  console.log("requestImage response", data);
-
-  if (!res.ok) {
-    throw new Error(data?.error || "画像生成に失敗しました");
-  }
-
-  return data?.imageUrl ?? data?.url ?? "";
-}
-
-
 
 
 
@@ -2080,19 +2108,17 @@ export default function App() {
       const bad = BAD_MATCH[first.id]?.[0] ?? "kijo";
       const good = GOOD_MATCH[first.id]?.[0] ?? "yukionna";
 
-
-
       const text = await requestResult({
         main: first,
         sub: second,
         mode,
+        bad,
+        good,
         gender,
       });
 
+
       setResultText(text);
-
-
-
 
       try {
         const img = await requestImage({
@@ -2114,126 +2140,68 @@ export default function App() {
     }
   };
 
+  const downloadResultImage = async () => {
+    if (!captureRef.current) return;
 
+    try {
+      setIsCapturePreparing(true);
 
+      if (document.fonts?.ready) {
+        await document.fonts.ready;
+      }
 
+      await new Promise((resolve) => setTimeout(resolve, 80));
 
-
-
-const downloadResultImage = async () => {
-  const target = captureRef.current;
-  if (!target) return;
-
-  try {
-    setErrorMessage("");
-
-    if (document.fonts?.ready) {
-      await document.fonts.ready;
-    }
-
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
-    await new Promise((resolve) => setTimeout(resolve, 150));
-
-    const canvas = await html2canvas(target, {
-      backgroundColor: "#0b0b12",
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      width: 1080,
-      height: 1350,
-      windowWidth: 1080,
-      windowHeight: 1350,
-      removeContainer: true,
-    });
-
-    const dataUrl = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = `${resultName || "result"}.png`;
-    link.click();
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("画像の保存に失敗しました。");
-  }
-};
-
-
-
-const shareResultImage = async () => {
-  const target = captureRef.current;
-  if (!target) return;
-
-  try {
-    setErrorMessage("");
-
-    if (document.fonts?.ready) {
-      await document.fonts.ready;
-    }
-
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
-    await new Promise((resolve) => setTimeout(resolve, 150));
-
-    const canvas = await html2canvas(target, {
-      backgroundColor: "#0b0b12",
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      width: 1080,
-      height: 1350,
-      windowWidth: 1080,
-      windowHeight: 1350,
-      removeContainer: true,
-    });
-
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, "image/png")
-    );
-
-    if (!blob) {
-      throw new Error("PNGの生成に失敗しました");
-    }
-
-    const file = new File([blob], "urban-legend-result.png", {
-      type: "image/png",
-    });
-
-    if (
-      typeof navigator !== "undefined" &&
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({ files: [file] })
-    ) {
-      await navigator.share({
-        title: "都市伝説占い",
-        text: "診断結果を共有する",
-        files: [file],
+      const canvas = await html2canvas(captureRef.current, {
+        backgroundColor: "#0b0b12",
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: 1080,
+        height: 1350,
+        windowWidth: 1080,
+        windowHeight: 1350,
       });
-      return;
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png")
+      );
+
+      if (!blob) {
+        throw new Error("PNGの生成に失敗しました");
+      }
+
+      const file = new File([blob], "urban-legend-result.png", {
+        type: "image/png",
+      });
+
+      if (
+        typeof navigator !== "undefined" &&
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({ files: [file] })
+      ) {
+        await navigator.share({
+          title: "都市伝説占い",
+          text: "診断結果を共有する",
+          files: [file],
+        });
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "urban-legend-result.png";
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      alert("画像の共有または保存に失敗しました");
+    } finally {
+      setIsCapturePreparing(false);
     }
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "urban-legend-result.png";
-    link.click();
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("画像の共有または保存に失敗しました。");
-  }
-};
-
-
-
-
-
-
-
-
+  };
 
   if (viewMode === "intro") {
     return (
@@ -2556,18 +2524,6 @@ const shareResultImage = async () => {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 const styles: Record<string, React.CSSProperties> = {
   horrorPage: {
@@ -3406,106 +3362,5 @@ const styles: Record<string, React.CSSProperties> = {
     color: "rgba(255,255,255,0.9)",
     wordBreak: "break-word",
     overflowWrap: "anywhere",
-  },
-
-
-
-
-
-
-
-  visualWrap: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 16,
-  },
-
-  visualEmoji: {
-    fontSize: 40,
-  },
-
-  visualTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-  },
-
-  visualTag: {
-    fontSize: 12,
-    opacity: 0.7,
-  },
-
-  resultHero: {
-    display: "grid",
-    gridTemplateColumns: "1.1fr 0.9fr",
-    gap: 24,
-    alignItems: "center",
-    padding: 24,
-    borderRadius: 24,
-    background: "linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))",
-    border: "1px solid rgba(255,255,255,0.08)",
-  },
-
-  resultHeroText: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
-  },
-
-  resultHeroBadge: {
-    display: "inline-flex",
-    alignSelf: "flex-start",
-    padding: "6px 10px",
-    borderRadius: 999,
-    fontSize: 12,
-    letterSpacing: "0.08em",
-    background: "rgba(255,255,255,0.08)",
-  },
-
-  resultHeroTitle: {
-    margin: 0,
-    fontSize: 32,
-    lineHeight: 1.2,
-    fontWeight: 800,
-  },
-
-  resultHeroBlend: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: 8,
-    alignItems: "center",
-    fontSize: 14,
-    opacity: 0.9,
-  },
-
-  resultHeroVibe: {
-    margin: 0,
-    fontSize: 14,
-    lineHeight: 1.7,
-    opacity: 0.85,
-  },
-
-  resultHeroImageWrap: {
-    width: "100%",
-  },
-
-  resultHeroImage: {
-    display: "block",
-    width: "100%",
-    borderRadius: 20,
-    objectFit: "cover",
-    border: "1px solid rgba(255,255,255,0.08)",
-  },
-
-  resultHeroImagePlaceholder: {
-    minHeight: 320,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 20,
-    border: "1px dashed rgba(255,255,255,0.2)",
-    background: "rgba(255,255,255,0.03)",
-    color: "rgba(255,255,255,0.55)",
   },
 };

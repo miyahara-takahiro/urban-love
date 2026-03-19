@@ -23,6 +23,7 @@ type ViewMode = "intro" | "diagnosis" | "result";
 type Gender = "male" | "female" | "other";
 type ResultMode = "single" | "dominant-dual" | "balanced-dual";
 
+
 type QuestionOption = { label: string; score: Partial<AxisScores> };
 type Question = {
   category: Category;
@@ -1218,8 +1219,8 @@ export default function App() {
   const [isCapturePreparing, setIsCapturePreparing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const captureRef = useRef<HTMLDivElement | null>(null);
 
+  const captureRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth <= 768);
@@ -1227,6 +1228,11 @@ export default function App() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+
+
+
+
 
   const current = questions[Math.min(step, questions.length - 1)];
   const normalizedAxis = useMemo(() => normalizeUserAxisScores(axis), [axis]);
@@ -1295,34 +1301,37 @@ export default function App() {
     try {
       setIsGenerating(true);
       setErrorMessage("");
-      setImageUrl("");
 
       const bad = BAD_MATCH[first.id]?.[0] ?? "kijo";
       const good = GOOD_MATCH[first.id]?.[0] ?? "yukionna";
 
-      const text = await requestResult({
-        main: first,
-        sub: second,
-        bad,
-        good,
-        gender,
-      });
+      const [text, img] = await Promise.all([
+        requestResult({
+          main: first,
+          sub: second,
+          bad,
+          good,
+          gender,
+        }),
+        
+      requestImage({
+        prompt: imagePrompt,
+        first,
+        second,
+        blend,
+        mode,
+      }),
+    ]);
+
+
+
+
+  
+
+
 
       setResultText(text);
-
-      try {
-        const img = await requestImage({
-          prompt: imagePrompt,
-          first,
-          second,
-          blend,
-          mode,
-        });
-        setImageUrl(img);
-      } catch (imageError) {
-        console.error(imageError);
-        setImageUrl("");
-      }
+      setImageUrl(img);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "生成に失敗しました。");
     } finally {
@@ -1456,35 +1465,14 @@ export default function App() {
   }
 
   if (viewMode === "result") {
-    const sections = splitSections(resultText);
-
     return (
-      <div
-        style={{
-          ...styles.page,
-          padding: isMobile ? 12 : 24,
-        }}
-      >
+      <div style={styles.page}>
         <div style={styles.scanlinesAbsolute} />
         <div style={styles.pageNoiseAbsolute} />
 
-        <div
-          style={{
-            ...styles.card,
-            padding: isMobile ? 14 : 24,
-            borderRadius: isMobile ? 18 : 24,
-          }}
-        >
+        <div style={styles.card}>
           <div style={styles.badge}>診断結果</div>
-          <h1
-            style={{
-              ...styles.titleLarge,
-              fontSize: isMobile ? 28 : 34,
-              marginBottom: isMobile ? 14 : 18,
-            }}
-          >
-            あなたの都市伝説タイプ
-          </h1>
+          <h1 style={styles.titleLarge}>あなたの都市伝説タイプ</h1>
 
           <ResultHero
             first={first}
@@ -1494,121 +1482,75 @@ export default function App() {
             resultName={resultName}
           />
 
-          <div
-            style={{
-              ...styles.resultGrid,
-              gridTemplateColumns: isMobile ? "1fr" : "minmax(0, 1.15fr) minmax(300px, 0.85fr)",
-              gap: isMobile ? 12 : 20,
-            }}
-          >
-            <div
-              style={{
-                ...styles.resultMainCol,
-                minWidth: 0,
-              }}
-            >
+          <div style={styles.resultGrid}>
+            <div style={styles.resultMainCol}>
               {!resultText && !isGenerating && (
-                <button
-                  style={{
-                    ...styles.generateBtn,
-                    width: "100%",
-                    display: "block",
-                    writingMode: "horizontal-tb",
-                    WebkitWritingMode: "horizontal-tb",
-                    textOrientation: "mixed",
-                    whiteSpace: "normal",
-                    wordBreak: "keep-all",
-                    overflowWrap: "break-word",
-                    textAlign: "center",
-                    lineHeight: 1.5,
-                    fontSize: isMobile ? 16 : 18,
-                    padding: isMobile ? "16px 14px" : "18px 18px",
-                    letterSpacing: isMobile ? "0.02em" : "0.08em",
-                  }}
-                  onClick={generateAll}
-                >
+                <button style={styles.generateBtn} onClick={generateAll}>
                   あなたの本当の姿を生成する
                 </button>
               )}
 
-              {isGenerating && (
-                <div style={styles.loading}>あなたの隠された姿を呼び出しています…</div>
-              )}
+              {isGenerating && <div style={styles.loading}>あなたの隠された姿を呼び出しています…</div>}
               {errorMessage && <div style={styles.errorText}>{errorMessage}</div>}
 
               {imageUrl && (
-                <div
-                  style={{
-                    ...styles.box,
-                    padding: isMobile ? 12 : 18,
-                  }}
-                >
+                <div style={styles.box}>
                   <div style={styles.sectionTitle}>合成された姿</div>
-                  <img
-                    src={imageUrl}
-                    alt="診断結果イメージ"
-                    style={{
-                      ...styles.resultImage,
-                      width: "100%",
-                      display: "block",
-                      writingMode: "horizontal-tb",
-                      aspectRatio: isMobile ? "4 / 5" : undefined,
-                      maxHeight: isMobile ? 460 : 720,
-                    }}
-                  />
+                  <img src={imageUrl} alt="診断結果イメージ" style={styles.resultImage} />
                 </div>
               )}
 
-              {resultText && (
-                <div
-                  style={{
-                    ...styles.box,
-                    padding: isMobile ? "16px 14px" : 20,
-                  }}
-                >
-                  <div style={styles.sectionTitle}>最終結果</div>
 
+{resultText && (
+  <div
+    style={{
+      ...styles.box,
+      padding: isMobile ? "16px 14px" : 20,
+    }}
+  >
+    <div style={styles.sectionTitle}>最終結果</div>
 
-                  {[
-                    { title: "基本性格", body: sections.basic },
-                    { title: "対人関係", body: sections.relationship },
-                    { title: "恋愛傾向", body: sections.love },
-                    { title: "隠れた性格", body: sections.hidden },
-                    { title: "⚠ 相性の悪い相手", body: sections.bad },
-                    { title: "◎ 相性の良い相手", body: sections.good },
-                  ]
-                    .filter((section) => section.body)
-                    .map((section) => (
-                      <div
-                        key={section.title}
-                        style={{
-                          ...styles.resultSection,
-                          marginTop: isMobile ? 14 : 18,
-                        }}
-                      >
-                        <div style={styles.resultSectionHeading}>{section.title}</div>
-                        <div
-                          style={{
-                            ...styles.resultTextReadable,
-                            fontSize: isMobile ? 16 : 15,
-                            lineHeight: isMobile ? 1.72 : 1.9,
-                          }}
-                        >
-                          {section.body}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              )}
+    <div style={styles.resultLeadCard}>
+      <div style={styles.resultLeadLabel}>SUMMARY</div>
+      <div style={styles.resultLeadText}>
+        {trimForCard(splitSections(resultText).basic || resultText, isMobile ? 82 : 120)}
+      </div>
+    </div>
+
+    {[
+      { title: "基本性格", body: splitSections(resultText).basic },
+      { title: "対人関係", body: splitSections(resultText).relationship },
+      { title: "恋愛傾向", body: splitSections(resultText).love },
+      { title: "隠れた性格", body: splitSections(resultText).hidden },
+      { title: "⚠ 相性の悪い相手", body: splitSections(resultText).bad },
+      { title: "◎ 相性の良い相手", body: splitSections(resultText).good },
+    ]
+      .filter((section) => section.body)
+      .map((section) => (
+        <div
+          key={section.title}
+          style={{
+            ...styles.resultSection,
+            marginTop: isMobile ? 14 : 18,
+          }}
+        >
+          <div style={styles.resultSectionHeading}>{section.title}</div>
+          <div
+            style={{
+              ...styles.resultTextReadable,
+              fontSize: isMobile ? 16 : 15,
+              lineHeight: isMobile ? 1.72 : 1.9,
+            }}
+          >
+            {section.body}
+          </div>
+        </div>
+      ))}
+  </div>
+)}
             </div>
 
-            <div
-              style={{
-                ...styles.resultSideCol,
-                minWidth: 0,
-                order: isMobile ? -1 : 0,
-              }}
-            >
+            <div style={styles.resultSideCol}>
               <div style={styles.box}>
                 <div style={styles.sectionTitle}>タイプ概要</div>
                 <div style={styles.metaStack}>
@@ -1675,7 +1617,6 @@ export default function App() {
     );
   }
 
-
   return (
     <div style={styles.page}>
       <div style={styles.scanlinesAbsolute} />
@@ -1738,61 +1679,60 @@ const styles: Record<string, React.CSSProperties> = {
   },
 
 
-  resultLeadCard: {
-    background: "rgba(255,255,255,0.05)",
-    border: "1px solid rgba(255,255,255,0.08)",
-    borderRadius: 14,
-    padding: "12px 12px",
-    marginTop: 10,
-  },
 
-  resultLeadLabel: {
-    fontSize: 10,
-    letterSpacing: "0.14em",
-    color: "rgba(252,165,165,0.78)",
-    marginBottom: 6,
-    fontWeight: 700,
-  },
+resultLeadCard: {
+  background: "rgba(255,255,255,0.05)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: 14,
+  padding: "12px 12px",
+  marginTop: 10,
+},
 
-  resultLeadText: {
-    fontSize: 15,
-    lineHeight: 1.65,
-    color: "rgba(255,255,255,0.96)",
-    fontWeight: 600,
-    writingMode: "horizontal-tb",
-    WebkitWritingMode: "horizontal-tb",
-    textOrientation: "mixed",
-    textAlign: "left",
-  },
+resultLeadLabel: {
+  fontSize: 10,
+  letterSpacing: "0.14em",
+  color: "rgba(252,165,165,0.78)",
+  marginBottom: 6,
+  fontWeight: 700,
+},
 
-  resultSection: {
-    borderTop: "1px solid rgba(255,255,255,0.08)",
-    paddingTop: 12,
-  },
+resultLeadText: {
+  fontSize: 15,
+  lineHeight: 1.65,
+  color: "rgba(255,255,255,0.96)",
+  fontWeight: 600,
+},
 
-  resultSectionHeading: {
-    fontSize: 14,
-    fontWeight: 800,
-    color: "#fecaca",
-    letterSpacing: "0.05em",
-    marginBottom: 8,
-    writingMode: "horizontal-tb",
-    WebkitWritingMode: "horizontal-tb",
-    textOrientation: "mixed",
-    textAlign: "left",
-  },
+resultSection: {
+  borderTop: "1px solid rgba(255,255,255,0.08)",
+  paddingTop: 12,
+},
 
-  resultTextReadable: {
-    color: "rgba(255,255,255,0.92)",
-    whiteSpace: "pre-wrap",
-    wordBreak: "keep-all",
-    letterSpacing: "0.01em",
-    writingMode: "horizontal-tb",
-    WebkitWritingMode: "horizontal-tb",
-    textOrientation: "mixed",
-    textAlign: "left",
-    overflowWrap: "break-word",
-  },
+resultSectionHeading: {
+  fontSize: 14,
+  fontWeight: 800,
+  color: "#fecaca",
+  letterSpacing: "0.05em",
+  marginBottom: 8,
+},
+
+resultTextReadable: {
+  color: "rgba(255,255,255,0.92)",
+  whiteSpace: "pre-wrap",
+  wordBreak: "keep-all",
+  letterSpacing: "0.01em",
+},
+
+
+
+
+
+
+
+
+
+
+
 
   scanlines: {
     position: "fixed",
@@ -2194,15 +2134,12 @@ const styles: Record<string, React.CSSProperties> = {
 
   resultMainCol: {
     minWidth: 0,
-    display: "flex",
-    flexDirection: "column",
-    gap: 12,
   },
 
   resultSideCol: {
     minWidth: 0,
     display: "grid",
-    gap: 12,
+    gap: 16,
     alignContent: "start",
   },
 
@@ -2217,9 +2154,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 18,
     fontWeight: 800,
     marginBottom: 16,
-    writingMode: "horizontal-tb",
-    WebkitWritingMode: "horizontal-tb",
-    textOrientation: "mixed",
   },
 
   loading: {
@@ -2263,8 +2197,6 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 16,
     objectFit: "cover",
     border: "1px solid rgba(255,255,255,0.08)",
-    writingMode: "horizontal-tb",
-    WebkitWritingMode: "horizontal-tb",
   },
 
   resultText: {

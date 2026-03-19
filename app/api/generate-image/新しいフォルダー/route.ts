@@ -104,25 +104,15 @@ function clampPercent(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
-function inferMode(
-  first: RankedType,
-  second: RankedType,
-  blend?: Blend,
-  mode?: ResultMode
-): ResultMode {
+function inferMode(first: RankedType, second: RankedType, blend?: Blend, mode?: ResultMode): ResultMode {
   if (mode) return mode;
   if (blend?.p2 === 0) return "single";
 
   const diff = (first.score ?? 0) - (second.score ?? 0);
-  if (diff >= 9) return "single";
-  if (diff >= 4) return "dominant-dual";
+  if (diff >= 12) return "single";
+  if (diff >= 7) return "dominant-dual";
   return "balanced-dual";
 }
-
-
-
-
-
 
 function buildModeInstruction(
   mode: ResultMode,
@@ -178,8 +168,8 @@ Visual priority:
 - silhouette may come from one, but face, details, texture, posture, and atmosphere must visibly carry both
 
 Influence balance:
-- primary influence: about ${Math.max(52, Math.min(60, p1))}%
-- secondary influence: about ${Math.max(40, Math.min(48, p2))}%
+- primary influence: about ${Math.max(55, Math.min(65, p1))}%
+- secondary influence: about ${Math.max(35, Math.min(45, p2))}%
 `;
 }
 

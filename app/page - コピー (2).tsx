@@ -1555,14 +1555,6 @@ function buildResultName(first: RankedType, second: RankedType, p1: number) {
   return `${first.name}${second.name}融合型`;
 }
 
-
-
-
-
-
-
-
-
 function formatPercent(value: number) {
   return `${Math.round(value)}%`;
 }
@@ -1584,16 +1576,6 @@ function splitSections(resultText: string) {
       good: "",
     };
   }
-
-
-
-
-
-
-
-
-
-
 
   const get = (start: string, end?: string) => {
     const s = resultText.indexOf(start);
@@ -1690,6 +1672,7 @@ function QuestionVisual({ item }: { item: Question }) {
 
 
 
+
 function ResultHero({
   first,
   second,
@@ -1706,12 +1689,7 @@ function ResultHero({
   imageUrl: string;
 }) {
   return (
-      <div
-      style={{
-        ...styles.resultHero,
-        gridTemplateColumns: imageUrl ? "1.1fr 0.9fr" : "1fr",
-      }}
-    >
+    <div style={styles.resultHero}>
       <div style={styles.resultHeroText}>
         <div style={styles.resultHeroBadge}>診断結果</div>
         <h2 style={styles.resultHeroTitle}>{resultName}</h2>
@@ -1730,23 +1708,22 @@ function ResultHero({
         </p>
       </div>
 
-      {imageUrl ? (
-        <div style={styles.resultHeroImageWrap}>
+      <div style={styles.resultHeroImageWrap}>
+        {imageUrl ? (
           <img
             src={imageUrl}
             alt={resultName}
             style={styles.resultHeroImage}
           />
-        </div>
-      ) : null}
+        ) : (
+          <div style={styles.resultHeroImagePlaceholder}>
+            画像生成前
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-
-
-
-
-
 
 
 
@@ -1884,77 +1861,14 @@ function CaptureCard({
 
 
 
-async function requestResult(params: {
-  main: RankedType;
-  sub?: RankedType;
-  mode: "single" | "dominant-dual" | "balanced-dual";
-  gender: Gender;
-}) {
-  const { main, sub, mode } = params;
 
-  console.log("requestResult payload", { main, sub, mode });
 
-  const res = await fetch("/api/generate-result", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      main,
-      sub,
-      mode,
-    }),
-  });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    console.error("generate-result error", data);
-    throw new Error(data?.error || "結果文の生成に失敗しました");
-  }
-
-  return data?.text ?? "";
-}
+ 
 
 
 
 
-
-
-
-async function requestImage(params: {
-  prompt: string;
-  first: RankedType;
-  second: RankedType;
-  blend: { p1: number; p2: number };
-  mode: "single" | "dominant-dual" | "balanced-dual";
-}) {
-  const { prompt, first, second, blend, mode } = params;
-
-  const res = await fetch("/api/generate-image", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt,
-      first,
-      second,
-      blend,
-      mode,
-    }),
-  });
-
-  const data = await res.json();
-
-  console.log("requestImage response", data);
-
-  if (!res.ok) {
-    throw new Error(data?.error || "画像生成に失敗しました");
-  }
-
-  return data?.imageUrl ?? data?.url ?? "";
-}
 
 
 
@@ -2081,18 +1995,20 @@ export default function App() {
       const good = GOOD_MATCH[first.id]?.[0] ?? "yukionna";
 
 
+  const text = await requestResult({
+    first,
+    second,
+    blend,
+    mode,
+    gender,
+    normalizedAxis,
+  });
 
-      const text = await requestResult({
-        main: first,
-        sub: second,
-        mode,
-        gender,
-      });
+
+
+
 
       setResultText(text);
-
-
-
 
       try {
         const img = await requestImage({
@@ -2113,11 +2029,6 @@ export default function App() {
       setIsGenerating(false);
     }
   };
-
-
-
-
-
 
 
 const downloadResultImage = async () => {
