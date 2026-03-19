@@ -1883,16 +1883,17 @@ function CaptureCard({
 
 
 
-
 async function requestResult(params: {
   main: RankedType;
   sub?: RankedType;
   mode: "single" | "dominant-dual" | "balanced-dual";
   gender: Gender;
+  good?: string;
+  bad?: string;
 }) {
-  const { main, sub, mode } = params;
+  const { main, sub, mode, good, bad } = params;
 
-  console.log("requestResult payload", { main, sub, mode });
+  console.log("requestResult payload", { main, sub, mode, good, bad });
 
   const res = await fetch("/api/generate-result", {
     method: "POST",
@@ -1903,6 +1904,9 @@ async function requestResult(params: {
       main,
       sub,
       mode,
+      good,
+      bad,
+      useAI: true,
     }),
   });
 
@@ -2087,6 +2091,8 @@ export default function App() {
         sub: second,
         mode,
         gender,
+        good,
+        bad,
       });
 
       setResultText(text);
@@ -2334,6 +2340,7 @@ const shareResultImage = async () => {
             p1={blend.p1}
             p2={blend.p2}
             resultName={resultName}
+            imageUrl={imageUrl}
           />
 
           <div
@@ -2378,28 +2385,13 @@ const shareResultImage = async () => {
               )}
               {errorMessage && <div style={styles.errorText}>{errorMessage}</div>}
 
-              {imageUrl && (
-                <div
-                  style={{
-                    ...styles.box,
-                    padding: isMobile ? 12 : 18,
-                  }}
-                >
-                  <div style={styles.sectionTitle}>合成された姿</div>
-                  <img
-                    src={imageUrl}
-                    alt="診断結果イメージ"
-                    style={{
-                      ...styles.resultImage,
-                      width: "100%",
-                      display: "block",
-                      writingMode: "horizontal-tb",
-                      aspectRatio: isMobile ? "4 / 5" : undefined,
-                      maxHeight: isMobile ? 460 : 720,
-                    }}
-                  />
-                </div>
-              )}
+
+
+
+
+
+
+
 
               {resultText && (
                 <div
