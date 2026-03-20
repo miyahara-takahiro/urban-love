@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import html2canvas from "html2canvas";
+import React, { useEffect, useMemo, useState } from "react";
 
 const USE_MOCK = false;
 const RESULT_API_URL = "/api/generate-result";
@@ -19,7 +18,7 @@ const AXES = [
 type AxisKey = (typeof AXES)[number];
 type AxisScores = Record<AxisKey, number>;
 type Category = "self" | "emotion" | "romance" | "social";
-type ViewMode = "intro" | "diagnosis" | "result";
+type ViewMode = "intro" | "diagnosis" | "result" | "card";
 type Gender = "male" | "female" | "other";
 type ResultMode = "single" | "dominant-dual" | "balanced-dual";
 
@@ -1820,6 +1819,131 @@ function ResultHero({
 
 
 
+
+
+
+function ShareCardScreen({
+  resultName,
+  first,
+  second,
+  blend,
+  imageUrl,
+  resultText,
+  onBack,
+  onRestart,
+  isMobile,
+}: {
+  resultName: string;
+  first: RankedType;
+  second: RankedType;
+  blend: { p1: number; p2: number };
+  imageUrl: string;
+  resultText: string;
+  onBack: () => void;
+  onRestart: () => void;
+  isMobile: boolean;
+}) {
+  const sections = splitSections(resultText);
+
+  const shortBasic = trimForCard(sections.basic || `${first.publicMask}。${first.innerCore}。`, 90);
+  const shortLove = trimForCard(sections.love || first.loveWarning || "", 70);
+  const shortBad = trimForCard(sections.bad || `${first.loveWarning}。`, 60);
+  const shortGood = trimForCard(sections.good || `${first.gift}。`, 60);
+
+  return (
+    <div
+      style={{
+        ...styles.page,
+        padding: isMobile ? 12 : 24,
+      }}
+    >
+      <div style={styles.scanlinesAbsolute} />
+      <div style={styles.pageNoiseAbsolute} />
+
+      <div
+        style={{
+          ...styles.cardScreenWrap,
+          maxWidth: 460,
+          margin: "0 auto",
+        }}
+      >
+        <div style={styles.cardScreenTopBar}>
+          <button style={styles.btnGhost} onClick={onBack}>
+            ← 結果へ戻る
+          </button>
+          <button style={styles.btnGhost} onClick={onRestart}>
+            もう一度診断する
+          </button>
+        </div>
+
+        <div style={styles.shareCardScreen}>
+          <div style={styles.shareCardHeader}>
+            <div style={styles.shareCardBadge}>共有カード</div>
+            <div style={styles.shareCardTitle}>{resultName}</div>
+            <div style={styles.shareCardBlend}>
+              {first.name} {blend.p1}% {blend.p2 > 0 ? `× ${second.name} ${blend.p2}%` : ""}
+            </div>
+          </div>
+
+          <div style={styles.shareCardImageWrap}>
+            {imageUrl ? (
+              <img src={imageUrl} alt={resultName} style={styles.shareCardImage} />
+            ) : (
+              <div style={styles.shareCardImageEmpty}>画像準備中…</div>
+            )}
+          </div>
+
+          <div style={styles.shareInfoGrid}>
+            <div style={styles.shareInfoBox}>
+              <div style={styles.shareInfoHeading}>キャラ特性</div>
+              <div style={styles.shareInfoText}>
+                {first.traits.behavior} / {first.traits.emotion}
+              </div>
+            </div>
+
+            <div style={styles.shareInfoBox}>
+              <div style={styles.shareInfoHeading}>簡単な診断結果</div>
+              <div style={styles.shareInfoText}>{shortBasic}</div>
+            </div>
+
+            <div style={styles.shareInfoBox}>
+              <div style={styles.shareInfoHeading}>恋愛傾向</div>
+              <div style={styles.shareInfoText}>{shortLove || first.traits.love}</div>
+            </div>
+
+            <div style={styles.shareInfoBox}>
+              <div style={styles.shareInfoHeading}>相性</div>
+              <div style={styles.shareInfoText}>
+                ◎ {shortGood}
+                <br />
+                ⚠ {shortBad}
+              </div>
+            </div>
+          </div>
+
+          <div style={styles.shareCardFooter}>
+            スマホでこの画面をスクショして共有してください
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function AxisMeter({ axis }: { axis: AxisScores }) {
   const axisItems: { key: AxisKey; label: string }[] = [
     { key: "passion", label: "情熱性" },
@@ -2061,13 +2185,12 @@ export default function App() {
   const [imageUrl, setImageUrl] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [isCapturePreparing, setIsCapturePreparing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sessionQuestions, setSessionQuestions] = useState<Question[]>(() =>
     pickOneQuestionPerGroup(questionPool)
   );
 
-  const captureRef = useRef<HTMLDivElement | null>(null);
+  
 
 
   useEffect(() => {
@@ -2394,6 +2517,37 @@ const shareResultImage = async () => {
     );
   }
 
+
+
+if (viewMode === "card") {
+  return (
+    <ShareCardScreen
+      resultName={resultName}
+      first={first}
+      second={second}
+      blend={blend}
+      imageUrl={imageUrl}
+      resultText={resultText}
+      onBack={() => setViewMode("result")}
+      onRestart={restart}
+      isMobile={isMobile}
+    />
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   if (viewMode === "result") {
     const sections = splitSections(resultText);
 
@@ -2567,15 +2721,27 @@ const shareResultImage = async () => {
             </div>
           </div>
 
+
+
+
+
           <div style={styles.actionGrid}>
             <button
               style={styles.actionBtn}
-              onClick={downloadResultImage}
-              disabled={!resultText || !imageUrl || isCapturePreparing}
+              onClick={() => setViewMode("card")}
+              disabled={!resultText || !imageUrl}
             >
-              {isCapturePreparing ? "画像を準備中…" : "画像を共有"}
+              共有カードを作る
             </button>
           </div>
+
+
+          
+
+
+
+
+
 
           <div style={styles.row}>
             <button style={styles.btnGhost} onClick={restart}>
@@ -2584,19 +2750,6 @@ const shareResultImage = async () => {
           </div>
         </div>
 
-        <div style={styles.captureStage}>
-          <div ref={captureRef}>
-            <CaptureCard
-              resultName={resultName}
-              first={first}
-              second={second}
-              blend={blend}
-              imageUrl={imageUrl}
-              resultText={resultText}
-              normalizedAxis={normalizedAxis}
-            />
-          </div>
-        </div>
       </div>
     );
   }
@@ -3345,6 +3498,122 @@ const styles: Record<string, React.CSSProperties> = {
     pointerEvents: "none",
     overflow: "hidden",
   },
+
+
+
+
+
+cardScreenWrap: {
+  width: "100%",
+},
+
+cardScreenTopBar: {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 12,
+  marginBottom: 12,
+  flexWrap: "wrap",
+},
+
+shareCardScreen: {
+  background: "linear-gradient(180deg, rgba(20,26,46,0.98) 0%, rgba(10,14,24,0.98) 100%)",
+  border: "1px solid rgba(255,255,255,0.12)",
+  borderRadius: 28,
+  overflow: "hidden",
+  boxShadow: "0 24px 80px rgba(0,0,0,0.35)",
+},
+
+shareCardHeader: {
+  padding: "18px 18px 8px",
+},
+
+shareCardBadge: {
+  display: "inline-block",
+  fontSize: 11,
+  letterSpacing: "0.12em",
+  color: "rgba(255,255,255,0.68)",
+  marginBottom: 8,
+},
+
+shareCardTitle: {
+  fontSize: 30,
+  fontWeight: 800,
+  lineHeight: 1.2,
+  marginBottom: 8,
+},
+
+shareCardBlend: {
+  fontSize: 14,
+  color: "rgba(255,255,255,0.78)",
+},
+
+shareCardImageWrap: {
+  padding: "0 18px",
+},
+
+shareCardImage: {
+  width: "100%",
+  aspectRatio: "3 / 4",
+  objectFit: "cover",
+  borderRadius: 22,
+  display: "block",
+  background: "rgba(255,255,255,0.06)",
+},
+
+shareCardImageEmpty: {
+  width: "100%",
+  aspectRatio: "3 / 4",
+  borderRadius: 22,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "rgba(255,255,255,0.06)",
+  color: "rgba(255,255,255,0.5)",
+},
+
+shareInfoGrid: {
+  display: "grid",
+  gridTemplateColumns: "1fr",
+  gap: 12,
+  padding: 18,
+},
+
+shareInfoBox: {
+  background: "rgba(255,255,255,0.05)",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: 18,
+  padding: "14px 14px 12px",
+},
+
+shareInfoHeading: {
+  fontSize: 12,
+  fontWeight: 700,
+  color: "rgba(255,255,255,0.72)",
+  marginBottom: 8,
+},
+
+shareInfoText: {
+  fontSize: 14,
+  lineHeight: 1.75,
+  color: "rgba(255,255,255,0.92)",
+},
+
+shareCardFooter: {
+  textAlign: "center" as const,
+  padding: "0 18px 18px",
+  fontSize: 12,
+  color: "rgba(255,255,255,0.52)",
+},
+
+
+
+
+
+
+
+
+
+
 
   captureFixed: {
     width: 1080,
