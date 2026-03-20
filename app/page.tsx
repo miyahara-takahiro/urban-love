@@ -1450,20 +1450,42 @@ function normalizeVectorToPercent(axis: AxisScores): AxisScores {
   return result;
 }
 
+
+
+
 function normalizeUserAxisScores(raw: AxisScores, axisMaxScores: AxisScores): AxisScores {
   const corrected = { ...ZERO };
 
   for (const key of AXES) {
     const maxScore = axisMaxScores[key] || 1;
-    corrected[key] = raw[key] / maxScore;
+    corrected[key] = Number(((raw[key] / maxScore) * 100).toFixed(2));
   }
 
-  return normalizeVectorToPercent(corrected);
+  return corrected;
 }
 
+
+
+
+
 function normalizeTypeAxisScores(axis: AxisScores): AxisScores {
-  return normalizeVectorToPercent(axis);
+  const result = { ...ZERO };
+  const max = Math.max(...AXES.map((key) => axis[key]), 1);
+
+  for (const key of AXES) {
+    result[key] = Number(((axis[key] / max) * 100).toFixed(2));
+  }
+
+  return result;
 }
+
+
+
+
+
+
+
+
 
 function weightedCosineSimilarity(
   user: AxisScores,
@@ -1499,6 +1521,20 @@ function getPrimaryAxisGap(axis: AxisScores): number {
   return (sorted[0] ?? 0) - (sorted[1] ?? 0);
 }
 
+
+
+
+function axisDistance(user: AxisScores, target: AxisScores, weights: AxisScores): number {
+  let sum = 0;
+
+  for (const key of AXES) {
+    const w = weights[key];
+    sum += Math.abs(user[key] - target[key]) * w;
+  }
+
+  return sum;
+}
+
 function similarity(user: AxisScores, target: AxisScores, weights: AxisScores): number {
   const base = weightedCosineSimilarity(user, target, weights);
 
@@ -1507,39 +1543,53 @@ function similarity(user: AxisScores, target: AxisScores, weights: AxisScores): 
   const overlap = userTop.filter((axis) => targetTop.includes(axis)).length;
 
   const overlapBonus = overlap === 2 ? 2 : overlap === 1 ? 1 : 0;
+
   const sharpness = getPrimaryAxisGap(user);
-  const sharpnessBonus = sharpness >= 10 && userTop[0] === targetTop[0] ? 1 : 0;
+  const sharpnessBonus = sharpness >= 10 && userTop[0] === targetTop[0] ? 1.5 : 0;
+
+  const distance = axisDistance(user, target, weights);
+  const distancePenalty = distance * 0.12;
 
   return Number(
-    Math.max(0, Math.min(100, base + overlapBonus + sharpnessBonus)).toFixed(2)
+    Math.max(0, Math.min(100, base + overlapBonus + sharpnessBonus - distancePenalty)).toFixed(2)
   );
 }
 
+
+
+
+
+
+
+
+
+
+
 function inferResultMode(firstScore: number, secondScore: number): ResultMode {
   const diff = firstScore - secondScore;
+  const bothHigh = firstScore >= 72 && secondScore >= 68;
 
-  if (diff >= 9) return "single";
-  if (diff >= 4) return "dominant-dual";
-  return "balanced-dual";
+  if (diff >= 10) return "single";
+  if (diff >= 5) return "dominant-dual";
+  return bothHigh ? "balanced-dual" : "dominant-dual";
 }
 
 
+
 function topTwoBlend(firstScore: number, secondScore: number) {
-  const diff = firstScore - secondScore;
-  const total = firstScore + secondScore || 1;
+  const diff = Math.max(0, firstScore - secondScore);
+  const firstClamped = Math.max(0, Math.min(100, firstScore));
 
-  let p1 = Math.round((firstScore / total) * 100);
-
-  if (diff >= 9) {
+  if (diff >= 10) {
     return { p1: 100, p2: 0 };
   }
 
-  if (diff >= 4) {
-    p1 = Math.max(65, Math.min(90, p1));
-    return { p1, p2: 100 - p1 };
-  }
+  const diffFactor = diff / 10;
+  const firstFactor = Math.max(0, Math.min(1, (firstClamped - 60) / 40));
 
-  p1 = Math.max(52, Math.min(60, p1));
+  const raw = 58 + diffFactor * 28 + firstFactor * 8;
+
+  const p1 = Math.round(Math.max(58, Math.min(99, raw)));
   return { p1, p2: 100 - p1 };
 }
 
@@ -1690,6 +1740,10 @@ function QuestionVisual({ item }: { item: Question }) {
 
 
 
+
+
+
+
 function ResultHero({
   first,
   second,
@@ -1697,6 +1751,7 @@ function ResultHero({
   p2,
   resultName,
   imageUrl,
+  isMobile,
 }: {
   first: RankedType;
   second: RankedType;
@@ -1704,12 +1759,19 @@ function ResultHero({
   p2: number;
   resultName: string;
   imageUrl: string;
+  isMobile,
 }) {
   return (
-      <div
+    <div
       style={{
         ...styles.resultHero,
-        gridTemplateColumns: imageUrl ? "1.1fr 0.9fr" : "1fr",
+        gridTemplateColumns: imageUrl
+          ? isMobile
+            ? "1fr"
+            : "minmax(0, 1fr) minmax(360px, 520px)"
+          : "1fr",
+        alignItems: "center",
+        gap: isMobile ? 20 : 28,
       }}
     >
       <div style={styles.resultHeroText}>
@@ -1731,11 +1793,23 @@ function ResultHero({
       </div>
 
       {imageUrl ? (
-        <div style={styles.resultHeroImageWrap}>
+        <div
+          style={{
+            ...styles.resultHeroImageWrap,
+            width: "100%",
+            maxWidth: isMobile ? "100%" : 520,
+            aspectRatio: isMobile ? "4 / 5" : "4 / 5",
+            margin: isMobile ? "0 auto" : undefined,
+          }}
+        >
           <img
             src={imageUrl}
             alt={resultName}
-            style={styles.resultHeroImage}
+            style={{
+              ...styles.resultHeroImage,
+              objectFit: "cover",
+              objectPosition: "center top",
+            }}
           />
         </div>
       ) : null}
@@ -1746,25 +1820,19 @@ function ResultHero({
 
 
 
-
-
-
-
-
-
 function AxisMeter({ axis }: { axis: AxisScores }) {
   const axisItems: { key: AxisKey; label: string }[] = [
-    { key: "passion", label: "passion" },
-    { key: "caution", label: "caution" },
-    { key: "intuition", label: "intuition" },
-    { key: "reality", label: "reality" },
-    { key: "attachment", label: "attachment" },
-    { key: "independence", label: "independence" },
+    { key: "passion", label: "情熱性" },
+    { key: "caution", label: "慎重性" },
+    { key: "intuition", label: "直感性" },
+    { key: "reality", label: "現実性" },
+    { key: "attachment", label: "愛着性" },
+    { key: "independence", label: "自立性" },
   ];
 
   return (
     <div style={styles.axisCard}>
-      <div style={styles.sectionTitle}>AXIS METER</div>
+      <div style={styles.sectionTitle}>6軸バランス</div>
 
       <div style={styles.axisList}>
         {axisItems.map(({ key, label }) => {
@@ -1791,6 +1859,23 @@ function AxisMeter({ axis }: { axis: AxisScores }) {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1991,6 +2076,12 @@ export default function App() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+
+
+
+
+
 
   const current = sessionQuestions[Math.min(step, sessionQuestions.length - 1)];
 
@@ -2341,6 +2432,7 @@ const shareResultImage = async () => {
             p2={blend.p2}
             resultName={resultName}
             imageUrl={imageUrl}
+            isMobile={isMobile}
           />
 
           <div
@@ -3478,17 +3570,35 @@ const styles: Record<string, React.CSSProperties> = {
     opacity: 0.85,
   },
 
+
+
+
   resultHeroImageWrap: {
     width: "100%",
+    borderRadius: 24,
+    overflow: "hidden",
+    background: "rgba(255,255,255,0.04)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
-  resultHeroImage: {
+  resultHeroImage: {  
     display: "block",
     width: "100%",
-    borderRadius: 20,
+    height: "100%",
     objectFit: "cover",
-    border: "1px solid rgba(255,255,255,0.08)",
+    objectPosition: "center top",
+    borderRadius: 24, 
+    background: "#f4eedf",
   },
+  
+
+
+
+
+
 
   resultHeroImagePlaceholder: {
     minHeight: 320,

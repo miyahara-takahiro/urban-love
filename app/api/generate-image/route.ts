@@ -104,6 +104,7 @@ function clampPercent(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
 }
 
+
 function inferMode(
   first: RankedType,
   second: RankedType,
@@ -113,10 +114,14 @@ function inferMode(
   if (mode) return mode;
   if (blend?.p2 === 0) return "single";
 
-  const diff = (first.score ?? 0) - (second.score ?? 0);
-  if (diff >= 9) return "single";
-  if (diff >= 4) return "dominant-dual";
-  return "balanced-dual";
+  const firstScore = first.score ?? 0;
+  const secondScore = second.score ?? 0;
+  const diff = firstScore - secondScore;
+  const bothHigh = firstScore >= 72 && secondScore >= 68;
+
+  if (diff >= 10) return "single";
+  if (diff >= 5) return "dominant-dual";
+  return bothHigh ? "balanced-dual" : "dominant-dual";
 }
 
 
@@ -144,9 +149,10 @@ Visual priority:
 - Do NOT make the image feel like an equal fusion
 - silhouette, face, posture, and visual identity must be mostly driven by ${first.name}
 
+
 Influence balance:
-- primary influence must feel like about ${Math.max(88, p1)}%
-- secondary influence must feel very minor
+- primary influence: about ${p1}%
+- secondary influence: about ${p2}%
 `;
   }
 
@@ -161,9 +167,10 @@ Visual priority:
 - use ${second.name} as accent influence in face details, body texture, gesture, hair, aura, or uncanny features
 - do NOT split the body into two halves
 
+
 Influence balance:
-- primary influence: about ${Math.max(70, p1)}%
-- secondary influence: about ${Math.min(30, Math.max(15, p2))}%
+- primary influence: about ${p1}%
+- secondary influence: about ${p2}%
 `;
   }
 
@@ -177,9 +184,10 @@ Visual priority:
 - combine the two identities in a natural but uncanny single-body design
 - silhouette may come from one, but face, details, texture, posture, and atmosphere must visibly carry both
 
+
 Influence balance:
-- primary influence: about ${Math.max(52, Math.min(60, p1))}%
-- secondary influence: about ${Math.max(40, Math.min(48, p2))}%
+- primary influence: about ${p1}%
+- secondary influence: about ${p2}%
 `;
 }
 
@@ -219,6 +227,8 @@ Composition:
 - clear silhouette
 - visible fusion details
 - readable at a glance
+- face must remain clearly visible
+- avoid cropping or hiding the face with hair, pose, or frame
 `;
 
   return `
