@@ -2098,14 +2098,14 @@ function ShareCardScreen({
             </div>
 
             {/* 先に軸を出す */}
-            <div style={styles.yokaiStatRowCompact}>
-              {stats.map((item) => (
-                <div key={item.label} style={styles.yokaiStatBoxCompact}>
-                  <div style={styles.yokaiStatLabelCompact}>{item.label}</div>
-                  <div style={styles.yokaiStatValueCompact}>{item.value}</div>
-                </div>
-              ))}
-            </div>
+         <div style={styles.yokaiStatRowInline}>
+  {stats.map((item) => (
+    <div key={item.label} style={styles.yokaiStatInlineItem}>
+      <span style={styles.yokaiStatInlineLabel}>{item.label}</span>
+      <span style={styles.yokaiStatInlineValue}>{item.value}</span>
+    </div>
+  ))}
+</div>  
 
             {/* 画像は少し小さく */}
             <div style={styles.yokaiArtFrameOuterCompact}>
@@ -4374,7 +4374,37 @@ yokaiRare: {
     fontWeight: 700,
     whiteSpace: "nowrap" as const,
   },
+yokaiStatRowInline: {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: 10,
+  marginBottom: 10,
+},
 
+yokaiStatInlineItem: {
+  display: "flex",
+  alignItems: "center",
+  gap: 6,
+  flex: 1,
+  justifyContent: "center",
+  background: "rgba(76,54,28,0.06)",
+  border: "1px solid rgba(76,54,28,0.12)",
+  borderRadius: 10,
+  padding: "6px 4px",
+},
+
+yokaiStatInlineLabel: {
+  fontSize: 11,
+  fontWeight: 800,
+  color: "rgba(76,54,28,0.7)",
+},
+
+yokaiStatInlineValue: {
+  fontSize: 18,
+  fontWeight: 900,
+  color: "#22170d",
+},
 
 
 
