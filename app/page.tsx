@@ -4019,18 +4019,9 @@ shareCardFooter: {
 
 
 
-  cardScreenWrap: {
-    width: "100%",
-  },
+ 
 
-  cardScreenTopBar: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: 12,
-    marginBottom: 12,
-    flexWrap: "wrap",
-  },
-
+  
   yokaiCardOuter: {
     background: "linear-gradient(180deg, #d8ccb4 0%, #b9a483 100%)",
     border: "2px solid rgba(208,188,144,0.95)",
