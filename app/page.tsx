@@ -2521,7 +2521,6 @@ export default function App() {
     setImageUrl("");
     setErrorMessage("");
     setIsGenerating(false);
-    setIsCapturePreparing(false);
     setSessionQuestions(pickOneQuestionPerGroup(questionPool));
   };
 
