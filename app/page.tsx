@@ -1759,7 +1759,7 @@ function ResultHero({
   p2: number;
   resultName: string;
   imageUrl: string;
-  isMobile,
+  isMobile: boolean;
 }) {
   return (
     <div
