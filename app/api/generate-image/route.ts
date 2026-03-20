@@ -375,6 +375,10 @@ Composition:
 - leave comfortable margin above the head
 - avoid zoomed-in framing
 - camera distance should be medium to long shot
+- the character should be slightly smaller within the canvas
+- ensure visible space above the head and around the body
+- do not place the face close to the top edge
+- keep the entire silhouette comfortably inside the frame
 `
       : `
 Composition:

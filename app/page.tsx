@@ -1622,6 +1622,164 @@ function trimForCard(text: string, max = 240) {
   return `${normalized.slice(0, max)}…`;
 }
 
+
+
+
+
+const CARD_CHARACTER_NAMES = [
+  "口裂け女",
+  "花子さん",
+  "貞子",
+  "雪女",
+  "鬼女",
+  "一つ目小僧",
+  "ろくろ首",
+  "のっぺらぼう",
+  "座敷童",
+  "ぬらりひょん",
+  "河童",
+  "天狗",
+] as const;
+
+function pickCardRare(blend: { p1: number; p2: number }) {
+  if (blend.p1 >= 95) return "UR";
+  if (blend.p1 >= 80) return "SSR";
+  if (blend.p1 >= 65) return "SR";
+  return "R";
+}
+
+
+
+function pickCardElements(first: RankedType, second: RankedType) {
+  const source = `${first.name} ${second.name} ${first.vibe} ${second.vibe} ${first.scaryTitle} ${first.loveWarning}`;
+  const result: string[] = [];
+
+  if (/口裂け女|鬼女/.test(source)) result.push("圧");
+  if (/貞子|花子さん/.test(source)) result.push("不穏");
+  if (/雪女/.test(source)) result.push("冷気");
+  if (/一つ目小僧/.test(source)) result.push("観察");
+  if (/ろくろ首/.test(source)) result.push("接近");
+  if (/のっぺらぼう/.test(source)) result.push("異質");
+  if (/座敷童/.test(source)) result.push("干渉");
+  if (/ぬらりひょん/.test(source)) result.push("侵食");
+  if (/河童/.test(source)) result.push("誘導");
+  if (/天狗/.test(source)) result.push("俯瞰");
+
+  if (/鬼女|口裂け女|貞子|ろくろ首/.test(source)) result.push("執着");
+  if (/雪女|貞子|花子さん/.test(source)) result.push("静圧");
+  if (/一つ目小僧|のっぺらぼう|座敷童/.test(source)) result.push("異質");
+  if (/天狗|鬼女/.test(source)) result.push("支配");
+
+  if (result.length < 2) result.push("怪気");
+  if (result.length < 2) result.push("概念");
+
+  return [...new Set(result)].slice(0, 2);
+}
+
+
+
+
+
+
+
+
+
+
+function extractMatchNames(
+  text: string,
+  fallback: string,
+  excludeNames: string[] = []
+) {
+  if (!text) return fallback;
+
+  const cleaned = text
+    .replace(/[◎○●・]/g, " ")
+    .replace(/相性の良い相手|相性の悪い相手|おすすめ|注意|タイプ|なのは|です|である|。|、|，/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const found = CARD_CHARACTER_NAMES.filter(
+    (name) => cleaned.includes(name) && !excludeNames.includes(name)
+  );
+
+  if (found.length >= 2) return `${found[0]} / ${found[1]}`;
+  if (found.length === 1) return found[0];
+  return fallback;
+}
+
+function pickStats(first: RankedType) {
+  return [
+    { label: "情念", value: Math.round(first.axis.passion ?? 0) },
+    { label: "圧", value: Math.round(100 - (first.axis.caution ?? 0) * 0.4 + (first.axis.intuition ?? 0) * 0.4) },
+    { label: "執着", value: Math.round((first.axis.attachment ?? 0) * 0.7 + (first.axis.passion ?? 0) * 0.3) },
+  ].map((item) => ({
+    ...item,
+    value: Math.max(1, Math.min(99, item.value)),
+  }));
+}
+
+
+
+
+
+
+function buildCardSummary(first: RankedType, sections: ReturnType<typeof splitSections>) {
+  const source = `${first.name} ${first.publicMask} ${first.innerCore} ${first.traits.behavior} ${first.traits.emotion}`;
+
+  if (/一つ目小僧/.test(source)) {
+    return "静かに違和感を見抜く観察分析型。感情を表に出さないまま、相手の揺れや空気の綻びを先に察知します。";
+  }
+  if (/貞子/.test(source)) {
+    return "言葉より気配で存在を残す静圧型。距離を詰めずに、相手の深い場所へじわりと入り込みます。";
+  }
+  if (/口裂け女/.test(source)) {
+    return "強い圧と執着を秘めた高緊張型。感情に触れた瞬間、空気ごと支配するような存在感が立ち上がります。";
+  }
+  if (/花子さん/.test(source)) {
+    return "静けさの奥に不穏さを隠す待機型。目立たないまま場に残り、気づけば空気の中心へ入り込みます。";
+  }
+  if (/雪女/.test(source)) {
+    return "熱を見せずに距離を支配する低温型。近づきすぎないまま、相手の温度だけを静かに奪っていきます。";
+  }
+  if (/鬼女/.test(source)) {
+    return "感情の出力が高い情念型。愛情も怒りも深く、一度火がつくと自分でも抑えにくくなるタイプです。";
+  }
+  if (/ろくろ首/.test(source)) {
+    return "普段は静かでも、意識が向いた瞬間に一気に距離を詰める急接近型。";
+  }
+  if (/のっぺらぼう/.test(source)) {
+    return "感情を読ませずに相手を揺らす無表情型。静かな空白のまま、不気味な印象だけを残します。";
+  }
+  if (/座敷童/.test(source)) {
+    return "穏やかに場へ溶け込みながら、見えない影響を残す干渉型。静かでも無視できない存在です。";
+  }
+  if (/ぬらりひょん/.test(source)) {
+    return "自然に境界を越えて入り込む侵食型。気づいた時には、相手のペースと居場所を奪っています。";
+  }
+  if (/河童/.test(source)) {
+    return "軽さの奥に癖を隠した誘導型。親しみやすさの裏で、相手の注意を静かに逸らしていきます。";
+  }
+  if (/天狗/.test(source)) {
+    return "全体を見渡しながら主導権を取る俯瞰型。近づきすぎずに、上から空気を動かすタイプです。";
+  }
+
+  const base = sections.basic || `${first.publicMask}。${first.innerCore}。`;
+  return trimForCard(base, 72);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function splitSections(resultText: string) {
   if (!resultText) {
     return {
@@ -1822,6 +1980,42 @@ function ResultHero({
 
 
 
+
+
+function pickMoveName(first: RankedType, second: RankedType) {
+  const source = `${first.name} ${second.name} ${first.traits.behavior} ${first.traits.emotion} ${first.traits.love}`;
+
+  if (/鬼女/.test(source)) return "感情暴走";
+  if (/口裂け女/.test(source)) return "無言の威圧";
+  if (/花子さん|貞子/.test(source)) return "気配支配";
+  if (/雪女/.test(source)) return "温度低下";
+  if (/天狗/.test(source)) return "上空監視";
+  if (/河童/.test(source)) return "水際誘導";
+  if (/一つ目小僧/.test(source)) return "単眼注視";
+  if (/ろくろ首/.test(source)) return "異常接近";
+  if (/のっぺらぼう/.test(source)) return "無貌の圧";
+  if (/座敷童/.test(source)) return "静かな干渉";
+  if (/ぬらりひょん/.test(source)) return "日常侵食";
+  return "怪異発現";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function ShareCardScreen({
   resultName,
   first,
@@ -1844,11 +2038,14 @@ function ShareCardScreen({
   isMobile: boolean;
 }) {
   const sections = splitSections(resultText);
+  const rare = pickCardRare(blend);
+  const elements = pickCardElements(first, second);
+  const stats = pickStats(first);
+  const excludeNames = [first.name, second.name];
 
-  const shortBasic = trimForCard(sections.basic || `${first.publicMask}。${first.innerCore}。`, 90);
-  const shortLove = trimForCard(sections.love || first.loveWarning || "", 70);
-  const shortBad = trimForCard(sections.bad || `${first.loveWarning}。`, 60);
-  const shortGood = trimForCard(sections.good || `${first.gift}。`, 60);
+  const summary = buildCardSummary(first, sections);
+  const goodNames = extractMatchNames(sections.good, "雪女 / 座敷童", excludeNames);
+  const badNames = extractMatchNames(sections.bad, "鬼女 / 口裂け女", excludeNames);
 
   return (
     <div
@@ -1863,7 +2060,7 @@ function ShareCardScreen({
       <div
         style={{
           ...styles.cardScreenWrap,
-          maxWidth: 460,
+          maxWidth: 430,
           margin: "0 auto",
         }}
       >
@@ -1876,59 +2073,98 @@ function ShareCardScreen({
           </button>
         </div>
 
-        <div style={styles.shareCardScreen}>
-          <div style={styles.shareCardHeader}>
-            <div style={styles.shareCardBadge}>共有カード</div>
-            <div style={styles.shareCardTitle}>{resultName}</div>
-            <div style={styles.shareCardBlend}>
-              {first.name} {blend.p1}% {blend.p2 > 0 ? `× ${second.name} ${blend.p2}%` : ""}
+        <div style={styles.yokaiCardOuter}>
+          <div style={styles.yokaiCardInner}>
+            <div style={styles.yokaiHeader}>
+              <div>
+                <div style={styles.yokaiMiniLabel}>都市伝説図鑑カード</div>
+                <div style={styles.yokaiTitle}>{resultName}</div>
+              </div>
+              <div style={styles.yokaiRare}>{rare}</div>
             </div>
-          </div>
 
-          <div style={styles.shareCardImageWrap}>
-            {imageUrl ? (
-              <img src={imageUrl} alt={resultName} style={styles.shareCardImage} />
-            ) : (
-              <div style={styles.shareCardImageEmpty}>画像準備中…</div>
-            )}
-          </div>
+            <div style={styles.yokaiElementRow}>
+              {elements.map((item) => (
+                <span key={item} style={styles.yokaiElementChip}>
+                  {item}
+                </span>
+              ))}
+            </div>
 
-          <div style={styles.shareInfoGrid}>
-            <div style={styles.shareInfoBox}>
-              <div style={styles.shareInfoHeading}>キャラ特性</div>
-              <div style={styles.shareInfoText}>
-                {first.traits.behavior} / {first.traits.emotion}
+            <div style={styles.yokaiBlendLine}>
+              {first.name} {blend.p1}%{blend.p2 > 0 ? ` × ${second.name} ${blend.p2}%` : ""}
+            </div>
+
+            <div style={styles.yokaiArtFrameOuter}>
+              <div style={styles.yokaiArtFrameInner}>
+                {imageUrl ? (
+                  <img src={imageUrl} alt={resultName} style={styles.yokaiArtImage} />
+                ) : (
+                  <div style={styles.yokaiArtEmpty}>NO IMAGE</div>
+                )}
               </div>
             </div>
 
-            <div style={styles.shareInfoBox}>
-              <div style={styles.shareInfoHeading}>簡単な診断結果</div>
-              <div style={styles.shareInfoText}>{shortBasic}</div>
-            </div>
+            <div style={styles.yokaiInfoPanel}>
+              <div style={styles.yokaiSection}>
+                <div style={styles.yokaiSectionLabel}>特性</div>
+                <div style={styles.yokaiTraitText}>
+                  {first.traits.behavior} / {first.traits.emotion}
+                </div>
+              </div>
 
-            <div style={styles.shareInfoBox}>
-              <div style={styles.shareInfoHeading}>恋愛傾向</div>
-              <div style={styles.shareInfoText}>{shortLove || first.traits.love}</div>
-            </div>
+              <div style={styles.yokaiDivider} />
 
-            <div style={styles.shareInfoBox}>
-              <div style={styles.shareInfoHeading}>相性</div>
-              <div style={styles.shareInfoText}>
-                ◎ {shortGood}
-                <br />
-                ⚠ {shortBad}
+              <div style={styles.yokaiSection}>
+                <div style={styles.yokaiSectionLabel}>診断要約</div>
+                <div style={styles.yokaiSummaryText}>{summary}</div>
+              </div>
+
+              <div style={styles.yokaiDivider} />
+
+              <div style={styles.yokaiSection}>
+                <div style={styles.yokaiMatchInline}>
+                  <div style={styles.yokaiMatchInlineItem}>
+                    <span style={styles.yokaiMatchKey}>相性◎</span>
+                    <span style={styles.yokaiMatchVal}>{goodNames}</span>
+                   </div>
+
+                   <div style={styles.yokaiMatchInlineItem}>
+                    <span style={styles.yokaiMatchKey}>相性×</span>
+                    <span style={styles.yokaiMatchVal}>{badNames}</span>
+                  </div>
+                </div>
+              </div>
+
+
+             
+
+              <div style={styles.yokaiDivider} />
+
+              <div style={styles.yokaiStatRow}>
+                {stats.map((item) => (
+                  <div key={item.label} style={styles.yokaiStatBox}>
+                    <div style={styles.yokaiStatLabel}>{item.label}</div>
+                    <div style={styles.yokaiStatValue}>{item.value}</div>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
 
-          <div style={styles.shareCardFooter}>
-            スマホでこの画面をスクショして共有してください
+            <div style={styles.yokaiFooter}>
+              urban myth archive / screenshot to share
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+
+
+
+
 
 
 
@@ -3878,5 +4114,267 @@ shareCardFooter: {
     border: "1px dashed rgba(255,255,255,0.2)",
     background: "rgba(255,255,255,0.03)",
     color: "rgba(255,255,255,0.55)",
+  },
+
+
+
+
+  cardScreenWrap: {
+    width: "100%",
+  },
+
+  cardScreenTopBar: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 12,
+    marginBottom: 12,
+    flexWrap: "wrap",
+  },
+
+  yokaiCardOuter: {
+    background: "linear-gradient(180deg, #d8ccb4 0%, #b9a483 100%)",
+    border: "2px solid rgba(208,188,144,0.95)",
+    borderRadius: 26,
+    boxShadow: "0 18px 48px rgba(0,0,0,0.28)",
+    padding: 6,
+  },
+
+  yokaiCardInner: {
+    background: "linear-gradient(180deg, #f3ecdf 0%, #e4d7c0 100%)",
+    border: "1px solid rgba(104,79,43,0.28)",
+    borderRadius: 22,
+    overflow: "hidden",
+    padding: 14,
+    color: "#241b10",
+  },
+
+  yokaiHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: 12,
+    marginBottom: 8,
+  },
+
+  yokaiMiniLabel: {
+    fontSize: 11,
+    letterSpacing: "0.12em",
+    color: "rgba(64,48,28,0.72)",
+    marginBottom: 6,
+    fontWeight: 700,
+  },
+
+  yokaiTitle: {
+    fontSize: 32,
+    lineHeight: 1.08,
+    fontWeight: 900,
+    letterSpacing: "-0.03em",
+    color: "#20160d",
+  },
+
+
+
+yokaiRare: {
+  minWidth: 72,
+  padding: "10px 14px",
+  borderRadius: 999,
+  background: "linear-gradient(180deg, #a41f35 0%, #6e1022 55%, #4f0b18 100%)",
+  color: "#fffaf2",
+  fontSize: 16,
+  fontWeight: 900,
+  textAlign: "center" as const,
+  border: "1px solid rgba(255,240,220,0.55)",
+  boxShadow:
+    "0 6px 18px rgba(110,16,34,0.28), inset 0 1px 0 rgba(255,255,255,0.24)",
+  letterSpacing: "0.04em",
+},
+
+ 
+
+
+
+
+
+
+  yokaiElementRow: {
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+    marginBottom: 8,
+  },
+
+  yokaiElementChip: {
+    display: "inline-flex",
+    alignItems: "center",
+    padding: "6px 10px",
+    borderRadius: 999,
+    background: "rgba(76,54,28,0.08)",
+    border: "1px solid rgba(76,54,28,0.14)",
+    color: "#3e2e1f",
+    fontSize: 12,
+    fontWeight: 800,
+  },
+
+  yokaiBlendLine: {
+    fontSize: 13,
+    color: "rgba(49,35,20,0.78)",
+    marginBottom: 12,
+    fontWeight: 700,
+  },
+
+  yokaiArtFrameOuter: {
+    background: "linear-gradient(180deg, #cab38d 0%, #9e8258 100%)",
+    border: "2px solid rgba(138,109,63,0.58)",
+    borderRadius: 18,
+    padding: 8,
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2)",
+    marginBottom: 14,
+  },
+
+  yokaiArtFrameInner: {
+    background: "#efe5d2",
+    border: "1px solid rgba(97,75,44,0.24)",
+    borderRadius: 14,
+    padding: 6,
+  },
+
+  yokaiArtImage: {
+    width: "100%",
+    aspectRatio: "3 / 4",
+    objectFit: "cover",
+    objectPosition: "center top",
+    display: "block",
+    borderRadius: 10,
+    background: "#d9ccb3",
+  },
+
+  yokaiArtEmpty: {
+    width: "100%",
+    aspectRatio: "3 / 4",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    background: "#d9ccb3",
+    color: "rgba(36,27,16,0.5)",
+    fontWeight: 700,
+  },
+
+  yokaiInfoPanel: {
+    background: "rgba(255,248,238,0.52)",
+    border: "1px solid rgba(88,66,36,0.18)",
+    borderRadius: 16,
+    overflow: "hidden",
+    marginBottom: 10,
+  },
+
+  yokaiSection: {
+    padding: "12px 14px",
+  },
+
+  yokaiSectionLabel: {
+    fontSize: 11,
+    letterSpacing: "0.12em",
+    color: "rgba(76,54,28,0.72)",
+    fontWeight: 800,
+    marginBottom: 6,
+  },
+
+  yokaiTraitText: {
+    fontSize: 17,
+    lineHeight: 1.5,
+    color: "#20160d",
+    fontWeight: 800,
+  },
+
+  yokaiSummaryText: {
+    fontSize: 14,
+    lineHeight: 1.8,
+    color: "#2c2218",
+    fontWeight: 600,
+  },
+
+  yokaiDivider: {
+    borderTop: "1px solid rgba(88,66,36,0.14)",
+  },
+
+  yokaiMatchLine: {
+    display: "flex",
+    gap: 12,
+    alignItems: "flex-start",
+    marginBottom: 8,
+  },
+
+
+  yokaiMatchKey: {
+    fontSize: 13,
+    fontWeight: 900,
+    color: "#7a2030",
+    whiteSpace: "nowrap" as const,
+  },
+
+
+  yokaiMatchVal: {
+    fontSize: 14,
+    lineHeight: 1.5,
+    color: "#2c2218",
+    fontWeight: 700,
+    whiteSpace: "nowrap" as const,
+  },
+
+ 
+
+
+
+  yokaiStatRow: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 10,
+    padding: "12px 14px 14px",
+  },
+
+  yokaiStatBox: {
+    background: "rgba(76,54,28,0.06)",
+    border: "1px solid rgba(76,54,28,0.12)",
+    borderRadius: 14,
+    padding: "10px 8px",
+    textAlign: "center" as const,
+  },
+
+  yokaiStatLabel: {
+    fontSize: 11,
+    color: "rgba(76,54,28,0.7)",
+    fontWeight: 800,
+    marginBottom: 6,
+    letterSpacing: "0.06em",
+  },
+
+  yokaiStatValue: {
+    fontSize: 28,
+    lineHeight: 1,
+    fontWeight: 900,
+    color: "#22170d",
+  },
+
+  yokaiFooter: {
+    textAlign: "center" as const,
+    fontSize: 11,
+    color: "rgba(64,48,28,0.5)",
+    letterSpacing: "0.05em",
+    paddingBottom: 2,
+  },
+  yokaiMatchInline: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 12,
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+
+  yokaiMatchInlineItem: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    minWidth: 0,
   },
 };
