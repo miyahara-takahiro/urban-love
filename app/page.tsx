@@ -1764,7 +1764,9 @@ function buildCardSummary(first: RankedType, sections: ReturnType<typeof splitSe
   }
 
   const base = sections.basic || `${first.publicMask}。${first.innerCore}。`;
-  return trimForCard(base, 72);
+  return trimForCard(base, 58);
+
+  
 }
 
 
@@ -2095,59 +2097,56 @@ function ShareCardScreen({
               {first.name} {blend.p1}%{blend.p2 > 0 ? ` × ${second.name} ${blend.p2}%` : ""}
             </div>
 
-            <div style={styles.yokaiArtFrameOuter}>
-              <div style={styles.yokaiArtFrameInner}>
+            {/* 先に軸を出す */}
+            <div style={styles.yokaiStatRowCompact}>
+              {stats.map((item) => (
+                <div key={item.label} style={styles.yokaiStatBoxCompact}>
+                  <div style={styles.yokaiStatLabelCompact}>{item.label}</div>
+                  <div style={styles.yokaiStatValueCompact}>{item.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* 画像は少し小さく */}
+            <div style={styles.yokaiArtFrameOuterCompact}>
+              <div style={styles.yokaiArtFrameInnerCompact}>
                 {imageUrl ? (
-                  <img src={imageUrl} alt={resultName} style={styles.yokaiArtImage} />
+                  <img src={imageUrl} alt={resultName} style={styles.yokaiArtImageCompact} />
                 ) : (
                   <div style={styles.yokaiArtEmpty}>NO IMAGE</div>
                 )}
               </div>
             </div>
 
-            <div style={styles.yokaiInfoPanel}>
-              <div style={styles.yokaiSection}>
+            <div style={styles.yokaiInfoPanelCompact}>
+              <div style={styles.yokaiSectionCompact}>
                 <div style={styles.yokaiSectionLabel}>特性</div>
-                <div style={styles.yokaiTraitText}>
+                <div style={styles.yokaiTraitTextCompact}>
                   {first.traits.behavior} / {first.traits.emotion}
                 </div>
               </div>
 
               <div style={styles.yokaiDivider} />
 
-              <div style={styles.yokaiSection}>
+              <div style={styles.yokaiSectionCompact}>
                 <div style={styles.yokaiSectionLabel}>診断要約</div>
-                <div style={styles.yokaiSummaryText}>{summary}</div>
+                <div style={styles.yokaiSummaryTextCompact}>{summary}</div>
               </div>
 
               <div style={styles.yokaiDivider} />
 
-              <div style={styles.yokaiSection}>
-                <div style={styles.yokaiMatchInline}>
-                  <div style={styles.yokaiMatchInlineItem}>
+              <div style={styles.yokaiSectionCompact}>
+                <div style={styles.yokaiMatchInlineCompact}>
+                  <div style={styles.yokaiMatchInlineItemCompact}>
                     <span style={styles.yokaiMatchKey}>相性◎</span>
-                    <span style={styles.yokaiMatchVal}>{goodNames}</span>
-                   </div>
+                    <span style={styles.yokaiMatchValCompact}>{goodNames}</span>
+                  </div>
 
-                   <div style={styles.yokaiMatchInlineItem}>
+                  <div style={styles.yokaiMatchInlineItemCompact}>
                     <span style={styles.yokaiMatchKey}>相性×</span>
-                    <span style={styles.yokaiMatchVal}>{badNames}</span>
+                    <span style={styles.yokaiMatchValCompact}>{badNames}</span>
                   </div>
                 </div>
-              </div>
-
-
-             
-
-              <div style={styles.yokaiDivider} />
-
-              <div style={styles.yokaiStatRow}>
-                {stats.map((item) => (
-                  <div key={item.label} style={styles.yokaiStatBox}>
-                    <div style={styles.yokaiStatLabel}>{item.label}</div>
-                    <div style={styles.yokaiStatValue}>{item.value}</div>
-                  </div>
-                ))}
               </div>
             </div>
 
@@ -2158,6 +2157,7 @@ function ShareCardScreen({
         </div>
       </div>
     </div>
+
   );
 }
 
@@ -4249,7 +4249,7 @@ yokaiRare: {
 
   yokaiFooter: {
     textAlign: "center" as const,
-    fontSize: 11,
+    fontSize: 10,
     color: "rgba(64,48,28,0.5)",
     letterSpacing: "0.05em",
     paddingBottom: 2,
@@ -4268,4 +4268,114 @@ yokaiRare: {
     gap: 8,
     minWidth: 0,
   },
+
+
+  yokaiStatRowCompact: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)",
+    gap: 8,
+    marginBottom: 10,
+  },
+
+  yokaiStatBoxCompact: {
+    background: "rgba(76,54,28,0.06)",
+    border: "1px solid rgba(76,54,28,0.12)",
+    borderRadius: 12,
+    padding: "8px 6px",
+    textAlign: "center" as const,
+  },
+
+  yokaiStatLabelCompact: {
+    fontSize: 10,
+    color: "rgba(76,54,28,0.7)",
+    fontWeight: 800,
+    marginBottom: 4,
+    letterSpacing: "0.04em",
+  },
+
+  yokaiStatValueCompact: {
+    fontSize: 22,
+    lineHeight: 1,
+    fontWeight: 900,
+    color: "#22170d",
+  },
+
+  yokaiArtFrameOuterCompact: {
+    background: "linear-gradient(180deg, #cab38d 0%, #9e8258 100%)",
+    border: "2px solid rgba(138,109,63,0.58)",
+    borderRadius: 18,
+    padding: 6,
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2)",
+    marginBottom: 10,
+  },
+
+  yokaiArtFrameInnerCompact: {
+    background: "#efe5d2",
+    border: "1px solid rgba(97,75,44,0.24)",
+    borderRadius: 14,
+    padding: 4,
+  },
+
+  yokaiArtImageCompact: {
+    width: "100%",
+    aspectRatio: "4 / 5",
+    objectFit: "cover",
+    objectPosition: "center top",
+    display: "block",
+    borderRadius: 10,
+    background: "#d9ccb3",
+  },
+
+  yokaiInfoPanelCompact: {
+    background: "rgba(255,248,238,0.52)",
+    border: "1px solid rgba(88,66,36,0.18)",
+    borderRadius: 14,
+    overflow: "hidden",
+    marginBottom: 8,
+  },
+
+  yokaiSectionCompact: {
+    padding: "10px 12px",
+  },
+
+  yokaiTraitTextCompact: {
+    fontSize: 15,
+    lineHeight: 1.45,
+    color: "#20160d",
+    fontWeight: 800,
+  },
+
+  yokaiSummaryTextCompact: {
+    fontSize: 13,
+    lineHeight: 1.6,
+    color: "#2c2218",
+    fontWeight: 600,
+  },
+
+  yokaiMatchInlineCompact: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 10,
+    alignItems: "center",
+    flexWrap: "nowrap" as const,
+  },
+
+  yokaiMatchInlineItemCompact: {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    minWidth: 0,
+  },
+
+  yokaiMatchValCompact: {
+    fontSize: 13,
+    lineHeight: 1.4,
+    color: "#2c2218",
+    fontWeight: 700,
+    whiteSpace: "nowrap" as const,
+  },
+
+
+
+
 };
