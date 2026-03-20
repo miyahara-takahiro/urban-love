@@ -2575,44 +2575,10 @@ export default function App() {
 
 
 
-const downloadResultImage = async () => {
-  const target = captureRef.current;
-  if (!target) return;
 
-  try {
-    setErrorMessage("");
 
-    if (document.fonts?.ready) {
-      await document.fonts.ready;
-    }
 
-    await new Promise<void>((resolve) => {
-      requestAnimationFrame(() => resolve());
-    });
-    await new Promise((resolve) => setTimeout(resolve, 150));
 
-    const canvas = await html2canvas(target, {
-      backgroundColor: "#0b0b12",
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      width: 1080,
-      height: 1350,
-      windowWidth: 1080,
-      windowHeight: 1350,
-      removeContainer: true,
-    });
-
-    const dataUrl = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = `${resultName || "result"}.png`;
-    link.click();
-  } catch (error) {
-    console.error(error);
-    setErrorMessage("画像の保存に失敗しました。");
-  }
-};
 
 
 
