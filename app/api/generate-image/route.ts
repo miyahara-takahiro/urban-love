@@ -457,16 +457,13 @@ Core style:
 - cartoon-like body proportions
 - no realistic human anatomy
 
-
-
-
-
-
-
-
-
-
 - background should include visible scenery and place details such as corridors, streets, shrine paths, riversides, coastlines, windows, walls, steps, rails, lights, reflections, room depth, or distant structures
+
+
+
+
+
+
 
 Absolute rules:
 - this must be ONE unified character only
@@ -514,6 +511,33 @@ Background direction:
 - use atmosphere rather than giant props
 - the background should support the character's world, not dominate the image
 - background is required and must not be simplified into a plain backdrop
+
+
+Background requirement:
+- a detailed environment background is REQUIRED
+- the background is mandatory and must always be present
+- NEVER use a plain, empty, or single-color background
+- the scene must clearly show a location (corridor, street, river, room, etc.)
+- include visible ground, walls, or environmental context
+- the image must not look like a character on a blank backdrop
+
+
+
+Background enforcement:
+- NEVER use plain, empty, or single-color background
+- background must contain visible environmental elements at all times
+- do not simplify the background into a flat backdrop
+- even in minimal style, keep walls, floor, depth, or scenery visible
+- the scene must clearly show a place, not a blank space
+- do not replace the background with paper texture or plain gradient
+- the character must be grounded in the environment (not floating on empty space)
+- always include visible ground plane and depth behind the character
+
+
+
+
+
+
 
 
 
@@ -596,26 +620,6 @@ Framing override:
 - the character should occupy about 40 to 50 percent of the canvas height
 - ensure visible ground space below the feet
 - ensure clear space above the head
-
-Background requirement:
-- a detailed environment background is REQUIRED
-- the background is mandatory and must always be present
-- NEVER use a plain, empty, or single-color background
-- the scene must clearly show a location (corridor, street, river, room, etc.)
-- include visible ground, walls, or environmental context
-- the image must not look like a character on a blank backdrop
-
-
-
-Background enforcement:
-- NEVER use plain, empty, or single-color background
-- background must contain visible environmental elements at all times
-- do not simplify the background into a flat backdrop
-- even in minimal style, keep walls, floor, depth, or scenery visible
-- the scene must clearly show a place, not a blank space
-- do not replace the background with paper texture or plain gradient
-- the character must be grounded in the environment (not floating on empty space)
-- always include visible ground plane and depth behind the character
 
 
 
