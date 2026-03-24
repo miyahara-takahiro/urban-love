@@ -40,7 +40,6 @@ slightly uncanny
 not too horror-like
 not too dark
 shareable eerie atmosphere
-slight forward approach or subtle stepping motion
 subtle childlike mood`,
 
   "人面犬": `awkward human-like face influence
@@ -65,7 +64,6 @@ not cool`,
 not violent
 no excessive blood
 not slasher horror
-gentle forward lean with subtle reaching gesture
 shareable eerie beauty`,
 
   "ツチノコ": `fat rounded body
@@ -80,7 +78,6 @@ soft and distant presence
 slightly melancholic feeling
 not majestic
 not horror-like
-gentle drifting motion with slight body tilt
 pale winter spirit mood`,
 
   "ネッシー": `mysterious lake creature atmosphere
@@ -99,14 +96,12 @@ shareable eerie creature energy`,
 not heroic
 not battle-character like
 slightly strange proportions
-light confident stance with subtle dynamic balance
 traditional yokai mood`,
 
   "河童": `folk creature atmosphere
 slightly creepy but not scary
 awkward presence
 strange but readable silhouette
-playful sneaky posture with slight crouch or side step
 not too cute`,
 
   "鵺": `strange hybrid yokai presence
@@ -119,7 +114,6 @@ not too powerful`,
 soft eerie mood
 not fully innocent
 subtle unsettling eyes
-small playful step or slight bouncing posture
 not too dark`,
 
   "海坊主": `mysterious maritime folklore presence
@@ -132,14 +126,12 @@ shareable eerie atmosphere`,
 single-eye motif
 awkward but readable
 not too terrifying
-awkward tilted posture with uneven balance
 traditional yokai mood`,
 
   "ぬらりひょん": `sneaky old yokai mood
 slightly petty
 mischievous
 not cool
-relaxed leaning posture with subtle shifting weight
 comical but eerie`,
 
   "貞子": `long black hair
@@ -148,7 +140,6 @@ quiet eerie presence
 not too horror
 not too grotesque
 more uncanny than violent
-slow leaning posture with soft flowing motion
 shareable eerie beauty`,
 
   "鬼女": `intense feminine supernatural presence
@@ -156,21 +147,18 @@ dramatic but elegant silhouette
 not full demon monster
 human-based uncanny woman
 not gore
-active stance with expressive movement but non-aggressive
 not too horrifying`,
 
   "ろくろ首": `elongated neck motif
 strange silhouette
 not too grotesque
 not body horror
-slight unnatural stretch with gentle body tilt
 human-based form with surreal extension`,
 
   "のっぺらぼう": `blank or reduced facial simplicity
 quiet uncanny mood
 not gore
 not horror movie style
-still posture with slight unnatural tilt or shift
 minimal eerie presence`,
 };
 
@@ -428,7 +416,7 @@ Core style:
 - simple facial features
 - iconic silhouette design
 - high contrast color separation
-- clean but not empty background, maintain environmental detail
+- clean and minimal visual noise
 - easy to recognize at a glance
 - resembles trading card game creature illustration
 - full body
@@ -445,8 +433,6 @@ Core style:
 - no cinematic lighting
 - no realistic lighting
 - evenly lit, soft shading only
-
-- background must remain visible even when the character is dynamic
 
 
 - strongly stylized proportions
@@ -513,9 +499,6 @@ Background direction:
 - the background should feel like a place, not an empty backdrop
 - use atmosphere rather than giant props
 - the background should support the character's world, not dominate the image
-- background is required and must not be simplified into a plain backdrop
-
-
 
 Face design:
 - calm and neutral expression
@@ -537,113 +520,6 @@ Face design:
 - avoid overly sharp or horror-like teeth
 - keep the face readable and not grotesque
 - slightly soften the expression even if eerie
-
-
-
-Expression override:
-- add slight emotion to the face (not fully neutral)
-- soft subtle smile OR gentle curious expression
-- eyes must have visible highlights
-- avoid empty, hollow, or fully black eyes
-- expression should feel slightly alive and personable
-- keep it approachable and shareable, not scary
-
-Pose and motion:
-- add slight dynamic pose (no stiff standing)
-- slight body twist or weight shift
-- natural asymmetry in arms or shoulders
-- one hand slightly raised or interacting with space
-- subtle movement in hair or clothing
-- pose should reflect personality traits
-- keep it simple but not static
-
-Dynamic motion emphasis:
-- create a clear sense of motion, not just a hand gesture
-- the pose should feel captured mid-movement
-- show visible weight shift through hips, shoulders, and legs
-- add a slight forward lean, side step, or turning motion
-- avoid symmetrical front-facing standing pose
-- use flowing hair and sleeve movement to reinforce motion
-- make the body feel alive and in action, not posed like a doll
-
-Pose variation:
-- avoid default or typical pose for the character type
-- introduce variation in stance, gesture, and body angle
-- do not repeat similar poses across different characters
-- each character should feel slightly different in posture and movement
-
-
-
-
-Motion priority:
-- prioritize dynamic movement over perfectly centered or balanced pose
-- even in full-body framing, keep a sense of motion and asymmetry
-- do not default to a neutral standing pose
-
-
-
-
-
-
-Framing override:
-- use a zoomed-out full-body composition
-- the entire character must fit comfortably inside the frame
-- leave clear space above the head, below the feet, and on both sides
-- do not crop hair, hands, sleeves, or feet
-- keep generous margins around the full silhouette
-- camera should be pulled back enough to show the whole body and surrounding background
-- avoid close-up or near-close framing
-- the character should occupy about 40 to 50 percent of the canvas height
-- ensure visible ground space below the feet
-- ensure clear space above the head
-
-Background requirement:
-- a detailed environment background is REQUIRED
-- the background is mandatory and must always be present
-- NEVER use a plain, empty, or single-color background
-- the scene must clearly show a location (corridor, street, river, room, etc.)
-- include visible ground, walls, or environmental context
-- the image must not look like a character on a blank backdrop
-
-
-
-Background enforcement:
-- NEVER use plain, empty, or single-color background
-- background must contain visible environmental elements at all times
-- do not simplify the background into a flat backdrop
-- even in minimal style, keep walls, floor, depth, or scenery visible
-- the scene must clearly show a place, not a blank space
-- do not replace the background with paper texture or plain gradient
-- the character must be grounded in the environment (not floating on empty space)
-- always include visible ground plane and depth behind the character
-
-
-
-
-Framing rules (strict):
-- the entire character must be fully visible within the frame
-- DO NOT crop any part of the character
-- full body must be shown from head to toe
-- leave clear margin above the head and below the feet
-- the character must not touch the image edges
-- if any part would be cropped, adjust camera to include everything
-
-Camera distance:
-- use a zoomed-out full-body view
-- avoid close-up framing
-- the character should appear smaller within the frame
-- prioritize full-body visibility over detail
-
-
-
-
-
-
-Full-body motion:
-- include movement in legs and hips, not just arms
-- one leg slightly forward, stepping, or shifting weight
-- hips and shoulders should not be parallel (twist the body slightly)
-- avoid straight vertical posture
 
 
 

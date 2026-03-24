@@ -35,143 +35,140 @@ type Blend = {
 };
 
 const characterAdjustments: Record<string, string> = {
-  "花子さん": `quiet school ghost presence
-slightly uncanny
-not too horror-like
-not too dark
-shareable eerie atmosphere
-slight forward approach or subtle stepping motion
-subtle childlike mood`,
+  "花子さん": `slightly unsettling smile
+not friendly
+quiet but watching you
+do not make too terrifying
+school ghost energy but still shareable`,
 
-  "人面犬": `awkward human-like face influence
-slightly odd expression
-strange urban legend energy
-not too horrific
-shareable uncanny mood`,
+  "人面犬": `awkward human-like face
+slightly annoying expression
+not cute
+do not make too horrific
+strange urban legend energy rather than horror monster`,
 
-  "モスマン": `mysterious presence
-not too scary
+  "モスマン": `not too scary
 not horror
-slightly awkward silhouette
-memorable rather than threatening`,
+slightly awkward posture
+not powerful
+mysterious and memorable rather than threatening`,
 
-  "ビッグフット": `large folkloric creature presence
-slightly clumsy silhouette
-wild but not aggressive
-not heroic
-not cool`,
+  "ビッグフット": `not heroic
+not cool
+slightly clumsy presence
+a bit awkward
+wild but not aggressive`,
 
-  "口裂け女": `unsettling feminine urban legend energy
-not violent
+  "口裂け女": `not too violent
 no excessive blood
-not slasher horror
-gentle forward lean with subtle reaching gesture
-shareable eerie beauty`,
+unsettling but not horror
+do not make too grotesque
+urban legend woman rather than slasher horror`,
 
-  "ツチノコ": `fat rounded body
-short and stubby proportions
+  "ツチノコ": `fat body
+short and stubby
 lazy posture
-odd local legend presence
+slightly stupid expression
 not cool
-slightly funny uncanny mood`,
+not cute
+odd local legend mood`,
 
-  "雪女": `quiet supernatural beauty
-soft and distant presence
-slightly melancholic feeling
+  "雪女": `emotionless expression
+slightly uncanny beauty
+not elegant
 not majestic
-not horror-like
-gentle drifting motion with slight body tilt
-pale winter spirit mood`,
+do not make too cold or horror-like
+quiet supernatural presence`,
 
-  "ネッシー": `mysterious lake creature atmosphere
-not realistic
+  "ネッシー": `not realistic
 slightly strange proportions
 not majestic
-shareable legendary creature mood`,
+a bit awkward
+mysterious creature rather than giant monster`,
 
-  "チュパカブラ": `creepy but not horror
-no blood
+  "チュパカブラ": `no blood
 no gore
-slightly weird expression
-shareable eerie creature energy`,
-
-  "天狗": `folkloric supernatural presence
-not heroic
-not battle-character like
-slightly strange proportions
-light confident stance with subtle dynamic balance
-traditional yokai mood`,
-
-  "河童": `folk creature atmosphere
-slightly creepy but not scary
-awkward presence
-strange but readable silhouette
-playful sneaky posture with slight crouch or side step
-not too cute`,
-
-  "鵺": `strange hybrid yokai presence
-not too monstrous
-uncanny but controlled
-slightly unsettling
-not too powerful`,
-
-  "座敷童": `quiet uncanny childlike presence
-soft eerie mood
-not fully innocent
-subtle unsettling eyes
-small playful step or slight bouncing posture
-not too dark`,
-
-  "海坊主": `mysterious maritime folklore presence
 not horror
-simple readable shape
-slightly uncanny
-shareable eerie atmosphere`,
+slightly weird expression
+creepy but still shareable`,
 
-  "一つ目小僧": `odd yokai silhouette
-single-eye motif
-awkward but readable
-not too terrifying
-awkward tilted posture with uneven balance
-traditional yokai mood`,
-
-  "ぬらりひょん": `sneaky old yokai mood
-slightly petty
-mischievous
+  "天狗": `not heroic
 not cool
-relaxed leaning posture with subtle shifting weight
-comical but eerie`,
+slightly strange proportions
+a bit unsettling
+folkloric presence rather than battle character`,
 
+  "河童": `not cute
+slightly creepy
+awkward expression
+do not make too scary
+folk creature atmosphere`,
+
+  "鵺": `strange hybrid creature
+not cool
+not powerful
+slightly unsettling
+do not make it too monstrous
+uncanny yokai energy`,
+
+  "座敷童": `slightly unsettling eyes
+too calm expression
+not fully innocent
+do not make too dark
+quiet uncanny childlike presence`,
+
+  "海坊主": `not too scary
+not horror
+simple face
+slightly uncanny
+mysterious maritime folklore presence`,
+
+  "一つ目小僧": `not cute
+slightly awkward
+unsettling single eye
+do not make too terrifying
+odd yokai silhouette`,
+
+  "ぬらりひょん": `not cool
+petty
+sneaky
+annoying
+uninvited guest
+slightly ugly
+comical but creepy
+mischievous old yokai atmosphere`,
+
+  // result route 側にあるが image route 側で未対応だったものを追加
   "貞子": `long black hair
 pale face
 quiet eerie presence
 not too horror
 not too grotesque
+not cinematic ghost movie style
 more uncanny than violent
-slow leaning posture with soft flowing motion
-shareable eerie beauty`,
+shareable eerie beauty rather than terror`,
 
-  "鬼女": `intense feminine supernatural presence
-dramatic but elegant silhouette
+  "鬼女": `intense feminine presence
+wrathful or jealous emotional energy
 not full demon monster
 human-based uncanny woman
 not gore
-active stance with expressive movement but non-aggressive
-not too horrifying`,
+not too horrifying
+dramatic but still elegant in silhouette`,
 
   "ろくろ首": `elongated neck motif
 strange silhouette
 not too grotesque
 not body horror
-slight unnatural stretch with gentle body tilt
+uncanny traditional yokai feeling
 human-based form with surreal extension`,
 
-  "のっぺらぼう": `blank or reduced facial simplicity
-quiet uncanny mood
+  "のっぺらぼう": `blank face or reduced facial features
 not gore
 not horror movie style
-still posture with slight unnatural tilt or shift
-minimal eerie presence`,
+quiet uncanny simplicity
+human-like but unnatural
+minimal unsettling expression rather than shock horror`,
 };
 
 function clampPercent(value: number, min: number, max: number) {
@@ -378,12 +375,10 @@ Composition:
 - leave comfortable margin above the head
 - avoid zoomed-in framing
 - camera distance should be medium to long shot
-- the character should appear slightly smaller within the canvas
+- the character should be slightly smaller within the canvas
 - ensure visible space above the head and around the body
 - do not place the face close to the top edge
 - keep the entire silhouette comfortably inside the frame
-- background should be clearly visible behind the character
-- maintain comfortable margins on all sides
 `
       : `
 Composition:
@@ -403,61 +398,29 @@ Composition:
 - leave comfortable margin above the head
 - avoid zoomed-in framing
 - camera distance should be medium to long shot
-- the character should appear slightly smaller within the canvas
-- ensure visible space above the head and around the body
-- background should be clearly visible behind the character
-- maintain comfortable margins on all sides
 `;
 
   return `
 Japanese urban legend fusion character illustration.
 
 Core style:
-- stylized creature illustration
-- highly simplified character design
-- strong deformation and readability
-- bold clean outline
-- flat colors with minimal shading
-- no realistic texture
-- no painterly rendering
-- no semi-realistic style
-- smooth clean surfaces
-- large readable shapes
-- slightly exaggerated proportions
-- slightly larger head and eyes
-- simple facial features
-- iconic silhouette design
-- high contrast color separation
-- clean but not empty background, maintain environmental detail
-- easy to recognize at a glance
-- resembles trading card game creature illustration
+- semi-realistic illustration
+- slightly grotesque kimo-kawaii balance
+- unsettling but not horror
+- strange and memorable but shareable
+- not too scary
+- not too dark
+- not cute
+- not cinematic
+- no gore
+- no excessive blood
+- not photorealistic
 - full body
 - centered composition
 - one character only
 - light eerie atmosphere
 - soft environmental storytelling
 - brighter than horror imagery
-- slightly uncanny but not horror
-- not grotesque
-- no gore
-- no excessive blood
-- no excessive detail
-- no cinematic lighting
-- no realistic lighting
-- evenly lit, soft shading only
-
-- background must remain visible even when the character is dynamic
-
-
-- strongly stylized proportions
-- simplified anatomy
-- rounded and soft shapes
-- minimal detail in hands and fingers
-- reduce realism in body structure
-- cartoon-like body proportions
-- no realistic human anatomy
-
-
 
 
 
@@ -482,18 +445,12 @@ Absolute rules:
 - avoid large background objects competing with the subject
 - keep the face and body clearly readable
 - avoid plain empty background
-- avoid blank white background
-- avoid plain studio backdrop
+- avoid flat blank walls with no variation
+- background should feel like a place, not a blank studio backdrop
 - overall lighting should be softly bright, dusk-like, or gently lit, not horror-dark
 - avoid heavy shadow that makes the character too frightening
 - keep the image suitable for social sharing and visually catchy
 - maintain an eerie tone without becoming grotesque horror
-- only one head
-- no extra faces
-- no duplicated body parts
-- the neck must connect to a single head
-- no twin head
-- no second face
 
 Character fusion:
 Primary influence: ${first.name} (${blend.p1}%)
@@ -506,169 +463,47 @@ ${compositionRule}
 Background direction:
 - use a fitting Japanese urban-legend inspired setting
 - ${backgroundDirection}
-- include subtle environmental details such as walls, corridors, objects, textures, architecture, paths, railings, windows, water edges, stones, snow, mist, lanterns, or landscape elements
+- include subtle environmental details such as walls, corridors, objects, textures, architecture, paths, railings, windows, water edges, stones, or landscape elements
 - add depth and perspective to the background
 - include atmospheric lighting variation and gentle shadow
 - keep the background readable, scenic, and slightly bright
-- the background should feel like a place, not an empty backdrop
 - use atmosphere rather than giant props
 - the background should support the character's world, not dominate the image
-- background is required and must not be simplified into a plain backdrop
-
-
-
-Face design:
-- calm and neutral expression
-- very subtle emotion
-- slightly distant gaze
-- quiet and mysterious feeling
-- not smiling
-- not expressive
-- not fully emotionless
-- faint melancholic presence
-- soft eyes with minimal highlight
-- slightly pale expression
-- balanced between eerie and calm
-- slightly cute but restrained
-- elegant and minimal facial detail
-- gentle and approachable rather than scary
-
-
-- avoid overly sharp or horror-like teeth
-- keep the face readable and not grotesque
-- slightly soften the expression even if eerie
-
-
-
-Expression override:
-- add slight emotion to the face (not fully neutral)
-- soft subtle smile OR gentle curious expression
-- eyes must have visible highlights
-- avoid empty, hollow, or fully black eyes
-- expression should feel slightly alive and personable
-- keep it approachable and shareable, not scary
-
-Pose and motion:
-- add slight dynamic pose (no stiff standing)
-- slight body twist or weight shift
-- natural asymmetry in arms or shoulders
-- one hand slightly raised or interacting with space
-- subtle movement in hair or clothing
-- pose should reflect personality traits
-- keep it simple but not static
-
-Dynamic motion emphasis:
-- create a clear sense of motion, not just a hand gesture
-- the pose should feel captured mid-movement
-- show visible weight shift through hips, shoulders, and legs
-- add a slight forward lean, side step, or turning motion
-- avoid symmetrical front-facing standing pose
-- use flowing hair and sleeve movement to reinforce motion
-- make the body feel alive and in action, not posed like a doll
-
-Pose variation:
-- avoid default or typical pose for the character type
-- introduce variation in stance, gesture, and body angle
-- do not repeat similar poses across different characters
-- each character should feel slightly different in posture and movement
-
-
-
-
-Motion priority:
-- prioritize dynamic movement over perfectly centered or balanced pose
-- even in full-body framing, keep a sense of motion and asymmetry
-- do not default to a neutral standing pose
-
-
-
-
-
-
-Framing override:
-- use a zoomed-out full-body composition
-- the entire character must fit comfortably inside the frame
-- leave clear space above the head, below the feet, and on both sides
-- do not crop hair, hands, sleeves, or feet
-- keep generous margins around the full silhouette
-- camera should be pulled back enough to show the whole body and surrounding background
-- avoid close-up or near-close framing
-- the character should occupy about 40 to 50 percent of the canvas height
-- ensure visible ground space below the feet
-- ensure clear space above the head
-
-Background requirement:
-- a detailed environment background is REQUIRED
-- the background is mandatory and must always be present
-- NEVER use a plain, empty, or single-color background
-- the scene must clearly show a location (corridor, street, river, room, etc.)
-- include visible ground, walls, or environmental context
-- the image must not look like a character on a blank backdrop
-
-
-
-Background enforcement:
-- NEVER use plain, empty, or single-color background
-- background must contain visible environmental elements at all times
-- do not simplify the background into a flat backdrop
-- even in minimal style, keep walls, floor, depth, or scenery visible
-- the scene must clearly show a place, not a blank space
-- do not replace the background with paper texture or plain gradient
-- the character must be grounded in the environment (not floating on empty space)
-- always include visible ground plane and depth behind the character
-
-
-
-
-Framing rules (strict):
-- the entire character must be fully visible within the frame
-- DO NOT crop any part of the character
-- full body must be shown from head to toe
-- leave clear margin above the head and below the feet
-- the character must not touch the image edges
-- if any part would be cropped, adjust camera to include everything
-
-Camera distance:
-- use a zoomed-out full-body view
-- avoid close-up framing
-- the character should appear smaller within the frame
-- prioritize full-body visibility over detail
-
-
-
-
-
-
-Full-body motion:
-- include movement in legs and hips, not just arms
-- one leg slightly forward, stepping, or shifting weight
-- hips and shoulders should not be parallel (twist the body slightly)
-- avoid straight vertical posture
-
-
-
-
-
-
 
 Design intent:
 - create a strange new creature, not two characters standing together
 - use the dominant character as the main silhouette and personality base
 - blend the secondary character through facial structure, body details, expression, texture, posture, aura, or iconic motifs
 - the visual balance must clearly reflect the percentage difference
-- memorable, uncanny, slightly disturbing, but still visually appealing
-- the image should feel like a trading card character portrait with environmental mood
-- prioritize simplicity over realism
-- prioritize shape over texture
-- prioritize silhouette over detail
-- avoid realistic anatomy
-- avoid complex lighting
+- memorable, uncanny, slightly disturbing, slightly comical
+- the image should feel like a character portrait with environmental mood, not a horror scene
+- the final result should feel visually appealing and easy to share, not oppressively scary
 
 ${first.name} adjustment:
 ${firstAdjust}
 
 ${second.name} adjustment:
 ${secondAdjust}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Additional prompt from client:
 ${prompt ?? ""}
