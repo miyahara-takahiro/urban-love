@@ -2328,7 +2328,7 @@ function ShareCardScreen({
             summary={summary}
             title={resultName}
             rarityLabel={rare}
-            summary={buildShareSummary(first)}
+           
           />
         </div>
 
