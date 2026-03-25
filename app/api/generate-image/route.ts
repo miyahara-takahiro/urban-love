@@ -299,11 +299,6 @@ function getBackgroundDirection(first: RankedType, second: RankedType) {
 
 
 
-
-
-
-
-
 function buildImagePrompt({
   prompt,
   first,
@@ -376,9 +371,7 @@ Japanese urban legend fusion character illustration.
 
 Core style:
 - stylized creature illustration
-
 - simplified character design, but background must retain structural detail
-
 - strong deformation and readability
 - bold clean outline
 - flat colors with minimal shading
@@ -405,16 +398,11 @@ Core style:
 - not grotesque
 - no gore
 - no excessive blood
-
 - no excessive detail in character, but keep environmental detail in background
-
 - no cinematic lighting
 - no realistic lighting
 - evenly lit, soft shading only
-
 - background must remain visible even when the character is dynamic
-
-
 - strongly stylized proportions
 - simplified anatomy
 - rounded and soft shapes
@@ -422,14 +410,6 @@ Core style:
 - reduce realism in body structure
 - cartoon-like body proportions
 - no realistic human anatomy
-
-- background should include visible scenery and place details such as corridors, streets, shrine paths, riversides, coastlines, windows, walls, steps, rails, lights, reflections, room depth, or distant structures
-
-
-
-
-
-
 
 Absolute rules:
 - this must be ONE unified character only
@@ -440,15 +420,10 @@ Absolute rules:
 - do NOT add text, logo, caption, frame, UI, or watermark
 - the character must remain the clear main subject
 - do NOT let the background overpower the character
-
 - avoid overly cluttered scenery but keep clear environmental structures visible
-
 - avoid overly busy composition
 - avoid large background objects competing with the subject
 - keep the face and body clearly readable
-- avoid plain empty background
-- avoid blank white background
-- avoid plain studio backdrop
 - overall lighting should be softly bright, dusk-like, or gently lit, not horror-dark
 - avoid heavy shadow that makes the character too frightening
 - keep the image suitable for social sharing and visually catchy
@@ -468,180 +443,51 @@ ${modeInstruction}
 
 ${compositionRule}
 
-Background direction:
-- use a fitting Japanese urban-legend inspired setting
-- ${backgroundDirection}
-- include subtle environmental details such as walls, corridors, objects, textures, architecture, paths, railings, windows, water edges, stones, snow, mist, lanterns, or landscape elements
-- add depth and perspective to the background
-- include atmospheric lighting variation and gentle shadow
-- keep the background readable, scenic, and slightly bright
-- the background should feel like a place, not an empty backdrop
-- use atmosphere rather than giant props
-- the background should support the character's world, not dominate the image
-- background is required and must not be simplified into a plain backdrop
-- background should be clearly visible and not too faint or washed out
-- maintain clear contrast between foreground and background elements
+Background:
+- a detailed environment background is mandatory
+- never use plain, blank, gradient, studio, or single-color background
+- the scene must clearly show a real place in Japan
+- use this setting: ${backgroundDirection}
+- include visible ground plane, depth, and at least 3 environmental elements
+- examples of environmental elements: walls, corridors, windows, railings, steps, trees, stones, water edges, lanterns, snow, room structures
+- the character must be clearly grounded in the environment, not floating
+- the background must stay readable and clearly visible behind the character
+- the environment should support the character's world without overpowering the character
 
-
-
-
-Background requirement:
-- a detailed environment background is REQUIRED
-- the background is mandatory and must always be present
-- NEVER use a plain, empty, or single-color background
-- the scene must clearly show a location (corridor, street, river, room, etc.)
-- must include visible ground plane AND multiple environmental structures
-- include at least two background elements such as walls, buildings, trees, railings, or interior structures
-- the image must not look like a character on a blank backdrop
-- the background must form a complete scene, not a partial or abstract space
-
-
-Background enforcement:
-- NEVER use plain, empty, or single-color background
-- background must contain visible environmental elements at all times
-- do not simplify the background into a flat backdrop
-- even in minimal style, keep walls, floor, depth, or scenery visible
-- the scene must clearly show a place, not a blank space
-- do not replace the background with paper texture or plain gradient
-- the character must be grounded in the environment (not floating on empty space)
-- always include visible ground plane and depth behind the character
-
-
-Environment anchoring:
-- the character must be clearly standing on a visible surface connected to the environment
-- the feet must be grounded in a detailed floor or terrain that extends into the background
-- the ground must visually connect to a full environment, not fade into empty space
-
-
-
-Background dominance control:
-- background must remain present regardless of character intensity or expression
-- do not remove or simplify the background even if the character is visually strong
-- even if the character is expressive or visually dominant, keep the environment clearly visible
-
-
-
-Environment dependency:
-- the character must be interacting with or clearly placed within the environment
-- the pose or composition should not make sense without a background
-- the character should visually relate to the environment (touching ground, aligned with perspective, or interacting with space)
-
-
-
-
-Face design:
+Face:
 - calm and neutral expression
 - very subtle emotion
 - slightly distant gaze
 - quiet and mysterious feeling
-- not smiling
-- not expressive
-- not fully emotionless
-- faint melancholic presence
-- soft eyes with minimal highlight
-- slightly pale expression
+- not overly expressive
 - balanced between eerie and calm
 - slightly cute but restrained
 - elegant and minimal facial detail
 - gentle and approachable rather than scary
-
-
 - avoid overly sharp or horror-like teeth
 - keep the face readable and not grotesque
-- slightly soften the expression even if eerie
-
-
-
-Expression override:
-- add slight emotion to the face (not fully neutral)
-- soft subtle smile OR gentle curious expression
-- eyes must have visible highlights
-- avoid empty, hollow, or fully black eyes
+- slight visible eye highlights
 - expression should feel slightly alive and personable
-- keep it approachable and shareable, not scary
 
 Pose and motion:
-- add slight dynamic pose (no stiff standing)
+- add slight dynamic pose
 - slight body twist or weight shift
 - natural asymmetry in arms or shoulders
 - one hand slightly raised or interacting with space
 - subtle movement in hair or clothing
-- pose should reflect personality traits
-- keep it simple but not static
-
-Dynamic motion emphasis:
-- create a clear sense of motion, not just a hand gesture
-- the pose should feel captured mid-movement
+- create a clear sense of motion
 - show visible weight shift through hips, shoulders, and legs
-- add a slight forward lean, side step, or turning motion
 - avoid symmetrical front-facing standing pose
-- use flowing hair and sleeve movement to reinforce motion
-- make the body feel alive and in action, not posed like a doll
-
-Pose variation:
-- avoid default or typical pose for the character type
-- introduce variation in stance, gesture, and body angle
-- do not repeat similar poses across different characters
-- each character should feel slightly different in posture and movement
-
-
-
-
-Motion priority:
-- prioritize dynamic movement over perfectly centered or balanced pose
-- even in full-body framing, keep a sense of motion and asymmetry
 - do not default to a neutral standing pose
 
-
-
-
-
-
-Framing override:
+Framing:
 - use a zoomed-out full-body composition
 - the entire character must fit comfortably inside the frame
-- leave clear space above the head, below the feet, and on both sides
 - do not crop hair, hands, sleeves, or feet
-- keep generous margins around the full silhouette
+- leave clear space above the head, below the feet, and on both sides
 - camera should be pulled back enough to show the whole body and surrounding background
-- avoid close-up or near-close framing
 - the character should occupy about 40 to 50 percent of the canvas height
 - ensure visible ground space below the feet
-- ensure clear space above the head
-
-
-
-
-Framing rules (strict):
-- the entire character must be fully visible within the frame
-- DO NOT crop any part of the character
-- full body must be shown from head to toe
-- leave clear margin above the head and below the feet
-- the character must not touch the image edges
-- if any part would be cropped, adjust camera to include everything
-
-Camera distance:
-- use a zoomed-out full-body view
-- avoid close-up framing
-- the character should appear smaller within the frame
-- prioritize full-body visibility over detail
-
-
-
-
-
-
-Full-body motion:
-- include movement in legs and hips, not just arms
-- one leg slightly forward, stepping, or shifting weight
-- hips and shoulders should not be parallel (twist the body slightly)
-- avoid straight vertical posture
-
-
-
-
-
-
 
 Design intent:
 - create a strange new creature, not two characters standing together
@@ -666,6 +512,26 @@ Additional prompt from client:
 ${prompt ?? ""}
 `.trim();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export async function POST(req: Request) {
   try {
