@@ -94,23 +94,6 @@ const QUESTION_GROUP_ORDER: QuestionGroupId[] = [
   "style",
 ];
 
-type CharacterTraits = {
-  behavior: string;
-  emotion: string;
-  love: string;
-};
-
-
-
- 
-
-
-
-
-
-
-
-
 
 type CharacterTraits = {
   behavior: string;
