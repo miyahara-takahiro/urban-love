@@ -20,6 +20,8 @@ const AXES = [
   "independence",
 ] as const;
 
+
+
 type AxisKey = (typeof AXES)[number];
 type AxisScores = Record<AxisKey, number>;
 type Category = "self" | "emotion" | "romance" | "social";
@@ -29,11 +31,32 @@ type ResultMode = "single" | "dominant-dual" | "balanced-dual";
 type Rarity = "R" | "SR" | "SSR" | "UR";
 type QuestionVariant = "A" | "B" | "C";
 
-
 type QuestionOption = {
   label: string;
   score: Partial<AxisScores>;
 };
+
+type QuestionGroupId =
+  | "alone-quality"
+  | "help-seeking"
+  | "distance"
+  | "after"
+  | "loneliness-response"
+  | "trust-speed"
+  | "intuition-discomfort"
+  | "evidence-need"
+  | "action"
+  | "risk"
+  | "chance"
+  | "conflict"
+  | "support"
+  | "emotion"
+  | "decision"
+  | "relation"
+  | "stress"
+  | "self"
+  | "value"
+  | "style";
 
 type Question = {
   id: string;
@@ -47,17 +70,6 @@ type Question = {
   groupId: QuestionGroupId;
   variant: QuestionVariant;
 };
-
-
-
-
-
-
-
-
-
-
-
 
 const QUESTION_GROUP_ORDER: QuestionGroupId[] = [
   "alone-quality",
@@ -82,6 +94,19 @@ const QUESTION_GROUP_ORDER: QuestionGroupId[] = [
   "style",
 ];
 
+type CharacterTraits = {
+  behavior: string;
+  emotion: string;
+  love: string;
+};
+
+
+
+ 
+
+
+
+
 
 
 
@@ -92,6 +117,15 @@ type CharacterTraits = {
   emotion: string;
   love: string;
 };
+
+
+
+
+
+
+
+
+
 
 type TypeDef = {
   id: string;
