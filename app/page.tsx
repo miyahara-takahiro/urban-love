@@ -1,6 +1,11 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useRef } from "react";
+import ShareCard, { getTypeLabel } from "@/app/components/ShareCard";
+import { toPng } from "html-to-image";
+
+
 
 const USE_MOCK = false;
 const RESULT_API_URL = "/api/generate-result";
@@ -1762,6 +1767,53 @@ function trimForCard(text: string, max = 240) {
 }
 
 
+function buildShareSummary(first: RankedType) {
+  const source = `${first.name} ${first.publicMask} ${first.innerCore} ${first.traits.behavior} ${first.traits.emotion}`;
+
+  if (/一つ目小僧/.test(source)) {
+    return "違和感を先に見抜く。\n感情はほとんど表に出ない。";
+  }
+  if (/貞子/.test(source)) {
+    return "気配で残る。\n深いところに静かに入り込む。";
+  }
+  if (/口裂け女/.test(source)) {
+    return "存在感が強い。\n触れた瞬間に空気を支配する。";
+  }
+  if (/花子さん/.test(source)) {
+    return "静かに潜む。\n気づけば場の中心にいる。";
+  }
+  if (/雪女/.test(source)) {
+    return "温度を見せない。\n近づかずに支配する。";
+  }
+  if (/鬼女/.test(source)) {
+    return "感情が深い。\n一度火がつくと止まらない。";
+  }
+  if (/ろくろ首/.test(source)) {
+    return "静かに見える。\n距離の詰め方が極端。";
+  }
+  if (/のっぺらぼう/.test(source)) {
+    return "感情が読めない。\n不気味な余白だけ残る。";
+  }
+  if (/座敷童/.test(source)) {
+    return "自然に溶け込む。\n静かに影響を残す。";
+  }
+  if (/ぬらりひょん/.test(source)) {
+    return "境界を越えてくる。\n気づけば居場所を奪われる。";
+  }
+  if (/河童/.test(source)) {
+    return "軽く見える。\n裏で流れをずらす。";
+  }
+  if (/天狗/.test(source)) {
+    return "全体を見ている。\n上から空気を動かす。";
+  }
+
+  return "感情が残る。\n影響が長く続く。";
+}
+
+
+
+
+
 
 
 
@@ -2142,21 +2194,6 @@ function pickMoveName(first: RankedType, second: RankedType) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function ShareCardScreen({
   resultName,
   first,
@@ -2164,29 +2201,61 @@ function ShareCardScreen({
   blend,
   imageUrl,
   resultText,
+  good,
+  bad,
   onBack,
   onRestart,
   isMobile,
 }: {
   resultName: string;
   first: RankedType;
-  second: RankedType;
+  second?: RankedType;
   blend: { p1: number; p2: number };
   imageUrl: string;
   resultText: string;
+  good?: string;
+  bad?: string;
   onBack: () => void;
   onRestart: () => void;
   isMobile: boolean;
 }) {
+  const cardRef = useRef<HTMLDivElement | null>(null);
+
+  async function handleExportCard() {
+    if (!cardRef.current) return;
+
+    try {
+      const dataUrl = await toPng(cardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+      });
+
+      const link = document.createElement("a");
+      link.download = "urban-myth-card.png";
+      link.href = dataUrl;
+      link.click();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   const sections = splitSections(resultText);
   const rare = pickCardRare(blend);
   const elements = pickCardElements(first, second);
   const stats = pickStats(first);
-  const excludeNames = [first.name, second.name];
-
   const summary = buildCardSummary(first, sections);
-  const goodNames = extractMatchNames(sections.good, "雪女 / 座敷童", excludeNames);
-  const badNames = extractMatchNames(sections.bad, "鬼女 / 口裂け女", excludeNames);
+  const excludeNames = [first.name, second?.name].filter(Boolean) as string[];
+
+  const goodNames = extractMatchNames(
+    sections.good,
+    "雪女 / 座敷童",
+    excludeNames
+  );
+  const badNames = extractMatchNames(
+    sections.bad,
+    "鬼女 / 口裂け女",
+    excludeNames
+  );
 
   return (
     <div
@@ -2214,91 +2283,45 @@ function ShareCardScreen({
           </button>
         </div>
 
-        <div style={styles.yokaiCardOuter}>
-          <div style={styles.yokaiCardInner}>
-            <div style={styles.yokaiHeader}>
-              <div>
-                <div style={styles.yokaiMiniLabel}>都市伝説図鑑カード</div>
-                <div style={styles.yokaiTitle}>{resultName}</div>
-              </div>
-              <div style={styles.yokaiRare}>{rare}</div>
-            </div>
+        <div
+          ref={cardRef}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <ShareCard
+            main={first}
+            sub={blend.p2 > 0 ? second : undefined}
+            goodLabel={goodNames}
+            badLabel={badNames}
+            imageUrl={imageUrl}
+            elements={elements}
+            stats={stats}
+            summary={summary}
+            title={resultName}
+            rarityLabel={rare}
+            summary={buildShareSummary(first)}
+          />
+        </div>
 
-            <div style={styles.yokaiElementRow}>
-              {elements.map((item) => (
-                <span key={item} style={styles.yokaiElementChip}>
-                  {item}
-                </span>
-              ))}
-            </div>
-
-            <div style={styles.yokaiBlendLine}>
-              {first.name} {blend.p1}%{blend.p2 > 0 ? ` × ${second.name} ${blend.p2}%` : ""}
-            </div>
-
-            {/* 先に軸を出す */}
-         <div style={styles.yokaiStatRowInline}>
-  {stats.map((item) => (
-    <div key={item.label} style={styles.yokaiStatInlineItem}>
-      <span style={styles.yokaiStatInlineLabel}>{item.label}</span>
-      <span style={styles.yokaiStatInlineValue}>{item.value}</span>
-    </div>
-  ))}
-</div>  
-
-            {/* 画像は少し小さく */}
-            <div style={styles.yokaiArtFrameOuterCompact}>
-              <div style={styles.yokaiArtFrameInnerCompact}>
-                {imageUrl ? (
-                  <img src={imageUrl} alt={resultName} style={styles.yokaiArtImageCompact} />
-                ) : (
-                  <div style={styles.yokaiArtEmpty}>NO IMAGE</div>
-                )}
-              </div>
-            </div>
-
-            <div style={styles.yokaiInfoPanelCompact}>
-              <div style={styles.yokaiSectionCompact}>
-                <div style={styles.yokaiSectionLabel}>特性</div>
-                <div style={styles.yokaiTraitTextCompact}>
-                  {first.traits.behavior} / {first.traits.emotion}
-                </div>
-              </div>
-
-              <div style={styles.yokaiDivider} />
-
-              <div style={styles.yokaiSectionCompact}>
-                <div style={styles.yokaiSectionLabel}>診断要約</div>
-                <div style={styles.yokaiSummaryTextCompact}>{summary}</div>
-              </div>
-
-              <div style={styles.yokaiDivider} />
-
-              <div style={styles.yokaiSectionCompact}>
-                <div style={styles.yokaiMatchInlineCompact}>
-                  <div style={styles.yokaiMatchInlineItemCompact}>
-                    <span style={styles.yokaiMatchKey}>相性◎</span>
-                    <span style={styles.yokaiMatchValCompact}>{goodNames}</span>
-                  </div>
-
-                  <div style={styles.yokaiMatchInlineItemCompact}>
-                    <span style={styles.yokaiMatchKey}>相性×</span>
-                    <span style={styles.yokaiMatchValCompact}>{badNames}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.yokaiFooter}>
-              urban myth archive / screenshot to share
-            </div>
-          </div>
+        <div
+          style={{
+            marginTop: 12,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <button onClick={handleExportCard} style={styles.btnGhost}>
+            画像として保存
+          </button>
         </div>
       </div>
     </div>
-
   );
 }
+
+
 
 
 
@@ -2398,6 +2421,14 @@ function CaptureCard({
   normalizedAxis: AxisScores;
 }) {
   const sections = splitSections(resultText);
+  const rare = pickCardRare(blend);
+  const elements = pickCardElements(first, second);
+  const stats = pickStats(first);
+  const summary = buildCardSummary(first, sections);
+
+
+
+
 
   return (
     <div style={styles.captureFixed}>
@@ -2565,7 +2596,7 @@ export default function App() {
     pickOneQuestionPerGroup(questionPool)
   );
 
-  
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
 
   useEffect(() => {
@@ -2805,23 +2836,24 @@ export default function App() {
 
 
 
-if (viewMode === "card") {
-  return (
-    <ShareCardScreen
-      resultName={resultName}
-      first={first}
-      second={second}
-      blend={blend}
-      imageUrl={imageUrl}
-      resultText={resultText}
-      onBack={() => setViewMode("result")}
-      onRestart={restart}
-      isMobile={isMobile}
-    />
-  );
-}
 
-
+  if (viewMode === "card") {
+    return (
+      <ShareCardScreen
+        resultName={resultName}
+        first={first}
+        second={second}
+        blend={blend}
+        imageUrl={imageUrl}
+        resultText={resultText}
+        good={good}
+        bad={bad}
+        onBack={() => setViewMode("result")}
+        onRestart={restart}
+        isMobile={isMobile}
+      />
+    );
+  }
 
 
 

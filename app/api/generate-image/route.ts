@@ -43,23 +43,6 @@ shareable eerie atmosphere
 slight forward approach or subtle stepping motion
 subtle childlike mood`,
 
-  "人面犬": `awkward human-like face influence
-slightly odd expression
-strange urban legend energy
-not too horrific
-shareable uncanny mood`,
-
-  "モスマン": `mysterious presence
-not too scary
-not horror
-slightly awkward silhouette
-memorable rather than threatening`,
-
-  "ビッグフット": `large folkloric creature presence
-slightly clumsy silhouette
-wild but not aggressive
-not heroic
-not cool`,
 
   "口裂け女": `unsettling feminine urban legend energy
 not violent
@@ -67,13 +50,6 @@ no excessive blood
 not slasher horror
 gentle forward lean with subtle reaching gesture
 shareable eerie beauty`,
-
-  "ツチノコ": `fat rounded body
-short and stubby proportions
-lazy posture
-odd local legend presence
-not cool
-slightly funny uncanny mood`,
 
   "雪女": `quiet supernatural beauty
 soft and distant presence
@@ -83,17 +59,6 @@ not horror-like
 gentle drifting motion with slight body tilt
 pale winter spirit mood`,
 
-  "ネッシー": `mysterious lake creature atmosphere
-not realistic
-slightly strange proportions
-not majestic
-shareable legendary creature mood`,
-
-  "チュパカブラ": `creepy but not horror
-no blood
-no gore
-slightly weird expression
-shareable eerie creature energy`,
 
   "天狗": `folkloric supernatural presence
 not heroic
@@ -109,11 +74,6 @@ strange but readable silhouette
 playful sneaky posture with slight crouch or side step
 not too cute`,
 
-  "鵺": `strange hybrid yokai presence
-not too monstrous
-uncanny but controlled
-slightly unsettling
-not too powerful`,
 
   "座敷童": `quiet uncanny childlike presence
 soft eerie mood
@@ -122,11 +82,6 @@ subtle unsettling eyes
 small playful step or slight bouncing posture
 not too dark`,
 
-  "海坊主": `mysterious maritime folklore presence
-not horror
-simple readable shape
-slightly uncanny
-shareable eerie atmosphere`,
 
   "一つ目小僧": `odd yokai silhouette
 single-eye motif
@@ -256,6 +211,8 @@ Influence balance:
 `;
 }
 
+
+
 function getBackgroundDirection(first: RankedType, second: RankedType) {
   const names = [first.name, second.name];
 
@@ -287,17 +244,6 @@ function getBackgroundDirection(first: RankedType, second: RankedType) {
     return `a quiet evening street or old corridor with soft light, subtle emptiness, walls or railings, and simple but eerie environmental depth`;
   }
 
-  if (names.includes("人面犬")) {
-    return `a city backstreet or residential lane at dusk with pavement texture, distant signage, soft streetlights, walls, and a slightly odd urban atmosphere`;
-  }
-
-  if (names.includes("モスマン")) {
-    return `an open roadside, hill overlook, or suburban edge at dusk with sky glow, faint haze, distant town lights, and mysterious but readable atmosphere`;
-  }
-
-  if (names.includes("ビッグフット")) {
-    return `a forest edge or mountain path in evening light with visible trees, soft haze, layered depth, and adventurous but uncanny atmosphere`;
-  }
 
   if (names.includes("河童")) {
     return `a quiet riverside with stone edges, shallow reflections, grass, bridge or embankment hints, and subdued folkloric atmosphere in dim evening light`;
@@ -307,9 +253,6 @@ function getBackgroundDirection(first: RankedType, second: RankedType) {
     return `a mountain shrine approach with stone steps, lanterns, trees, torii-like elements, and soft evening brightness`;
   }
 
-  if (names.includes("海坊主")) {
-    return `a seaside walkway or quiet coast at dusk with visible horizon, sea mist, reflected light, railings or rocks, and mysterious but readable atmosphere`;
-  }
 
   if (names.includes("座敷童")) {
     return `an old Japanese hallway or tatami room with soft indoor ambient light, shoji details, low furniture hints, and a gentle uncanny atmosphere`;
@@ -323,24 +266,43 @@ function getBackgroundDirection(first: RankedType, second: RankedType) {
     return `a traditional Japanese interior or engawa with soft warm light, subtle shadows, visible decorative textures, and a strange but not terrifying presence`;
   }
 
-  if (names.includes("鵺")) {
-    return `a ruined shrine edge or mountain clearing with visible structure, faint fog, evening light, trees, and layered environmental depth`;
-  }
-
-  if (names.includes("チュパカブラ")) {
-    return `a rural roadside or field edge at dusk with fences, dry textures, distant landforms, open sky, and restrained mysterious atmosphere`;
-  }
-
-  if (names.includes("ツチノコ")) {
-    return `a grassy mountain path or roadside with weeds, stones, earth textures, and soft evening light creating a playful mysterious local-legend atmosphere`;
-  }
-
-  if (names.includes("ネッシー")) {
-    return `a lakeside at dusk with soft water reflections, visible shoreline, misty depth, and a mysterious but not horror-like atmosphere`;
-  }
 
   return `a Japanese urban-legend inspired outdoor or semi-outdoor setting at dusk or evening with visible scenery, soft ambient light, subtle depth, and restrained mysterious atmosphere`;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function buildImagePrompt({
   prompt,
@@ -414,7 +376,9 @@ Japanese urban legend fusion character illustration.
 
 Core style:
 - stylized creature illustration
-- highly simplified character design
+
+- simplified character design, but background must retain structural detail
+
 - strong deformation and readability
 - bold clean outline
 - flat colors with minimal shading
@@ -441,7 +405,9 @@ Core style:
 - not grotesque
 - no gore
 - no excessive blood
-- no excessive detail
+
+- no excessive detail in character, but keep environmental detail in background
+
 - no cinematic lighting
 - no realistic lighting
 - evenly lit, soft shading only
@@ -474,7 +440,9 @@ Absolute rules:
 - do NOT add text, logo, caption, frame, UI, or watermark
 - the character must remain the clear main subject
 - do NOT let the background overpower the character
-- avoid cluttered scenery
+
+- avoid overly cluttered scenery but keep clear environmental structures visible
+
 - avoid overly busy composition
 - avoid large background objects competing with the subject
 - keep the face and body clearly readable
@@ -511,6 +479,10 @@ Background direction:
 - use atmosphere rather than giant props
 - the background should support the character's world, not dominate the image
 - background is required and must not be simplified into a plain backdrop
+- background should be clearly visible and not too faint or washed out
+- maintain clear contrast between foreground and background elements
+
+
 
 
 Background requirement:
@@ -518,9 +490,10 @@ Background requirement:
 - the background is mandatory and must always be present
 - NEVER use a plain, empty, or single-color background
 - the scene must clearly show a location (corridor, street, river, room, etc.)
-- include visible ground, walls, or environmental context
+- must include visible ground plane AND multiple environmental structures
+- include at least two background elements such as walls, buildings, trees, railings, or interior structures
 - the image must not look like a character on a blank backdrop
-
+- the background must form a complete scene, not a partial or abstract space
 
 
 Background enforcement:
@@ -534,9 +507,24 @@ Background enforcement:
 - always include visible ground plane and depth behind the character
 
 
+Environment anchoring:
+- the character must be clearly standing on a visible surface connected to the environment
+- the feet must be grounded in a detailed floor or terrain that extends into the background
+- the ground must visually connect to a full environment, not fade into empty space
 
 
 
+Background dominance control:
+- background must remain present regardless of character intensity or expression
+- do not remove or simplify the background even if the character is visually strong
+- even if the character is expressive or visually dominant, keep the environment clearly visible
+
+
+
+Environment dependency:
+- the character must be interacting with or clearly placed within the environment
+- the pose or composition should not make sense without a background
+- the character should visually relate to the environment (touching ground, aligned with perspective, or interacting with space)
 
 
 
