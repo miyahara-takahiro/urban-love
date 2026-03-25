@@ -1867,7 +1867,9 @@ function pickCardRare(blend: { p1: number; p2: number }): Rarity {
 
 
   function pickCardElements(first: RankedType, second?: RankedType) {
-  const source = `${first.name} ${second.name} ${first.vibe} ${second.vibe} ${first.scaryTitle} ${first.loveWarning}`;
+const source = `${first.name} ${second?.name ?? ""} ${first.vibe} ${second?.vibe ?? ""} ${first.scaryTitle} ${first.loveWarning}`;
+  
+
   const result: string[] = [];
 
   if (/口裂け女|鬼女/.test(source)) result.push("存在感");
