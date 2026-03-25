@@ -26,7 +26,7 @@ type Category = "self" | "emotion" | "romance" | "social";
 type ViewMode = "intro" | "diagnosis" | "result" | "card";
 type Gender = "male" | "female" | "other";
 type ResultMode = "single" | "dominant-dual" | "balanced-dual";
-
+type Rarity = "R" | "SR" | "SSR" | "UR";
 type QuestionVariant = "A" | "B" | "C";
 
 
@@ -1832,7 +1832,8 @@ const CARD_CHARACTER_NAMES = [
   "天狗",
 ] as const;
 
-function pickCardRare(blend: { p1: number; p2: number }) {
+
+function pickCardRare(blend: { p1: number; p2: number }): Rarity {
   if (blend.p1 >= 95) return "UR";
   if (blend.p1 >= 80) return "SSR";
   if (blend.p1 >= 65) return "SR";

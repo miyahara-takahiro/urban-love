@@ -29,7 +29,7 @@ type ShareCardProps = {
   stats?: { label: string; value: number }[];
   summary?: string;
   title?: string;
-  rarityLabel?: string;
+  rarityLabel?: Rarity;
 };
 
 type Rarity = "N" | "R" | "SR" | "SSR";
