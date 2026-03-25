@@ -107,6 +107,9 @@ function buildStats(main: RankedType, sub?: RankedType): StatItem[] {
   ];
 }
 
+
+
+
 const rarityTheme: Record<
   Rarity,
   {
@@ -118,13 +121,6 @@ const rarityTheme: Record<
     overlayTone: string;
   }
 > = {
-  N: {
-    card: "bg-[linear-gradient(180deg,#e8dece_0%,#d8c6ad_100%)] border-[#ad9270] text-[#3d3125] shadow-[0_10px_28px_rgba(95,73,42,0.12)]",
-    badge: "bg-[#8d7654] text-[#fff6ea] border-[#7b6545]",
-    panel: "bg-[rgba(247,239,226,0.70)] border-[#bda98a]",
-    imageFrame: "bg-[linear-gradient(180deg,#ddd0bb_0%,#ccb79a_100%)] border-[#9b8768]",
-    overlayTone: "bg-[rgba(31,20,30,0,18)]",
-  },
   R: {
     card: "bg-[linear-gradient(180deg,#eee3d3_0%,#dbc7b0_100%)] border-[#9b8768] text-[#392d23] shadow-[0_12px_30px_rgba(98,74,45,0.16)]",
     badge: "bg-[#6f7e8d] text-white border-[#576574] shadow-sm",
@@ -150,7 +146,23 @@ const rarityTheme: Record<
       "before:pointer-events-none before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top,rgba(188,128,255,0.26),transparent_34%),radial-gradient(circle_at_bottom,rgba(255,140,120,0.14),transparent_30%)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[28px] after:bg-[linear-gradient(120deg,transparent_18%,rgba(255,255,255,0.12)_38%,transparent_58%)]",
     overlayTone: "bg-[rgba(31,20,30,0,18)]",
   },
+  UR: {
+    card: "bg-[linear-gradient(180deg,#2a1636_0%,#120914_100%)] border-[#f3c96b] text-[#fff4df] shadow-[0_0_36px_rgba(243,201,107,0.24)]",
+    badge: "bg-[linear-gradient(180deg,#ffdf7a_0%,#d89b1d_100%)] text-[#2d1600] border-[#ffe7a6] shadow-[0_0_20px_rgba(255,223,122,0.34)]",
+    panel: "bg-[rgba(255,244,220,0.14)] border-[rgba(243,201,107,0.58)]",
+    imageFrame: "bg-[linear-gradient(180deg,#40214d_0%,#24112c_100%)] border-[#f0c15f] shadow-[0_0_28px_rgba(243,201,107,0.18)]",
+    overlay:
+      "before:pointer-events-none before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top,rgba(255,235,160,0.22),transparent_32%),radial-gradient(circle_at_bottom,rgba(188,128,255,0.16),transparent_30%)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[28px] after:bg-[linear-gradient(120deg,transparent_14%,rgba(255,255,255,0.16)_34%,transparent_56%)]",
+    overlayTone: "bg-[rgba(31,20,30,0,18)]",
+  },
 };
+
+
+
+
+
+
+
 
 const rarityBackgroundMap: Record<Rarity, string> = {
   
