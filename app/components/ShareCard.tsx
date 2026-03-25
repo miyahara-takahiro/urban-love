@@ -17,6 +17,9 @@ type RankedType = {
   traits: CharacterTraits;
 };
 
+
+type Rarity = "R" | "SR" | "SSR" | "UR";
+
 type ShareCardProps = {
   main: RankedType;
   sub?: RankedType;
@@ -32,7 +35,11 @@ type ShareCardProps = {
   rarityLabel?: Rarity;
 };
 
-type Rarity = "N" | "R" | "SR" | "SSR";
+
+
+
+
+
 
 type StatItem = {
   label: string;
@@ -44,11 +51,13 @@ function clamp(value: number, min = 0, max = 100) {
 }
 
 function getRarity(totalScore: number): Rarity {
-  if (totalScore >= 175) return "SSR";
-  if (totalScore >= 145) return "SR";
-  if (totalScore >= 115) return "R";
-  return "N";
+  if (totalScore >= 175) return "UR";
+  if (totalScore >= 145) return "SSR";
+  if (totalScore >= 115) return "SR";
+  return "R";
 }
+
+
 
 function getMixRatio(mainScore: number, subScore: number) {
   const safeMain = Math.max(0, mainScore);
@@ -144,17 +153,19 @@ const rarityTheme: Record<
 };
 
 const rarityBackgroundMap: Record<Rarity, string> = {
-  N: "/card-bg/n.png",
+  
   R: "/card-bg/r.png",
   SR: "/card-bg/sr.png",
   SSR: "/card-bg/ssr.png",
+  UR: "/card-bg/ur.png",
 };
 
 const backgroundOpacityMap: Record<Rarity, string> = {
-  N: "opacity-60",
+ 
   R: "opacity-70",
   SR: "opacity-80",
   SSR: "opacity-95",
+  UR: "opacity-95",
 };
 
 function cx(...values: Array<string | false | null | undefined>) {
