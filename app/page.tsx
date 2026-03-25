@@ -30,27 +30,34 @@ type Rarity = "R" | "SR" | "SSR" | "UR";
 type QuestionVariant = "A" | "B" | "C";
 
 
-type QuestionGroupId =
-  | "alone-quality"
-  | "help-seeking"
-  | "distance"
-  | "after"
-  | "loneliness-response"
-  | "trust-speed"
-  | "intuition-discomfort"
-  | "evidence-need"
-  | "action"
-  | "risk"
-  | "chance"
-  | "conflict"
-  | "support"
-  | "emotion"
-  | "decision"
-  | "relation"
-  | "stress"
-  | "self"
-  | "value"
-  | "style";
+type QuestionOption = {
+  label: string;
+  score: Partial<AxisScores>;
+};
+
+type Question = {
+  id: string;
+  category: Category;
+  visualEmoji: string;
+  visualTitle: string;
+  visualTag: string;
+  text: string;
+  colors: [string, string];
+  options: QuestionOption[];
+  groupId: QuestionGroupId;
+  variant: QuestionVariant;
+};
+
+
+
+
+
+
+
+
+
+
+
 
 const QUESTION_GROUP_ORDER: QuestionGroupId[] = [
   "alone-quality",
