@@ -1866,7 +1866,7 @@ function pickCardRare(blend: { p1: number; p2: number }): Rarity {
 
 
 
-function pickCardElements(first: RankedType, second: RankedType) {
+  function pickCardElements(first: RankedType, second?: RankedType) {
   const source = `${first.name} ${second.name} ${first.vibe} ${second.vibe} ${first.scaryTitle} ${first.loveWarning}`;
   const result: string[] = [];
 
