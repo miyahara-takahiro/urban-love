@@ -1711,7 +1711,7 @@ function similarity(user: AxisScores, target: AxisScores, weights: AxisScores): 
 
 function pickCompatibility(
   user: AxisScores,
-  types: typeof types,
+  types: RankedType[],
   weights: AxisScores
 ) {
   const scored = types.map((t) => {
