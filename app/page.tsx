@@ -876,21 +876,25 @@ q(
 
 q(
   "q13c",
-  "social",
-  "🌙",
-  "距離感",
-  "support-distance",
-  "人との距離感を決めるとき、あたなたどんなタイプ？",
-  ["#0f2027","#2c5364"],
+  "relationship",
+  "🫥",
+  "見せない弱さ",
+  "vulnerability",
+  "好きな人の前でしんどい時、自分の弱さはどう出る？",
+  ["#7c3aed", "#ec4899"],
   [
-    { label: "仲良くなると距離が近くなる", score: { attachment: 3 } },
-    { label: "相手に合わせて距離を調整する", score: { attachment: 2 } },
-    { label: "一定の距離を保つ", score: { independence: 3 } },
-    { label: "必要なときだけ関わる", score: { reality: 2 } }
+    { text: "隠しきれず、わかってほしくて態度に出る", score: { attachment: 3, passion: 1 } },
+    { text: "やんわり伝えるが、重くならないように抑える", score: { attachment: 2, caution: 1 } },
+    { text: "言葉にして伝える前に、自分の中で整理する", score: { independence: 2, reality: 1 } },
+    { text: "なるべく見せず、普段どおりに振る舞う", score: { reality: 2, caution: 1 } },
   ],
   "support",
-  "C"
+  "c"
 ),
+
+
+
+
 
 q(
   "q14a",
@@ -1006,24 +1010,22 @@ q(
 
 
 q(
-  "q16a",
-  "social",
-  "👋",
-  "距離感",
-  "relation-first",
-  "初対面の人と話すとき、あなたはどんな距離感になる？",
-  ["#232526","#414345"],
+  "q16b",
+  "relationship",
+  "🔓",
+  "心を開く速さ",
+  "opening-up",
+  "気になる相手に、素の自分を見せるのはどんな時？",
+  ["#7c3aed", "#ec4899"],
   [
-    { label: "自分から話題を振って、すぐ距離を縮める", score: { attachment: 3 } },
-    { label: "相手の反応を見ながら、少しずつ距離を縮める", score: { attachment: 2 } },
-    { label: "必要なことだけ簡潔に話す", score: { reality: 2 } },
-    { label: "まずは距離を保って、様子を見ながら接する", score: { independence: 3 } }
+    { text: "惹かれたら、わりとすぐ素が出る", score: { attachment: 3, passion: 1 } },
+    { text: "安心できそうなら、少しずつ見せていく", score: { attachment: 2, caution: 1 } },
+    { text: "見せたい気持ちはあっても、まだ様子を見る", score: { independence: 2, caution: 1 } },
+    { text: "ちゃんと信頼するまでは、あまり見せない", score: { reality: 2, caution: 1 } },
   ],
   "relation",
-  "A"
+  "b"
 ),
-
-
 
 
 
@@ -2293,46 +2295,8 @@ function ShareCardScreen({
 
   const cardRef = useRef<HTMLDivElement | null>(null);
 
-  
-async function handleExportCard() {
-  if (!cardRef.current) return;
+ 
 
-  try {
-    const dataUrl = await toPng(cardRef.current, {
-      cacheBust: true,
-      pixelRatio: isMobile ? 1 : 2,
-    });
-
-    if (isMobile) {
-      const newTab = window.open();
-      if (!newTab) {
-        alert("保存画面を開けませんでした");
-        return;
-      }
-      newTab.document.write(`
-        <html>
-          <head><title>カード画像</title></head>
-          <body style="margin:0;display:flex;align-items:center;justify-content:center;background:#111;">
-            <img src="${dataUrl}" style="max-width:100%;height:auto;" />
-            <p style="position:fixed;bottom:12px;left:0;right:0;text-align:center;color:white;font-family:sans-serif;">
-              長押しして保存してください
-            </p>
-          </body>
-        </html>
-      `);
-      newTab.document.close();
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.download = "urban-myth-card.png";
-    link.href = dataUrl;
-    link.click();
-  } catch (e) {
-    console.error(e);
-    alert("画像保存に失敗しました");
-  }
-}
 
 
 
@@ -2404,18 +2368,6 @@ async function handleExportCard() {
             traitName={cardTrait?.name}
             traitBody={cardTrait?.body}
           />
-        </div>
-
-        <div
-          style={{
-            marginTop: 12,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <button onClick={handleExportCard} style={styles.btnGhost}>
-            画像として保存
-          </button>
         </div>
       </div>
     </div>

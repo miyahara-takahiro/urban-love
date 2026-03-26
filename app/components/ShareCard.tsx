@@ -324,10 +324,10 @@ export default function ShareCard({
               )}
             >
              
-<div className="text-[10px] font-bold tracking-[0.04em] text-[#fff6de] [text-shadow:_0_1px_2px_rgba(0,0,0,0.45)]">
+<div className="text-[10px] font-medium tracking-[0.04em] text-black/75">
   {item.label}
 </div>
-<div className="mt-1 text-[19px] font-black leading-none text-white [text-shadow:_0_1px_3px_rgba(0,0,0,0.5)]">
+<div className="mt-[2px]text-[19px] font-semibold leading-none text-black/85">
   {item.value}
 </div>
 
