@@ -883,10 +883,10 @@ q(
   "好きな人の前でしんどい時、自分の弱さはどう出る？",
   ["#7c3aed", "#ec4899"],
   [
-    { text: "隠しきれず、わかってほしくて態度に出る", score: { attachment: 3, passion: 1 } },
-    { text: "やんわり伝えるが、重くならないように抑える", score: { attachment: 2, caution: 1 } },
-    { text: "言葉にして伝える前に、自分の中で整理する", score: { independence: 2, reality: 1 } },
-    { text: "なるべく見せず、普段どおりに振る舞う", score: { reality: 2, caution: 1 } },
+    { label: "隠しきれず、わかってほしくて態度に出る", score: { attachment: 3, passion: 1 } },
+    { label: "やんわり伝えるが、重くならないように抑える", score: { attachment: 2, caution: 1 } },
+    { label: "言葉にして伝える前に、自分の中で整理する", score: { independence: 2, reality: 1 } },
+    { label: "なるべく見せず、普段どおりに振る舞う", score: { reality: 2, caution: 1 } },
   ],
   "support",
   "c"
@@ -1018,10 +1018,10 @@ q(
   "気になる相手に、素の自分を見せるのはどんな時？",
   ["#7c3aed", "#ec4899"],
   [
-    { text: "惹かれたら、わりとすぐ素が出る", score: { attachment: 3, passion: 1 } },
-    { text: "安心できそうなら、少しずつ見せていく", score: { attachment: 2, caution: 1 } },
-    { text: "見せたい気持ちはあっても、まだ様子を見る", score: { independence: 2, caution: 1 } },
-    { text: "ちゃんと信頼するまでは、あまり見せない", score: { reality: 2, caution: 1 } },
+    { label: "惹かれたら、わりとすぐ素が出る", score: { attachment: 3, passion: 1 } },
+    { label: "安心できそうなら、少しずつ見せていく", score: { attachment: 2, caution: 1 } },
+    { label: "見せたい気持ちはあっても、まだ様子を見る", score: { independence: 2, caution: 1 } },
+    { label: "ちゃんと信頼するまでは、あまり見せない", score: { reality: 2, caution: 1 } },
   ],
   "relation",
   "b"
