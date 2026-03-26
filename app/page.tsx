@@ -876,7 +876,7 @@ q(
 
 q(
   "q13c",
-  "relationship",
+  "social",
   "🫥",
   "見せない弱さ",
   "vulnerability",
@@ -1011,7 +1011,7 @@ q(
 
 q(
   "q16b",
-  "relationship",
+  "social",
   "🔓",
   "心を開く速さ",
   "opening-up",
