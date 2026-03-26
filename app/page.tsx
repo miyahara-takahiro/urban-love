@@ -889,7 +889,7 @@ q(
     { label: "なるべく見せず、普段どおりに振る舞う", score: { reality: 2, caution: 1 } },
   ],
   "support",
-  "c"
+  "C"
 ),
 
 
@@ -1010,7 +1010,7 @@ q(
 
 
 q(
-  "q16b",
+  "q16a",
   "social",
   "🔓",
   "心を開く速さ",
@@ -1024,7 +1024,7 @@ q(
     { label: "ちゃんと信頼するまでは、あまり見せない", score: { reality: 2, caution: 1 } },
   ],
   "relation",
-  "b"
+  "A"
 ),
 
 
