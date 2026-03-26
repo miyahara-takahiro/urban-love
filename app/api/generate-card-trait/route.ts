@@ -79,7 +79,7 @@ sub info:
 - gift: ${sub?.gift ?? ""}
 - behavior: ${sub?.traits?.behavior ?? ""}
 - emotion: ${sub?.traits?.emotion ?? ""}
-- love: ${sub?.love ?? ""}
+- love: ${sub?.traits?.love ?? ""}
 
 # 出力ルール
 - 出力は必ず2行だけ
