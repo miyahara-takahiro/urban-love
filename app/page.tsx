@@ -585,7 +585,7 @@ q(
   "🗣️",
   "説明",
   "evidence-explain",
-  "自分の選択を人に説明するとき、どんな伝え片になりやすい？",
+  "自分の選択を人に説明するとき、どんな伝え方になりやすい？",
   ["#0f2027", "#203a43"],
   [
     { label: "理由はうまく言えないが感覚で選ぶことがある", score: { intuition: 3 } },
@@ -717,7 +717,7 @@ q(
     { label: "気にせずまっすぐ進む", score: { passion: 3 } },
     { label: "感覚で方向を決める", score: { intuition: 3 } },
     { label: "周りの情報を集めてから進む方向を決める", score: { caution: 3 } },
-    { label: "無理にこれ進まず、別の道がないか探す", score: { reality: 2 } }
+    { label: "無理に進まず、別の道がないか探す", score: { reality: 2 } }
   ],
   "risk",
   "C"
@@ -1858,9 +1858,9 @@ const CARD_CHARACTER_NAMES = [
 
 
 function pickCardRare(blend: { p1: number; p2: number }): Rarity {
-  if (blend.p1 >= 95) return "UR";
-  if (blend.p1 >= 80) return "SSR";
-  if (blend.p1 >= 65) return "SR";
+  if (blend.p1 >= 90) return "UR";
+  if (blend.p1 >= 83) return "SSR";
+  if (blend.p1 >= 70) return "SR";
   return "R";
 }
 
@@ -1925,20 +1925,58 @@ function extractMatchNames(
   return fallback;
 }
 
+
 function pickStats(first: RankedType) {
-  return [
-    { label: "情念", value: Math.round(first.axis.passion ?? 0) },
-    { label: "存在感", value: Math.round(100 - (first.axis.caution ?? 0) * 0.4 + (first.axis.intuition ?? 0) * 0.4) },
-    { label: "執着", value: Math.round((first.axis.attachment ?? 0) * 0.7 + (first.axis.passion ?? 0) * 0.3) },
-  ].map((item) => ({
+  const passion = first.axis.passion ?? 0;
+  const caution = first.axis.caution ?? 0;
+  const intuition = first.axis.intuition ?? 0;
+  const attachment = first.axis.attachment ?? 0;
+  const independence = first.axis.independence ?? 0;
+
+  const raw = [
+    {
+      label: "執着度",
+      value: attachment * 0.75 + passion * 0.25,
+    },
+    {
+      label: "威圧度",
+      value: passion * 0.55 + intuition * 0.45,
+    },
+    {
+      label: "冷淡度",
+      value: caution * 0.45 + independence * 0.55,
+    },
+  ];
+
+  const total = raw.reduce((sum, item) => sum + item.value, 0);
+
+  if (total <= 0) {
+    return [
+      { label: "執着度", value: 34 },
+      { label: "威圧度", value: 33 },
+      { label: "冷淡度", value: 33 },
+    ];
+  }
+
+  let normalized = raw.map((item) => ({
     ...item,
-    value: Math.max(1, Math.min(99, item.value)),
+    value: Math.round((item.value / total) * 100),
   }));
+
+  const diff =
+    100 - normalized.reduce((sum, item) => sum + item.value, 0);
+
+  if (diff !== 0) {
+    const maxIndex = normalized.reduce(
+      (best, item, index, arr) =>
+        item.value > arr[best].value ? index : best,
+      0
+    );
+    normalized[maxIndex].value += diff;
+  }
+
+  return normalized;
 }
-
-
-
-
 
 
 function buildCardSummary(first: RankedType, sections: ReturnType<typeof splitSections>) {
@@ -2221,6 +2259,7 @@ function pickMoveName(first: RankedType, second: RankedType) {
 
 
 
+
 function ShareCardScreen({
   resultName,
   first,
@@ -2233,6 +2272,7 @@ function ShareCardScreen({
   onBack,
   onRestart,
   isMobile,
+  cardTrait,
 }: {
   resultName: string;
   first: RankedType;
@@ -2245,26 +2285,58 @@ function ShareCardScreen({
   onBack: () => void;
   onRestart: () => void;
   isMobile: boolean;
+  cardTrait?: { name: string; body: string };
 }) {
+
+
+
+
   const cardRef = useRef<HTMLDivElement | null>(null);
 
-  async function handleExportCard() {
-    if (!cardRef.current) return;
+  
+async function handleExportCard() {
+  if (!cardRef.current) return;
 
-    try {
-      const dataUrl = await toPng(cardRef.current, {
-        cacheBust: true,
-        pixelRatio: 2,
-      });
+  try {
+    const dataUrl = await toPng(cardRef.current, {
+      cacheBust: true,
+      pixelRatio: isMobile ? 1 : 2,
+    });
 
-      const link = document.createElement("a");
-      link.download = "urban-myth-card.png";
-      link.href = dataUrl;
-      link.click();
-    } catch (e) {
-      console.error(e);
+    if (isMobile) {
+      const newTab = window.open();
+      if (!newTab) {
+        alert("保存画面を開けませんでした");
+        return;
+      }
+      newTab.document.write(`
+        <html>
+          <head><title>カード画像</title></head>
+          <body style="margin:0;display:flex;align-items:center;justify-content:center;background:#111;">
+            <img src="${dataUrl}" style="max-width:100%;height:auto;" />
+            <p style="position:fixed;bottom:12px;left:0;right:0;text-align:center;color:white;font-family:sans-serif;">
+              長押しして保存してください
+            </p>
+          </body>
+        </html>
+      `);
+      newTab.document.close();
+      return;
     }
+
+    const link = document.createElement("a");
+    link.download = "urban-myth-card.png";
+    link.href = dataUrl;
+    link.click();
+  } catch (e) {
+    console.error(e);
+    alert("画像保存に失敗しました");
   }
+}
+
+
+
+
 
   const sections = splitSections(resultText);
   const rare = pickCardRare(blend);
@@ -2328,7 +2400,9 @@ function ShareCardScreen({
             summary={summary}
             title={resultName}
             rarityLabel={rare}
-           
+            blendRatio={{ main: blend.p1, sub: blend.p2 }}
+            traitName={cardTrait?.name}
+            traitBody={cardTrait?.body}
           />
         </div>
 
@@ -2603,10 +2677,32 @@ async function requestImage(params: {
 }
 
 
+async function requestCardTrait(params: {
+  main: RankedType;
+  sub?: RankedType;
+  blend: { p1: number; p2: number };
+  mode: "single" | "dominant-dual" | "balanced-dual";
+}) {
+  const res = await fetch("/api/generate-card-trait", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
 
+  const data = await res.json();
 
+  if (!res.ok) {
+    throw new Error(data?.error || "カード特性の生成に失敗しました");
+  }
 
-
+  return {
+    name: data?.name ?? "",
+    body: data?.body ?? "",
+    text: data?.text ?? "",
+  };
+}
 
 
 export default function App() {
@@ -2616,6 +2712,19 @@ export default function App() {
   const [gender, setGender] = useState<Gender>("other");
   const [resultText, setResultText] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+
+  const [cardTrait, setCardTrait] = useState<{ name: string; body: string }>({
+    name: "",
+    body: "",
+  });
+
+  const [lastAnswer, setLastAnswer] = useState<{
+    step: number;
+    score: Partial<AxisScores>;
+  } | null>(null);
+
+  const [canUndo, setCanUndo] = useState(false);
+
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isMobile, setIsMobile] = useState(false);
@@ -2624,6 +2733,11 @@ export default function App() {
   );
 
   const cardRef = useRef<HTMLDivElement | null>(null);
+
+
+
+
+
 
 
   useEffect(() => {
@@ -2705,77 +2819,132 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [viewMode]);
 
-  const answer = (score: Partial<AxisScores>) => {
-    setAxis((prev) => {
-      const next = { ...prev };
-      AXES.forEach((key) => {
-        next[key] += score[key] ?? 0;
-      });
-      return next;
+
+
+
+
+const answer = (score: Partial<AxisScores>) => {
+  setLastAnswer({
+    step,
+    score,
+  });
+  setCanUndo(true);
+
+  setAxis((prev) => {
+    const next = { ...prev };
+    for (const key of AXES) {
+      next[key] += score[key] ?? 0;
+    }
+    return next;
+  });
+
+  const nextStep = step + 1;
+
+  if (nextStep >= sessionQuestions.length) {
+    setViewMode("result");
+    return;
+  }
+
+  setStep(nextStep);
+};
+
+const undoLastAnswer = () => {
+  if (!lastAnswer || !canUndo) return;
+  if (step < 1 || step > sessionQuestions.length - 1) return;
+
+  setAxis((prev) => {
+    const next = { ...prev };
+    for (const key of AXES) {
+      next[key] -= lastAnswer.score[key] ?? 0;
+    }
+    return next;
+  });
+
+  setStep(lastAnswer.step);
+  setCanUndo(false);
+};
+
+
+
+
+
+const restart = () => {
+  if (isGenerating) return;
+
+  setAxis({ ...ZERO });
+  setStep(0);
+  setViewMode("intro");
+  setResultText("");
+  setImageUrl("");
+  setErrorMessage("");
+  setIsGenerating(false);
+  setLastAnswer(null);
+  setCanUndo(false);
+  setSessionQuestions(pickOneQuestionPerGroup(questionPool));
+};
+
+const generateAll = async () => {
+  try {
+    setIsGenerating(true);
+    setErrorMessage("");
+    setImageUrl("");
+    setCardTrait({ name: "", body: "" });
+
+    const bad = BAD_MATCH[first.id]?.[0] ?? "kijo";
+    const good = GOOD_MATCH[first.id]?.[0] ?? "yukionna";
+
+    const text = await requestResult({
+      main: first,
+      sub: second,
+      mode,
+      gender,
+      good,
+      bad,
     });
 
-    if (step + 1 >= sessionQuestions.length) {
-      setViewMode("result");
-    }
+    setResultText(text);
 
-    setStep((prev) => prev + 1);
-  };
-
-  const restart = () => {
-    setAxis({ ...ZERO });
-    setStep(0);
-    setViewMode("intro");
-    setResultText("");
-    setImageUrl("");
-    setErrorMessage("");
-    setIsGenerating(false);
-    setSessionQuestions(pickOneQuestionPerGroup(questionPool));
-  };
-
-  const generateAll = async () => {
     try {
-      setIsGenerating(true);
-      setErrorMessage("");
-      setImageUrl("");
-
-      const bad = BAD_MATCH[first.id]?.[0] ?? "kijo";
-      const good = GOOD_MATCH[first.id]?.[0] ?? "yukionna";
-
-
-
-      const text = await requestResult({
+      const trait = await requestCardTrait({
         main: first,
         sub: second,
+        blend,
         mode,
-        gender,
-        good,
-        bad,
       });
 
-      setResultText(text);
-
-
-
-
-      try {
-        const img = await requestImage({
-          prompt: imagePrompt,
-          first,
-          second,
-          blend,
-          mode,
-        });
-        setImageUrl(img);
-      } catch (imageError) {
-        console.error(imageError);
-        setImageUrl("");
-      }
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "生成に失敗しました。");
-    } finally {
-      setIsGenerating(false);
+      setCardTrait({
+        name: trait.name,
+        body: trait.body,
+      });
+    } catch (traitError) {
+      console.error(traitError);
+      setCardTrait({ name: "", body: "" });
     }
-  };
+
+    try {
+      const img = await requestImage({
+        prompt: imagePrompt,
+        first,
+        second,
+        blend,
+        mode,
+      });
+      setImageUrl(img);
+    } catch (imageError) {
+      console.error(imageError);
+      setImageUrl("");
+    }
+  } catch (error) {
+    setErrorMessage(error instanceof Error ? error.message : "生成に失敗しました。");
+  } finally {
+    setIsGenerating(false);
+  }
+};
+
+
+
+
+
 
 
 
@@ -2878,6 +3047,7 @@ export default function App() {
         onBack={() => setViewMode("result")}
         onRestart={restart}
         isMobile={isMobile}
+        cardTrait={cardTrait}
       />
     );
   }
@@ -3082,17 +3252,23 @@ export default function App() {
 
 
           
+<div style={styles.row}>
+  <button
+    style={{
+      ...styles.btnGhost,
+      opacity: isGenerating ? 0.45 : 1,
+      cursor: isGenerating ? "not-allowed" : "pointer",
+    }}
+    onClick={restart}
+    disabled={isGenerating}
+  >
+    もう一度占う
+  </button>
+</div>
 
 
 
 
-
-
-          <div style={styles.row}>
-            <button style={styles.btnGhost} onClick={restart}>
-              もう一度占う
-            </button>
-          </div>
         </div>
 
       </div>
@@ -3134,17 +3310,30 @@ export default function App() {
             </button>
           ))}
         </div>
+
+
+<div style={styles.row}>
+  <button
+    style={{
+      ...styles.btnGhost,
+      opacity:
+        step >= 1 && step <= sessionQuestions.length - 1 && canUndo ? 1 : 0.45,
+      cursor:
+        step >= 1 && step <= sessionQuestions.length - 1 && canUndo
+          ? "pointer"
+          : "not-allowed",
+    }}
+    onClick={undoLastAnswer}
+    disabled={!(step >= 1 && step <= sessionQuestions.length - 1 && canUndo)}
+  >
+    1問戻る
+  </button>
+</div>
+
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
 
 
 
@@ -3440,7 +3629,7 @@ const styles: Record<string, React.CSSProperties> = {
 
   titleLarge: {
     margin: "0 0 18px",
-    fontSize: 34,
+    fontSize: 24,
     lineHeight: 1.25,
     fontWeight: 900,
     color: "#fff4f4",

@@ -20,6 +20,7 @@ type RankedType = {
 
 type Rarity = "R" | "SR" | "SSR" | "UR";
 
+
 type ShareCardProps = {
   main: RankedType;
   sub?: RankedType;
@@ -33,10 +34,10 @@ type ShareCardProps = {
   summary?: string;
   title?: string;
   rarityLabel?: Rarity;
+  blendRatio?: { main: number; sub: number };
+  traitName?: string;
+  traitBody?: string;
 };
-
-
-
 
 
 
@@ -149,7 +150,7 @@ const rarityTheme: Record<
   UR: {
     card: "bg-[linear-gradient(180deg,#2a1636_0%,#120914_100%)] border-[#f3c96b] text-[#fff4df] shadow-[0_0_36px_rgba(243,201,107,0.24)]",
     badge: "bg-[linear-gradient(180deg,#ffdf7a_0%,#d89b1d_100%)] text-[#2d1600] border-[#ffe7a6] shadow-[0_0_20px_rgba(255,223,122,0.34)]",
-    panel: "bg-[rgba(255,244,220,0.14)] border-[rgba(243,201,107,0.58)]",
+    panel: "bg-[rgba(255,244,220,0.14)] border-[rgba(243,201,107,0.70)]",
     imageFrame: "bg-[linear-gradient(180deg,#40214d_0%,#24112c_100%)] border-[#f0c15f] shadow-[0_0_28px_rgba(243,201,107,0.18)]",
     overlay:
       "before:pointer-events-none before:absolute before:inset-0 before:rounded-[28px] before:bg-[radial-gradient(circle_at_top,rgba(255,235,160,0.22),transparent_32%),radial-gradient(circle_at_bottom,rgba(188,128,255,0.16),transparent_30%)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[28px] after:bg-[linear-gradient(120deg,transparent_14%,rgba(255,255,255,0.16)_34%,transparent_56%)]",
@@ -183,7 +184,6 @@ const backgroundOpacityMap: Record<Rarity, string> = {
 function cx(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
 }
-
 export default function ShareCard({
   main,
   sub,
@@ -196,8 +196,12 @@ export default function ShareCard({
   summary,
   title,
   rarityLabel,
+  blendRatio,
+  traitName,
+  traitBody,
 }: ShareCardProps) {
-  const ratio = getMixRatio(main.score, sub?.score ?? 0);
+ 
+  const ratio = blendRatio ?? getMixRatio(main.score, sub?.score ?? 0);
   const rarity = rarityLabel ?? getRarity(main.score + (sub?.score ?? 0));
   const displayTitle = sub ? `${main.name}×${sub.name}` : main.name;
 
@@ -210,7 +214,11 @@ export default function ShareCard({
   const derivedStats = buildStats(main, sub);
   const displayStats = stats && stats.length > 0 ? stats : derivedStats;
 
-  const [line1, line2] = buildCatchCopy(main, sub);
+
+  const [fallbackLine1, fallbackLine2] = buildCatchCopy(main, sub);
+  const line1 = traitName || fallbackLine1;
+  const line2 = traitBody || fallbackLine2;
+
 
   return (
     <section
@@ -315,12 +323,14 @@ export default function ShareCard({
                 theme.panel
               )}
             >
-              <div className="text-[10px] font-semibold tracking-wide opacity-55">
-                {item.label}
-              </div>
-              <div className="mt-1 text-[19px] font-black leading-none opacity-85">
-                {item.value}
-              </div>
+             
+<div className="text-[10px] font-bold tracking-[0.04em] text-[#fff6de] [text-shadow:_0_1px_2px_rgba(0,0,0,0.45)]">
+  {item.label}
+</div>
+<div className="mt-1 text-[19px] font-black leading-none text-white [text-shadow:_0_1px_3px_rgba(0,0,0,0.5)]">
+  {item.value}
+</div>
+
             </div>
           ))}
         </div>
@@ -340,7 +350,9 @@ export default function ShareCard({
   </div>
 
   <p className="mt-2 whitespace-pre-line text-[13px] font-medium leading-snug opacity-80">
-    {summary ?? line2}
+  {traitBody || line2}
+
+
   </p>
 </div>
 
