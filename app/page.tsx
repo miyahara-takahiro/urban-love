@@ -1923,7 +1923,7 @@ const CARD_CHARACTER_NAMES = [
 
 
 function pickCardRare(blend: { p1: number; p2: number }): Rarity {
-  if (blend.p1 >= 90) return "UR";
+  if (blend.p1 >= 86) return "UR";
   if (blend.p1 >= 83) return "SSR";
   if (blend.p1 >= 70) return "SR";
   return "R";
