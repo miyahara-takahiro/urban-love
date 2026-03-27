@@ -239,7 +239,7 @@ export default function ShareCard({
 
      <div className={cx("absolute inset-0", theme.overlayTone)} />
 
-      <div className="relative z-10 flex flex-col gap-2">
+      <div className="relative z-10 flex flex-col gap-2 pt-3">
 
 
 <header className="flex items-start justify-between gap-3">
@@ -281,16 +281,17 @@ export default function ShareCard({
 <div className="relative mt-2">
 
 
-<div className="mx-auto flex h-[214px] w-[75%] items-center justify-center overflow-hidden rounded-[16px] border-[6px] border-[rgba(255,224,138,0.48)] shadow-[0_0_20px_rgba(255,228,140,0.38),0_0_48px_rgba(255,210,90,0.18),inset_0_1px_0_rgba(255,255,255,0.42)]">
-    
+<div className="mx-auto flex h-[185px] w-[95%] items-center justify-center overflow-hidden rounded-[16px] border-[6px] border-[rgba(255,224,138,0.48)] shadow-[0_0_20px_rgba(255,228,140,0.38),0_0_48px_rgba(255,210,90,0.18),inset_0_1px_0_rgba(255,255,255,0.42)]">
+  {imageUrl ? (
+    <img
+      src={imageUrl}
+      alt={displayTitle}
+      className="h-full w-full object-contain"
+    />
+  ) : (
 
-            {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt={displayTitle}
-                className="h-full w-full object-contain"
-              />
-            ) : (
+
+
               <div className="flex h-full w-full items-center justify-center bg-black/10 text-sm font-semibold opacity-60">
                 image preview
               </div>

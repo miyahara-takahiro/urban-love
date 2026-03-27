@@ -44,12 +44,20 @@ slight forward approach or subtle stepping motion
 subtle childlike mood`,
 
 
-  "口裂け女": `unsettling feminine urban legend energy
+
+"口裂け女": `quiet unsettling feminine urban legend
+human-based uncanny woman
 not violent
 no excessive blood
 not slasher horror
-gentle forward lean with subtle reaching gesture
-shareable eerie beauty`,
+still posture over motion
+upright stance with restrained presence
+subtle eerie beauty
+not too aggressive
+background must remain clearly visible around her silhouette`,
+
+
+
 
   "雪女": `quiet supernatural beauty
 soft and distant presence
@@ -60,12 +68,17 @@ gentle drifting motion with slight body tilt
 pale winter spirit mood`,
 
 
-  "天狗": `folkloric supernatural presence
+"天狗": `traditional yokai presence
 not heroic
 not battle-character like
-slightly strange proportions
-light confident stance with subtle dynamic balance
-traditional yokai mood`,
+less dynamic posture
+upright balanced stance
+traditional eerie mood
+background architecture must remain clearly readable
+not too dominant in the frame`,
+
+
+
 
   "河童": `folk creature atmosphere
 slightly creepy but not scary
@@ -106,20 +119,47 @@ more uncanny than violent
 slow leaning posture with soft flowing motion
 shareable eerie beauty`,
 
-  "鬼女": `intense feminine supernatural presence
-dramatic but elegant silhouette
-not full demon monster
-human-based uncanny woman
-not gore
-active stance with expressive movement but non-aggressive
-not too horrifying`,
 
-  "ろくろ首": `elongated neck motif
+
+
+
+"ろくろ首": `elongated neck motif
 strange silhouette
 not too grotesque
 not body horror
-slight unnatural stretch with gentle body tilt
-human-based form with surreal extension`,
+minimal motion
+still posture with subtle unnatural extension
+human-based form with surreal extension
+background must remain clearly visible around the figure`,
+
+
+"鬼女": `stylized human-based kijo
+quiet refined yokai girl presence
+subtle eerie Japanese beauty
+pale skin
+long straight black hair
+small elegant red horns
+soft red eyes
+calm gaze
+closed mouth
+gentle or unreadable expression
+traditional kimono styling
+minimal motion
+still posture over dynamic action
+not full demon monster
+not feral
+not aggressive
+not gore
+not too horrifying
+soft muted colors
+simple readable shapes
+clean silhouette
+cute-shareable but uncanny
+not too visually intense
+background must remain clearly visible around the figure`,
+
+
+
 
   "のっぺらぼう": `blank or reduced facial simplicity
 quiet uncanny mood
@@ -216,29 +256,35 @@ Influence balance:
 function getBackgroundDirection(first: RankedType, second: RankedType) {
   const names = [first.name, second.name];
 
-  if (names.includes("口裂け女")) {
-    return `a quiet residential street, alley, or school-adjacent path in soft evening light, with distant streetlights, walls, pavement texture, and gentle depth`;
-  }
+if (names.includes("口裂け女")) {
+  return `a narrow Japanese residential alley at dusk with concrete walls, pavement texture, utility poles, one streetlight, roadside guardrail, and clear depth receding behind the character`;
+}
+
+
 
   if (names.includes("花子さん")) {
     return `an old school corridor or stairwell with soft ambient brightness, worn walls, classroom windows, floor reflections, and clear perspective depth`;
   }
 
-  if (names.includes("貞子")) {
-    return `a dim but readable old hallway, room, or indoor corridor with soft ambient light, subtle depth, old textures, and classic eerie atmosphere without heavy darkness`;
-  }
+if (names.includes("貞子")) {
+  return `a dim old indoor corridor with worn walls, wooden or tiled floor, door frames, weak ceiling light, and clear perspective depth extending behind the character`;
+}
+
+
 
   if (names.includes("雪女")) {
     return `a softly lit winter roadside, shrine path, or snowy open space with pale snow, airy mist, and light blue-gray atmosphere`;
   }
 
-  if (names.includes("鬼女")) {
-    return `a shrine path, old street, or traditional Japanese setting at dusk with layered architecture, warm ambient light, and dramatic but readable atmosphere`;
-  }
+if (names.includes("鬼女")) {
+  return `a shrine approach at dusk with stone steps, red torii gates, lanterns, trees, and shrine buildings clearly visible behind the character`;
+}
 
-  if (names.includes("ろくろ首")) {
-    return `a traditional Japanese room, hallway, or alley with visible wooden architecture, lantern or window light, and quiet uncanny spatial depth`;
-  }
+if (names.includes("ろくろ首")) {
+  return `a traditional Japanese hallway with wooden pillars, sliding doors, warm lantern light, visible floor lines, and quiet spatial depth extending behind the character`;
+}
+
+
 
   if (names.includes("のっぺらぼう")) {
     return `a quiet evening street or old corridor with soft light, subtle emptiness, walls or railings, and simple but eerie environmental depth`;
@@ -249,9 +295,10 @@ function getBackgroundDirection(first: RankedType, second: RankedType) {
     return `a quiet riverside with stone edges, shallow reflections, grass, bridge or embankment hints, and subdued folkloric atmosphere in dim evening light`;
   }
 
-  if (names.includes("天狗")) {
-    return `a mountain shrine approach with stone steps, lanterns, trees, torii-like elements, and soft evening brightness`;
-  }
+if (names.includes("天狗")) {
+  return `a mountain shrine approach with clearly visible stone steps, red torii gates, lanterns, cedar trees, and layered shrine-path depth behind the character`;
+}
+
 
 
   if (names.includes("座敷童")) {
@@ -443,6 +490,7 @@ ${modeInstruction}
 
 ${compositionRule}
 
+
 Background:
 - a detailed environment background is mandatory
 - never use plain, blank, gradient, studio, or single-color background
@@ -452,7 +500,14 @@ Background:
 - examples of environmental elements: walls, corridors, windows, railings, steps, trees, stones, water edges, lanterns, snow, room structures
 - the character must be clearly grounded in the environment, not floating
 - the background must stay readable and clearly visible behind the character
+- background structures must remain identifiable at first glance
+- do not reduce the environment to vague blur, fog, or abstract color
+- for strong-presence characters like 鬼女, 口裂け女, and 天狗, the setting must occupy a meaningful visible portion of the composition
 - the environment should support the character's world without overpowering the character
+
+
+
+
 
 Face:
 - calm and neutral expression
@@ -470,24 +525,30 @@ Face:
 - expression should feel slightly alive and personable
 
 Pose and motion:
-- add slight dynamic pose
-- slight body twist or weight shift
+- add subtle pose variation
+- slight body twist or gentle weight shift
 - natural asymmetry in arms or shoulders
-- one hand slightly raised or interacting with space
-- subtle movement in hair or clothing
-- create a clear sense of motion
-- show visible weight shift through hips, shoulders, and legs
+- one hand may be slightly raised or softly interacting with space
+- subtle movement in hair or clothing is allowed
+- prefer stillness over strong action
+- avoid exaggerated motion
 - avoid symmetrical front-facing standing pose
-- do not default to a neutral standing pose
+- do not default to a perfectly neutral standing pose
+
 
 Framing:
-- use a zoomed-out full-body composition
+- compose for a wider frame
+- use a full-body composition
 - the entire character must fit comfortably inside the frame
 - do not crop hair, hands, sleeves, or feet
-- leave clear space above the head, below the feet, and on both sides
-- camera should be pulled back enough to show the whole body and surrounding background
-- the character should occupy about 40 to 50 percent of the canvas height
+- leave a small margin above the head and below the feet
+- reduce excessive empty space on both sides
+- the character should occupy about 55 to 60 percent of the canvas height
 - ensure visible ground space below the feet
+
+
+
+
 
 Design intent:
 - create a strange new creature, not two characters standing together
@@ -584,7 +645,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: "gpt-image-1-mini",
         prompt: safePrompt,
-        size: "1024x1024",
+        size: "1536x1024",
         output_format: "png",
       }),
     });

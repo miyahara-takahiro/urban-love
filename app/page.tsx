@@ -195,6 +195,7 @@ const q = (
 const questionPool: Question[] = [
 
 
+
 q(
   "q1a",
   "self",
@@ -236,7 +237,7 @@ q(
   "📵",
   "無連絡",
   "alone-silence",
-  "しばらく誰とも話していない、、、どんな行動を取りがち？",
+  "しばらく誰とも話していない、、どんな行動を取りがち？",
   ["#0f2027", "#2c5364"],
   [
     { label: "自分から誰かに話しかける", score: { attachment: 3 } },
@@ -293,7 +294,7 @@ q(
     { label: "すぐ詳しい人に相談する", score: { attachment: 3 } },
     { label: "少しやってみてから相談する", score: { attachment: 2 } },
     { label: "まず自分で最後までやってみる", score: { independence: 3 } },
-    { label: "やり方を変えながらそのまま進める", score: { reality: 2 } }
+    { label: "やり方を変えながら自力で進める", score: { reality: 2 } }
   ],
   "help-seeking",
   "C"
@@ -315,40 +316,50 @@ q(
   "distance",
   "A"
 ),
+
+
 q(
   "q3b",
   "social",
   "🧍",
-  "接し方",
+  "距離の壁",
   "distance-style",
-  "まだ距離がある相手と話すとき、どんな接し方になりやすい？",
+  "相手が少し踏み込み気味だと感じたとき、あなたはどう反応する？",
   ["#232526", "#414345"],
   [
-    { label: "自分から話題を出す", score: { attachment: 3 } },
-    { label: "相手に合わせて会話を広げる", score: { attachment: 2 } },
-    { label: "必要なことだけ話す", score: { independence: 3 } },
-    { label: "自分からはあまり話さない", score: { reality: 2 } }
+    { label: "自分も距離を縮めて合わせる", score: { attachment: 3 } },
+    { label: "相手のペースに合わせて調整する", score: { attachment: 2 } },
+    { label: "必要な話だけして距離を保つ", score: { independence: 3 } },
+    { label: "一歩引いて距離を戻す", score: { caution: 2 } }
   ],
   "distance",
   "B"
 ),
+
+
+
 q(
   "q3c",
   "social",
   "📏",
-  "距離調整",
+  "安全な距離",
   "distance-adjust",
-  "相手との距離が少し近いと感じたとき、どう調整することが多い？",
+  "あなたが“安心できる距離感”に一番近いのはどれ？",
   ["#0f2027", "#2c5364"],
   [
-    { label: "さりげなく距離を取る", score: { independence: 3 } },
-    { label: "関わる量を少し減らす", score: { independence: 2 } },
-    { label: "様子を見ながらそのまま関わる", score: { attachment: 2 } },
-    { label: "特に変えずそのまま接する", score: { attachment: 3 } }
+    { label: "相手とすぐ仲良くなれる距離", score: { attachment: 3 } },
+    { label: "少しずつ距離が縮まる関係", score: { attachment: 2 } },
+    { label: "必要なときだけ関わる距離", score: { independence: 3 } },
+    { label: "深く関わらず一定の距離を保つ関係", score: { caution: 2 } }
   ],
   "distance",
   "C"
 ),
+
+
+
+
+
 
 q(
   "q4a",
@@ -380,7 +391,7 @@ q(
     { label: "まだその人のことを考えることが多い", score: { attachment: 3 } },
     { label: "きっかけがあると思い出す", score: { attachment: 2 } },
     { label: "普段はほとんど思い出さない", score: { independence: 3 } },
-    { label: "思い出さないようにする", score: { reality: 2 } }
+    { label: "思い出すことがない", score: { reality: 2 } }
   ],
   "after",
   "B"
@@ -425,38 +436,42 @@ q(
 q(
   "q5b",
   "emotion",
-  "📝",
-  "感情処理",
-  "lonely-process",
-  "気分が落ちたとき、どうやって気持ちを整えることが多い？",
+  "🫥",
+  "寂しさの扱い",
+  "lonely-feel",
+  "寂しさを感じたとき、あなたはどうする事が多い？",
   ["#232526", "#414345"],
   [
-    { label: "誰かに話して整理する", score: { attachment: 3 } },
-    { label: "紙やメモに書いて整理する", score: { attachment: 2 } },
-    { label: "一人で考えて落ち着くのを待つ", score: { independence: 3 } },
-    { label: "別の予定を入れて切り替える", score: { reality: 2 } }
+    { label: "友人に会ったり話したりして気を紛らわせる", score: { attachment: 3 } },
+    { label: "気分転換に外へ出かける", score: { attachment: 2 } },
+    { label: "家で一人でのんびり過ごす", score: { independence: 3 } },
+    { label: "特に気にせずそのまま過ごす", score: { reality: 2 } }
   ],
   "loneliness-response",
   "B"
 ),
 
+
 q(
   "q5c",
   "emotion",
-  "🌙",
-  "孤独耐性",
-  "lonely-tolerance",
-  "一人の時間が長くなったとき、自然と取る行動は？",
-  ["#0f2027", "#203a43"],
+  "🫧",
+  "寂しさの正体",
+  "lonely-core",
+  "あなたが“寂しい”と感じるとき、その感覚に一番近いのは？",
+  ["#0f2027", "#2c5364"],
   [
-    { label: "誰かと話すきっかけを探す", score: { attachment: 3 } },
-    { label: "少し気になるがそのまま過ごす", score: { attachment: 2 } },
-    { label: "特に困らず普段どおり過ごす", score: { independence: 3 } },
-    { label: "むしろ一人の方が落ち着く", score: { reality: 2 } }
+    { label: "誰かとつながっていたい気持ち", score: { attachment: 3 } },
+    { label: "少しだけ人の温もりを感じたい気持ち", score: { attachment: 2 } },
+    { label: "一人でいる時間が孤独だと感じる感覚", score: { independence: 3 } },
+    { label: "特に寂しさを感じない", score: { reality: 2 } }
   ],
   "loneliness-response",
   "C"
 ),
+
+
+
 
 q(
   "q6a",
@@ -470,45 +485,49 @@ q(
     { label: "自分から話して打ち解ける", score: { attachment: 3 } },
     { label: "普通に話しながら相手を見る", score: { attachment: 2 } },
     { label: "少し様子を見てから話す", score: { independence: 3 } },
-    { label: "最初は距離を保って接する", score: { caution: 2 } }
+    { label: "あまり自分から話さない", score: { caution: 2 } }
   ],
   "trust-speed",
   "A"
 ),
+
 q(
   "q6b",
   "social",
-  "👤",
-  "初対面",
-  "trust-firstimpression",
-  "初対面で相手をどう見ることが多い？",
+  "🗣️",
+  "心の開き方",
+  "trust-open",
+  "初対面の相手に、自分のことをこれ見てるかどれくらい話す？",
   ["#232526", "#414345"],
   [
-    { label: "まず好意的に受け取る", score: { attachment: 3 } },
-    { label: "特に決めつけず普通に接する", score: { attachment: 2 } },
-    { label: "少し警戒して様子を見る", score: { independence: 3 } },
-    { label: "言い方や表情まで細かく見る", score: { caution: 2 } }
+    { label: "自分から話題を出していろいろ話す", score: { attachment: 3 } },
+    { label: "相手の話す量に合わせて話す", score: { attachment: 2 } },
+    { label: "必要なことだけ簡単に話す", score: { independence: 3 } },
+    { label: "ほとんど自分のことは話さない", score: { caution: 2 } }
   ],
   "trust-speed",
   "B"
 ),
+
+
 q(
   "q6c",
-  "emotion",
-  "🪨",
-  "裏切り",
-  "trust-betrayal",
-  "信頼していた人に裏切られた、どんな反応になりやすい？",
-  ["#0f2027", "#000000"],
+  "social",
+  "🧠",
+  "心の本音",
+  "trust-core",
+  "初めて会う人に対して、心の奥ではどんな気持ちになりやすい？",
+  ["#0f2027", "#2c5364"],
   [
-    { label: "かなり引きずってしまう", score: { attachment: 3 } },
-    { label: "理由を考えて相手の行動を振り返る", score: { attachment: 2 } },
-    { label: "今後の付き合い方だけ決めて切り替える", score: { independence: 3 } },
-    { label: "その人とは距離を取る", score: { caution: 2 } }
+    { label: "早く仲良くなれたらいいなと思う", score: { attachment: 3 } },
+    { label: "少し距離を保ちながら様子を見たい", score: { attachment: 2 } },
+    { label: "必要以上に近づかなくていいと思う", score: { independence: 3 } },
+    { label: "深く関わるつもりはあまりない", score: { caution: 2 } }
   ],
   "trust-speed",
   "C"
 ),
+
 
 q(
   "q7a",
@@ -516,30 +535,32 @@ q(
   "👁️",
   "違和感",
   "intuition-core",
-  "相手の言動に少し違和感を覚えたとき、どんな行動を取りやすい？",
+  "相手の言動に『あれ？』と思ったとき、まずどう動く？",
   ["#141e30", "#243b55"],
   [
-    { label: "その場で少し距離を取る", score: { intuition: 3 } },
-    { label: "様子を見ながらそのまま話す", score: { intuition: 2 } },
-    { label: "何が引っかかったか確かめる", score: { reality: 3 } },
-    { label: "特に気にしない", score: { caution: 2 } }
+    { label: "直感で少し距離を置く", score: { intuition: 3 } },
+    { label: "気にしつつも会話を続ける", score: { intuition: 2 } },
+    { label: "何が気になったのか確認する", score: { reality: 3 } },
+    { label: "気にせずそのまま話す", score: { caution: 2 } }
   ],
   "intuition-discomfort",
   "A"
 ),
+
+
 q(
   "q7b",
   "social",
   "🧩",
   "引っかかり",
   "intuition-feel",
-  "初対面で『なんとなく合わないかも』、自然と取る行動は？",
+  "初対面で『合わないかも』と感じたとき、どんな反応になる？",
   ["#232526", "#414345"],
   [
-    { label: "自分からはあまり関わらないようにする", score: { intuition: 3 } },
-    { label: "距離は変えずに少し様子を見る", score: { intuition: 2 } },
-    { label: "会話や態度を見て判断し直す", score: { reality: 3 } },
-    { label: "印象だけでは決めず普通に接する", score: { caution: 2 } }
+    { label: "無意識に距離を置く", score: { intuition: 3 } },
+    { label: "とりあえず様子を見る", score: { intuition: 2 } },
+    { label: "相手の言い方や態度を観察する", score: { reality: 3 } },
+    { label: "第一印象だけで決めない", score: { caution: 2 } }
   ],
   "intuition-discomfort",
   "B"
@@ -551,116 +572,133 @@ q(
   "🫧",
   "直感使用率",
   "intuition-usage",
-  "日常のちょっとした選択で、どんな決め方をすることが多い？",
+  "小さな選択をするとき、心の奥ではどんな決め方？",
   ["#0f2027", "#2c5364"],
   [
-    { label: "最初にいいと思った方を選ぶ", score: { intuition: 3 } },
-    { label: "迷ったときだけ感覚で決める", score: { intuition: 2 } },
-    { label: "比べられる材料を見て決める", score: { reality: 3 } },
-    { label: "理由が決まるまで選ばない", score: { caution: 2 } }
+    { label: "『最初に感じた方が正しい』と思う", score: { intuition: 3 } },
+    { label: "迷ったときだけ感覚に頼る", score: { intuition: 2 } },
+    { label: "理由がないと決められない", score: { reality: 3 } },
+    { label: "納得できるまで選ばない", score: { caution: 2 } }
   ],
   "intuition-discomfort",
   "C"
 ),
+
+
+
+
+
 q(
   "q8a",
   "self",
   "📚",
   "根拠",
   "evidence-core",
-  "何かを決めるとき、自然とどの進め方に近い？",
+  "ランチでメニューを選ぶとき、どんな決め方をする？",
   ["#232526", "#414345"],
   [
-    { label: "感覚で決めてから動く", score: { intuition: 3 } },
-    { label: "ざっくり理由があれば決める", score: { intuition: 2 } },
-    { label: "納得できる理由をそろえて決める", score: { reality: 3 } },
-    { label: "根拠が足りないと決めない", score: { caution: 2 } }
+    { label: "パッと見て『これやな』と決める", score: { intuition: 3 } },
+    { label: "写真や名前の“雰囲気”で選ぶ", score: { intuition: 2 } },
+    { label: "値段や内容を比べて決める", score: { reality: 3 } },
+    { label: "いつも頼む定番", score: { caution: 2 } }
   ],
   "evidence-need",
   "A"
 ),
+
 q(
   "q8b",
   "self",
   "🗣️",
   "説明",
   "evidence-explain",
-  "自分の選択を人に説明するとき、どんな伝え方になりやすい？",
+  "仕事で自分の案を説明するとき、どんな伝え方になる？",
   ["#0f2027", "#203a43"],
   [
-    { label: "理由はうまく言えないが感覚で選ぶことがある", score: { intuition: 3 } },
-    { label: "大まかな理由だけ伝える", score: { intuition: 2 } },
-    { label: "順番に説明する", score: { reality: 3 } },
-    { label: "説明できない選択はあまりしない", score: { caution: 2 } }
+    { label: "『直感でこれが良い』と感覚で話す", score: { intuition: 3 } },
+    { label: "ざっくり理由だけ伝える", score: { intuition: 2 } },
+    { label: "順番に理由を説明する", score: { reality: 3 } },
+    { label: "説明できない案は出さない", score: { caution: 2 } }
   ],
   "evidence-need",
   "B"
 ),
+
+
 q(
   "q8c",
   "self",
   "⚙️",
   "判断材料",
   "evidence-balance",
-  "初めて会う人を判断するとき、どこで判断する？",
+  "お店を選ぶとき、何を基準に選ぶ？",
   ["#141e30", "#243b55"],
   [
-    { label: "第一印象で方向を決める", score: { intuition: 3 } },
-    { label: "少し様子を見てから判断する", score: { intuition: 2 } },
-    { label: "言い方や行動を見て判断する", score: { reality: 3 } },
-    { label: "何回か会ってから決める", score: { caution: 2 } }
+    { label: "店の印象や雰囲気", score: { intuition: 3 } },
+    { label: "人から聞いた感想やおすすめ", score: { intuition: 2 } },
+    { label: "レビュー・評価・写真などの情報", score: { reality: 3 } },
+    { label: "値段や混雑状況など”", score: { caution: 2 } }
   ],
   "evidence-need",
   "C"
 ),
+
+
 q(
   "q9a",
   "self",
-  "⚡",
-  "初動",
-  "action-start",
-  "やってみたいことができたとき、まずどう動く？",
-  ["#141e30","#243b55"],
+  "🏃",
+  "行動",
+  "action-speed",
+  "友達に『今度ここ行こ？』って誘われたとき、どうする？",
+  ["#1f1c2c", "#928dab"],
   [
-    { label: "思いついた瞬間に始める", score: { passion: 3 } },
-    { label: "少しだけ試して、続けるか様子を見る", score: { passion: 2 } },
-    { label: "必要な情報を調べてから始める", score: { caution: 3 } },
-    { label: "すぐには始めず、まず様子を見る", score: { reality: 2 } }
+    { label: "その場で『行く！』とすぐ決める", score: { intuition: 3 } },
+    { label: "とりあえず『いいかも』と軽く返す", score: { intuition: 2 } },
+    { label: "日程や場所を確認してから決める", score: { reality: 3 } },
+    { label: "予定が固まるまで返事を保留する", score: { caution: 2 } }
   ],
   "action",
   "A"
 ),
 
+
 q(
   "q9b",
   "self",
-  "🧪",
-  "試し方",
-  "action-trial",
-  "新しいことに挑戦するとき、どんな始め方が多い？",
-  ["#232526","#414345"],
+  "📝",
+  "行動",
+  "action-start",
+  "やらなきゃいけない用事ができたとき、どう動く？",
+  ["#2c3e50", "#4ca1af"],
   [
-    { label: "最初からしっかり取り組む", score: { passion: 3 } },
-    { label: "軽く触ってみて、続けるか決める", score: { passion: 2 } },
-    { label: "やり方や手順を調べてから始める", score: { caution: 3 } },
-    { label: "失敗しにくい安全な方法を選んで始める", score: { reality: 2 } }
+    { label: "思い立った瞬間にすぐやる", score: { intuition: 3 } },
+    { label: "とりあえず少しだけ手をつけておく", score: { intuition: 2 } },
+    { label: "やる順番や時間を決めてから動く", score: { reality: 3 } },
+    { label: "やる気になるまで少し様子を見る", score: { caution: 2 } }
   ],
   "action",
   "B"
 ),
+
+
+
+
+
+
 q(
   "q9c",
   "self",
-  "🪜",
-  "進め方",
-  "action-process",
-  "やることが決まったあと、どんな進め方になる？",
-  ["#0f2027","#2c5364"],
+  "🧭",
+  "行動",
+  "action-choice",
+  "休日の予定を決めるとき、どうやって決める？",
+  ["#0f2027", "#2c5364"],
   [
-    { label: "集中して一気に進める", score: { passion: 3 } },
-    { label: "やりながら考えて調整する", score: { passion: 2 } },
-    { label: "手順を決めて順番に進める", score: { caution: 3 } },
-    { label: "状況に合わせてやり方を変えながら進める", score: { reality: 2 } }
+    { label: "その日の気分で決める", score: { intuition: 3 } },
+    { label: "誰かが決めた予定に合わせる", score: { intuition: 2 } },
+    { label: "行きたい場所や時間を先に決める", score: { reality: 3 } },
+    { label: "疲れない予定を優先する", score: { caution: 2 } }
   ],
   "action",
   "C"
@@ -672,13 +710,13 @@ q(
   "⚖️",
   "リスク",
   "risk-core",
-  "リスクがある選択をするとき、どんな判断になりやすい？",
+  "ちょっと不安な選択肢があるとき、まずどう考える？",
   ["#232526","#414345"],
   [
-    { label: "気にせず挑戦してみる", score: { passion: 3 } },
-    { label: "条件を決めて、その範囲で挑戦する", score: { passion: 2 } },
-    { label: "リスクとメリットを計算して決める", score: { caution: 3 } },
-    { label: "もっと安全な方法がないか探す", score: { reality: 2 } }
+    { label: "不安より“面白そう”を優先する", score: { passion: 3 } },
+    { label: "できる範囲で挑戦できないか考える", score: { passion: 2 } },
+    { label: "不安の理由を整理して判断する", score: { caution: 3 } },
+    { label: "無理せず安全な方を選ぶ", score: { reality: 2 } }
   ],
   "risk",
   "A"
@@ -691,19 +729,17 @@ q(
   "🧮",
   "判断基準",
   "risk-judge",
-  "迷ったとき、どんな基準で決めることが多い？",
+  "リスクがある選択で迷ったとき、どうやって決める？",
   ["#141e30","#243b55"],
   [
-    { label: "とりあえずやってみて判断する", score: { passion: 3 } },
-    { label: "できそうなら進める", score: { passion: 2 } },
-    { label: "条件を整理してから決める", score: { caution: 3 } },
-    { label: "リスクが減るまで待つ", score: { reality: 2 } }
+    { label: "まずやってみて、ダメなら戻る", score: { passion: 3 } },
+    { label: "できそうな範囲だけ試してみる", score: { passion: 2 } },
+    { label: "条件を整理して、最も安全な方法を探す", score: { caution: 3 } },
+    { label: "リスクが下がるまで待つ", score: { reality: 2 } }
   ],
   "risk",
   "B"
 ),
-
-
 
 q(
   "q10c",
@@ -711,17 +747,18 @@ q(
   "🔀",
   "選択",
   "risk-choice",
-  "先が見えない道を進むとき、どんな選び方をする？",
+  "先が読めない状況で進む道を選ぶとき、どう決める？",
   ["#0f2027","#2c5364"],
   [
-    { label: "気にせずまっすぐ進む", score: { passion: 3 } },
-    { label: "感覚で方向を決める", score: { intuition: 3 } },
-    { label: "周りの情報を集めてから進む方向を決める", score: { caution: 3 } },
-    { label: "無理に進まず、別の道がないか探す", score: { reality: 2 } }
+    { label: "勢いで進む", score: { passion: 3 } },
+    { label: "感覚的に安全と思う方を選ぶ", score: { intuition: 3 } },
+    { label: "情報を集めて最も安全な道を選ぶ", score: { caution: 3 } },
+    { label: "無理に進まず別の道を探す", score: { reality: 2 } }
   ],
   "risk",
   "C"
 ),
+
 
 
 
@@ -737,43 +774,45 @@ q(
     { label: "すぐに動く", score: { passion: 3 } },
     { label: "できる範囲で動き始める", score: { passion: 2 } },
     { label: "条件を見てから動く", score: { caution: 3 } },
-    { label: "様子を見てから決める", score: { reality: 2 } }
+    { label: "無理せず様子を見る", score: { reality: 2 } }
   ],
   "chance",
   "A"
 ),
 
+
 q(
   "q11b",
   "self",
-  "📈",
-  "機会",
-  "chance-use",
-  "良さそうな機会がふっと転がってきたとき、どうする？",
-  ["#232526","#414345"],
+  "💴",
+  "瞬間の判断",
+  "chance-core",
+  "道でお金が落ちているのを見つけたとき、まずどうする？",
+  ["#141e30","#243b55"],
   [
-    { label: "迷わず参加する", score: { passion: 3 } },
-    { label: "できる範囲で関わる", score: { passion: 2 } },
-    { label: "条件を確認してから決める", score: { caution: 3 } },
-    { label: "見送ることも多い", score: { reality: 2 } }
+    { label: "反射的に拾って周りを確認する", score: { passion: 3 } },
+    { label: "誰も見て無ければ拾う", score: { intuition: 3 } },
+    { label: "交番に届けることを考える", score: { caution: 3 } },
+    { label: "触らずにそのままにしておく", score: { reality: 2 } }
   ],
   "chance",
   "B"
 ),
 
+
 q(
   "q11c",
   "self",
-  "🎯",
-  "動き方",
-  "chance-style",
-  "チャンスを活かすとき、あなたはどう動く？",
+  "🎉",
+  "深層の価値観",
+  "chance-deep",
+  "宝くじが当たった！、あなたはどうする？",
   ["#0f2027","#2c5364"],
   [
-    { label: "自分から取りに行く", score: { passion: 3 } },
-    { label: "流れに乗って動く", score: { intuition: 3 } },
-    { label: "準備を整えてから動く", score: { caution: 3 } },
-    { label: "無理に取りに行かない", score: { reality: 2 } }
+    { label: "やりたかったことを一気に叶えたい", score: { passion: 3 } },
+    { label: "本当に必要なことだけに使いたい", score: { intuition: 3 } },
+    { label: "貯金や将来のために計画的に使いたい", score: { caution: 3 } },
+    { label: "生活は変えず、普段通りでいたい", score: { reality: 2 } }
   ],
   "chance",
   "C"
@@ -783,17 +822,17 @@ q(
 
 q(
   "q12a",
-  "social",
+  "self",
   "⚡",
-  "衝突",
+  "すれ違いのとき",
   "conflict-core",
-  "意見がぶつかったとき、あなたはどんな“最初の一手”を打つ？",
-  ["#232526","#000000"],
+  "友だちと意見が食い違ったとき、どうすることが多い？",
+  ["#3a1c71","#d76d77"],
   [
-    { label: "その場で自分の意見をはっきり言う", score: { passion: 3 } },
-    { label: "主導して話をまとめようとする", score: { passion: 2 } },
-    { label: "順番に整理して話す", score: { caution: 3 } },
-    { label: "自分の意見は控えめにする", score: { attachment: 2 } }
+    { label: "その場で自分の考えをハッキリ伝える", score: { passion: 3 } },
+    { label: "相手の言い方や態度を見て判断する", score: { intuition: 3 } },
+    { label: "一度落ち着いて話すタイミングを作る", score: { caution: 3 } },
+    { label: "深く話さず、衝突を避けて距離を置く", score: { reality: 2 } }
   ],
   "conflict",
   "A"
@@ -802,53 +841,57 @@ q(
 
 q(
   "q12b",
-  "social",
-  "🗣️",
-  "話し方",
-  "conflict-style",
-  "ちょっと空気がピリついてる場面、どんな話し方になる？",
-  ["#141e30","#243b55"],
+  "self",
+  "💢",
+  "すれ違いのとき",
+  "conflict-emotion",
+  "相手にイラッとしたとき、あなたはどうする？",
+  ["#3a1c71","#d76d77"],
   [
-    { label: "気にせず意見を言い切る", score: { passion: 3 } },
-    { label: "相手の反応を見ながら伝える", score: { attachment: 2 } },
-    { label: "言い方を選んで丁寧に伝える", score: { caution: 3 } },
-    { label: "必要なことだけ伝える", score: { reality: 2 } }
+    { label: "言いたいことは言わないと気が済まない", score: { passion: 3 } },
+    { label: "相手の態度をみて対応を決める", score: { intuition: 3 } },
+    { label: "冷静に状況を分析して落ち着こうとする", score: { caution: 3 } },
+    { label: "関わらない方が楽", score: { reality: 2 } }
   ],
   "conflict",
   "B"
 ),
 
+
+
+
 q(
   "q12c",
-  "social",
-  "🧊",
-  "対応",
-  "conflict-response",
-  "衝突が起きたあと、どんな“距離の取り方”をしがち？",
-  ["#0f2027","#2c5364"],
+  "self",
+  "🧩",
+  "深層の価値観",
+  "conflict-deep",
+  "人とのすれ違いで、心の奥では何を一番大事にしている？",
+  ["#3a1c71","#d76d77"],
   [
-    { label: "すぐに関係を戻そうとする", score: { attachment: 3 } },
-    { label: "少し時間をおいてから話す", score: { caution: 3 } },
-    { label: "必要なことだけ整理して話す", score: { reality: 2 } },
-    { label: "相手と距離を取る", score: { independence: 3 } }
+    { label: "本音で向き合うこと", score: { passion: 3 } },
+    { label: "お互いに無理しない距離感", score: { intuition: 3 } },
+    { label: "誤解をなくすための丁寧な話し合い", score: { caution: 3 } },
+    { label: "衝突を増やさない安定した関係", score: { reality: 2 } }
   ],
   "conflict",
   "C"
 ),
 
+
 q(
   "q13a",
-  "social",
+  "self",
   "🤝",
-  "頼り方",
+  "助けてもらうとき",
   "support-core",
-  "ちょっと困ったとき、あなたはどんな“助けの求め方”をする？",
-  ["#232526","#414345"],
+  "誰かが手伝おうとしてくれたとき、どうする？",
+  ["#243b55","#141e30"],
   [
-    { label: "すぐに誰かに相談する", score: { attachment: 3 } },
-    { label: "必要な部分だけ助けてもらう", score: { attachment: 2 } },
-    { label: "まずは自分でやってみる", score: { independence: 3 } },
-    { label: "人には頼らない", score: { reality: 2 } }
+    { label: "素直に受け取って一緒に進める", score: { passion: 3 } },
+    { label: "必要なところだけお願いする", score: { intuition: 3 } },
+    { label: "まず自分でやって、難しい部分だけ頼む", score: { caution: 3 } },
+    { label: "なるべく自分でやりたいので遠慮する", score: { reality: 2 } }
   ],
   "support",
   "A"
@@ -857,21 +900,25 @@ q(
 
 q(
   "q13b",
-  "social",
-  "🧩",
-  "助け方",
-  "support-style",
-  "後輩が困っているのを見かけたとき、あなたはどうする？",
-  ["#141e30","#243b55"],
+  "self",
+  "🫶",
+  "助けるとき",
+  "support-emotion",
+  "友だちが困っていそうなとき、どんな気持ちになる？",
+  ["#243b55","#141e30"],
   [
-    { label: "すぐに声をかけて一緒に解決する", score: { attachment: 3 } },
-    { label: "『大丈夫？』と声を掛ける", score: { attachment: 2 } },
-    { label: "状況を見て、必要なら手伝うと伝える", score: { caution: 3 } },
-    { label: "まずは見守って、求められたら助ける", score: { independence: 3 } }
+    { label: "放っておけず、すぐ助ける", score: { passion: 3 } },
+    { label: "必要そうなら助ける", score: { intuition: 3 } },
+    { label: "まず状況を見て、助るか考える", score: { caution: 3 } },
+    { label: "無理に関わらない", score: { reality: 2 } }
   ],
   "support",
   "B"
 ),
+
+
+
+
 
 
 q(
@@ -891,9 +938,6 @@ q(
   "support",
   "C"
 ),
-
-
-
 
 
 q(
@@ -924,13 +968,21 @@ q(
   ["#141e30","#243b55"],
   [
     { label: "人と話して気分を変える", score: { attachment: 3 } },
-    { label: "好きなことをして流れを変える", score: { passion: 2 } },
+    { label: "好きなことをして気分を変える", score: { passion: 2 } },
     { label: "状況を整理して落ち着かせる", score: { caution: 3 } },
-    { label: "時間を置いて自然に戻す", score: { reality: 2 } }
+    { label: "時間を置いて気持ちをもどす", score: { reality: 2 } }
   ],
   "emotion",
   "B"
 ),
+
+
+
+
+
+
+
+
 
 q(
   "q14c",
@@ -1112,7 +1164,7 @@ q(
   ["#0f2027","#2c5364"],
   [
     { label: "周りに助けを求める", score: { attachment: 3 } },
-    { label: "気持ちを切り替えて動き出す", score: { passion: 2 } },
+    { label: "気持ちを切り替えてリセットする", score: { passion: 2 } },
     { label: "状況を整理して対処法を考える", score: { caution: 3 } },
     { label: "一人で静かに状況を確認する", score: { independence: 3 } }
   ],
@@ -1126,12 +1178,12 @@ q(
   "🌥️",
   "自己管理",
   "self-low",
-  "やる気が出ない日に、あなたはどう動く？",
+  "やる気が出ない日に、あなたはどうする？",
   ["#232526","#414345"],
   [
     { label: "誰かと話して気持ちを上げる", score: { attachment: 3 } },
     { label: "好きなことをして気分を上げる", score: { passion: 2 } },
-    { label: "やるべきことを小さく分けて進める", score: { caution: 3 } },
+    { label: "やるべきことをすこしずつ進める", score: { caution: 3 } },
     { label: "今日は休むと決めて一人で過ごす", score: { independence: 3 } }
   ],
   "self",
@@ -1149,7 +1201,7 @@ q(
   [
     { label: "誰かに相談してアドバイスをもらう", score: { attachment: 3 } },
     { label: "気分転換して流れを変える", score: { passion: 2 } },
-    { label: "計画を立て直して整える", score: { caution: 3 } },
+    { label: "計画を立て直してリズムを整える", score: { caution: 3 } },
     { label: "一人で静かにリズムを整える", score: { independence: 3 } }
   ],
   "self",
@@ -1271,18 +1323,24 @@ q(
   "🧹",
   "行動スタイル",
   "style-avoid",
-  "やりたくないことに向き合うとき、あなたはどう動く？",
+  "やりたくないことに向き合うとき、あなたはどうする？",
   ["#0f2027","#2c5364"],
   [
-    { label: "誰かに愚痴って気持ちを軽くしてから取りかかる", score: { attachment: 3 } },
-    { label: "勢いで一気に終わらせる", score: { passion: 2 } },
-    { label: "手順を決めて少しずつ進める", score: { caution: 3 } },
-    { label: "一人で集中できる環境を作って向き合う", score: { independence: 3 } }
+    { label: "勢いで一気に片づけようとする", score: { passion: 2 } },
+    { label: "嫌でもすこしずつ進める", score: { attachment: 3 } },
+    { label: "やらなきゃと思って準備だけする", score: { caution: 3 } },
+    { label: "やる気になるまで放置する", score: { independence: 3 } }
   ],
   "style",
   "C"
-), 
+),
+
+
+
 ];
+
+
+
 
 
 
@@ -1562,8 +1620,13 @@ function pickOneQuestionPerGroup(pool: Question[]): Question[] {
       throw new Error(`質問グループが不足しています: ${groupId}`);
     }
 
-    const picked = candidates[Math.floor(Math.random() * candidates.length)];
-    selected.push(picked);
+   const picked = candidates[Math.floor(Math.random() * candidates.length)];
+selected.push({
+  ...picked,
+  options: shuffleArray(picked.options),
+}); 
+
+
   }
 
   return shuffleArray(selected);
@@ -2209,27 +2272,28 @@ function ResultHero({
         </p>
       </div>
 
-      {imageUrl ? (
-        <div
-          style={{
-            ...styles.resultHeroImageWrap,
-            width: "100%",
-            maxWidth: isMobile ? "100%" : 520,
-            aspectRatio: isMobile ? "4 / 5" : "4 / 5",
-            margin: isMobile ? "0 auto" : undefined,
-          }}
-        >
-          <img
-            src={imageUrl}
-            alt={resultName}
-            style={{
-              ...styles.resultHeroImage,
-              objectFit: "cover",
-              objectPosition: "center top",
-            }}
-          />
-        </div>
-      ) : null}
+{imageUrl ? (
+  <div
+    style={{
+      ...styles.resultHeroImageWrap,
+      width: "100%",
+      maxWidth: isMobile ? "100%" : 520,
+      aspectRatio: "1 / 1",
+      margin: isMobile ? "0 auto" : undefined,
+    }}
+  >
+    <img
+      src={imageUrl}
+      alt={resultName}
+      style={{
+        ...styles.resultHeroImage,
+        objectFit: "cover",
+        objectPosition: "center center",
+      }}
+    />
+  </div>
+) : null}
+
     </div>
   );
 }
@@ -3254,14 +3318,20 @@ const generateAll = async () => {
 
         <h2 style={styles.titleLarge}>{current.text}</h2>
 
-        <div style={styles.stack}>
-          {current.options.map((option, index) => (
-            <button key={`${step}-${index}`} style={styles.btn} onClick={() => answer(option.score)}>
-              <span style={styles.optionIndex}>{String(index + 1).padStart(2, "0")}</span>
-              <span>{option.label}</span>
-            </button>
-          ))}
-        </div>
+
+<div style={styles.stack}>
+  {current.options.map((option, index) => (
+    <button
+      key={`${current.id}-${option.label}-${JSON.stringify(option.score)}`}
+      style={styles.btn}
+      onClick={() => answer(option.score)}
+    >
+      <span style={styles.optionIndex}>{String(index + 1).padStart(2, "0")}</span>
+      <span>{option.label}</span>
+    </button>
+  ))}
+</div>
+
 
 
 <div style={styles.row}>
