@@ -241,7 +241,7 @@ q(
   ["#0f2027", "#2c5364"],
   [
     { label: "自分から誰かに話しかける", score: { attachment: 3 } },
-    { label: "最近話していた人のこと思い浮かべる", score: { attachment: 2 } },
+    { label: "最近仲良くなった人のこと思い浮かべる", score: { attachment: 2 } },
     { label: "特に気にしないでそのまま過ごす", score: { independence: 3 } },
     { label: "自分からは誰にも連絡しない", score: { reality: 2 } }
   ],
@@ -271,13 +271,13 @@ q(
   "🫣",
   "弱音",
   "help-vulnerability",
-  "気分が落ちているとき、自然とどうやって気持ちを整える？",
+  "気分が落ちているとき、どうやって気分転換する？",
   ["#232526", "#000000"],
   [
-    { label: "誰かにそのまま話す", score: { attachment: 3 } },
-    { label: "少しだけ話して軽く共有する", score: { attachment: 2 } },
-    { label: "一人で整理して気持ちを落ち着かせる", score: { independence: 3 } },
-    { label: "誰にも話さずそのまま過ごす", score: { reality: 2 } }
+    { label: "誰かに話して気持ちを軽くする", score: { attachment: 3 } },
+    { label: "一人でゆっくりして気持ちを落ち着かせる", score: { independence: 3 } },
+    { label: "好きな事をして気持ちを紛らわせる", score: { attachment: 2 } },
+    { label: "あまり気にせずそのまま過ごす", score: { reality: 2 } }
   ],
   "help-seeking",
   "B"
@@ -497,7 +497,7 @@ q(
   "🗣️",
   "心の開き方",
   "trust-open",
-  "初対面の相手に、自分のことをこれ見てるかどれくらい話す？",
+  "初対面の相手に、自分のことをどれくらい話す？",
   ["#232526", "#414345"],
   [
     { label: "自分から話題を出していろいろ話す", score: { attachment: 3 } },
@@ -747,12 +747,12 @@ q(
   "🔀",
   "選択",
   "risk-choice",
-  "先が読めない状況で進む道を選ぶとき、どう決める？",
+  "先が見えない暗い分かれ道、あなたはどう進む？",
   ["#0f2027","#2c5364"],
   [
     { label: "勢いで進む", score: { passion: 3 } },
     { label: "感覚的に安全と思う方を選ぶ", score: { intuition: 3 } },
-    { label: "情報を集めて最も安全な道を選ぶ", score: { caution: 3 } },
+    { label: "周囲を観察して最も安全な道を選ぶ", score: { caution: 3 } },
     { label: "無理に進まず別の道を探す", score: { reality: 2 } }
   ],
   "risk",
@@ -866,7 +866,7 @@ q(
   "🧩",
   "深層の価値観",
   "conflict-deep",
-  "人とのすれ違いで、心の奥では何を一番大事にしている？",
+  "人との意見のすれ違い、あなたは何を一番大事にしている？",
   ["#3a1c71","#d76d77"],
   [
     { label: "本音で向き合うこと", score: { passion: 3 } },
@@ -946,11 +946,11 @@ q(
   "🌧️",
   "感情",
   "emotion-core",
-  "気持ちが沈んでしまった日、あなたはまずどうする？",
+  "気持ちが落ち込んでる日、あなたはまずどうする？",
   ["#232526","#414345"],
   [
     { label: "誰かに話して気持ちを軽くする", score: { attachment: 3 } },
-    { label: "落ち込んだ原因を自分で分析する", score: { caution: 3 } },
+    { label: "落ち込んだ理由をもう一度思い返す", score: { caution: 3 } },
     { label: "一人で静かに過ごして気持ちを落ち着かせる", score: { independence: 3 } },
     { label: "別の予定や行動で気分を切り替える", score: { reality: 2 } }
   ],
@@ -970,7 +970,7 @@ q(
     { label: "人と話して気分を変える", score: { attachment: 3 } },
     { label: "好きなことをして気分を変える", score: { passion: 2 } },
     { label: "状況を整理して落ち着かせる", score: { caution: 3 } },
-    { label: "時間を置いて気持ちをもどす", score: { reality: 2 } }
+    { label: "時間を置いて気持ちを切り替える", score: { reality: 2 } }
   ],
   "emotion",
   "B"
@@ -1214,13 +1214,13 @@ q(
   "📚",
   "自己管理",
   "self-task",
-  "やるべきことが溜まったとき、あなたはどう片付ける？",
+  "部屋が汚い、、部屋の掃除しなきゃ、あなたはどうする？",
   ["#0f2027","#2c5364"],
   [
-    { label: "誰かに話して気持ちを軽くしてから動く", score: { attachment: 3 } },
-    { label: "勢いで一気に片付ける", score: { passion: 2 } },
-    { label: "優先順位をつけて順番に処理する", score: { caution: 3 } },
-    { label: "一人で集中できる環境を作る", score: { independence: 3 } }
+    { label: "とりあえず目についた所から片付け始める", score: { passion: 2 } },
+    { label: "やる気はあるが少しだけ片付けて休憩", score: { attachment: 3 } },
+    { label: "掃除する順番を決めて、順番に片付けていく", score: { caution: 3 } },
+    { label: "また今度掃除しよ、、", score: { independence: 3 } }
   ],
   "self",
   "C"
